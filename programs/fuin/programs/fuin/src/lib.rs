@@ -10,8 +10,8 @@ pub mod error;
 pub mod fuin {
     use super::*;
 
-    pub fn init_vault(ctx: Context<InitializeVault>, nonce:u64, daily_limit: u64)->Result<()>{
-        handlers::init_vault(ctx, nonce, daily_limit)
+    pub fn init_vault(ctx: Context<InitializeVault>, nonce:u64, daily_limit: u64,whitelisted_address:Vec<Pubkey>)->Result<()>{
+        handlers::init_vault(ctx, nonce, daily_limit,whitelisted_address)
     }
 
     /// Issues a Session key for a bot or Teenager
@@ -23,6 +23,9 @@ pub mod fuin {
         handlers::execute_transfer(ctx, nonce_vault, nonce_session, amount)
     }
 
+    pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, nonce_session: u64,amount: u64)->Result<()>{
+        handlers::execute_spl_transfer(ctx, nonce_vault, nonce_session, amount)
+    }
 }
 
 #[derive(Accounts)]

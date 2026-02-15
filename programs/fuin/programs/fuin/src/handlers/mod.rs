@@ -6,3 +6,6 @@ pub use issue_session::*;
 
 pub mod execute_transfer;
 pub use execute_transfer::*;
+
+pub mod execute_spl_transfer;
+pub use execute_spl_transfer::*;

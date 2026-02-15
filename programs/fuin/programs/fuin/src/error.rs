@@ -20,4 +20,8 @@ pub enum ErrorCode{
     Overflow,   
     #[msg("Whitelist Account are not provided")]
     WhitelistAccountsAreNotProvided,
+    #[msg("MintMismatch")]
+    MintMismatch,
+    #[msg("Vault Owner Mismatch")]
+    VaultOwnerMismatch,
 }

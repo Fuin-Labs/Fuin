@@ -9,7 +9,7 @@ pub struct ExecuteTransfer<'info>{
     #[account(mut)]
     pub relayer:Signer<'info>,
 
-    pub session_key: AccountInfo<'info>,
+    pub session_key: Signer<'info>,
 
     pub guardian: AccountInfo<'info>,
 
