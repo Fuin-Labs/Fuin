@@ -35,7 +35,7 @@ pub struct IssueSesson<'info>{
     pub system_program: Program<'info,System>,
 }
 
-pub fn issue_session(ctx:Context<IssueSesson>, nonce: u64,session_key:Pubkey,validity_in_secs: i64,daily_limit: u64)->Result<()>{
+pub fn issue_session(ctx:Context<IssueSesson>, nonce: u64,session_key:Pubkey,validity_in_secs: i64,daily_limit: Option<u64>,session_spend:Option<u64> )->Result<()>{
     
     let session = &mut ctx.accounts.session;
 
@@ -44,7 +44,8 @@ pub fn issue_session(ctx:Context<IssueSesson>, nonce: u64,session_key:Pubkey,val
     session.set_inner(Session { 
         vault: ctx.accounts.vault.key(), 
         authority: ctx.accounts.guardian.key(), 
-        daily_limit, 
+        daily_limit,
+        session_spend, 
         expires_at: expiry_time, 
         is_active: true, 
         nonce, 

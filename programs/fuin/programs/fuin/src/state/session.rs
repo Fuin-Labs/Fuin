@@ -5,7 +5,8 @@ pub use anchor_lang::prelude::*;
 pub struct Session{
     pub vault: Pubkey, // associating a session with a vault,
     pub authority: Pubkey, // ephemeral key,
-    pub daily_limit: u64, // specific limits for this session,
+    pub daily_limit: Option<u64>, // specific limits for this session,
+    pub session_spend: Option<u64>,
     pub expires_at: i64,
     pub is_active: bool,
     pub nonce: u64,

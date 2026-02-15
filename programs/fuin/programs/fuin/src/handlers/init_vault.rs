@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 // use solana_program::{clock::Clock, sysvar::Sysvar};
-use crate::state::vault::Vault;
+use crate::{state::vault::Vault, error::ErrorCode}
 
 #[derive(Accounts)]
 #[instruction(nonce:u64)]
@@ -24,7 +24,9 @@ pub struct InitializeVault<'info>{
     pub system_program : Program<'info,System>,
 }
 
-pub fn init_vault(ctx: Context<InitializeVault>, nonce:u64, daily_limit: u64)->Result<()>{
+pub fn init_vault(ctx: Context<InitializeVault>, nonce:u64, daily_limit: u64,whitelisted_address:Vec<Pubkey>)->Result<()>{
+
+    require!(!whitelisted_address.is_empty(), ErrorCode::WhitelistAccountsAreNotProvided);
 
     let clock = Clock::get()?;
 
@@ -37,6 +39,7 @@ pub fn init_vault(ctx: Context<InitializeVault>, nonce:u64, daily_limit: u64)->R
         daily_spent : 0, 
         last_reset_epoch: epoch, 
         nonce, 
+        whitelisted_address,
         bump: ctx.bumps.vault, 
     });
 
