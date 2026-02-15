@@ -1,5 +1,7 @@
 pub use anchor_lang::prelude::*;
 
+use crate::state::LimitTracker;
+
 #[derive(InitSpace)]
 #[account]
 pub struct Session{
@@ -11,4 +13,18 @@ pub struct Session{
     pub is_active: bool,
     pub nonce: u64,
     pub bump:u8,
+}
+
+impl LimitTracker for Session{
+    fn get_limit(&self) -> Option<u64> {
+        self.daily_limit
+    }
+
+    fn get_spent(&self) -> u64 {
+        self.session_spend.unwrap_or(0)
+    }
+
+    fn set_spent(&mut self, amount: u64) {
+        self.session_spend = Some(amount);
+    }
 }

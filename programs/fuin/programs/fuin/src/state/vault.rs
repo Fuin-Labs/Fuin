@@ -1,5 +1,7 @@
 use anchor_lang::prelude::*;
 
+use crate::state::LimitTracker;
+
 #[derive(InitSpace)]
 #[account]
 pub struct Vault{
@@ -11,4 +13,18 @@ pub struct Vault{
     pub whitelisted_address: Vec<Pubkey>,
     pub nonce:u64,
     pub bump:u8,
+}
+
+impl LimitTracker for Vault{
+    fn get_limit(&self)->Option<u64> {
+        Some(self.daily_limit)
+    }
+
+    fn get_spent(&self)->u64 {
+        self.daily_spent
+    }
+
+    fn set_spent(&mut self,amount:u64) {
+        self.daily_spent = amount;
+    }
 }

@@ -54,32 +54,13 @@ pub fn execute_transfer<'info>(ctx:Context<ExecuteTransfer>, nonce_vault:u64, no
     if !vault.whitelisted_address.is_empty() {
         require!(vault.whitelisted_address.contains(&ctx.accounts.destination.key()), ErrorCode::AddressNotWhitelisted);
     }
-    require!(session.is_active,ErrorCode::SessionInactive);
-    require!(clock.unix_timestamp <= session.expires_at, ErrorCode::SessionExpired);
-
-    // Time-based reset
-    if clock.epoch > vault.last_reset_epoch {
-        vault.daily_spent = 0;
-        vault.last_reset_epoch = clock.epoch;
-    };
-
-    // Policy Check 
-    // 1) Global Vault Limit
-    require!(vault.daily_spent.checked_add(amount).unwrap() <= vault.daily_limit, ErrorCode::DailyLimitExceeded);
-
-    // 2) Session Specific Limit 
-    match session.daily_limit{
-        Some(val)=>{
-            if let Some(total_spend) = session.session_spend {
-                require!(total_spend.checked_add(amount).unwrap() <= val, ErrorCode::SessionLimitExceeded);
-            }
-        },
-        None=>{
-            msg!("Session spending limit is not set");
-        }
-    };
-
-    vault.daily_spent = vault.daily_spent.checked_add(amount).unwrap();
+    
+    validate_and_update_limits(
+        &mut ctx.accounts.vault,
+        &mut ctx.accounts.session,
+        &clock,
+        amount
+    )?;
 
     let seeds: &[&[&[u8]]] = &[&[
         b"vault",

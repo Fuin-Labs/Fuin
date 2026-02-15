@@ -61,8 +61,12 @@ pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, no
     let session = &ctx.accounts.session;
     let clock = Clock::get()?;
 
-    require!(session.is_active,ErrorCode::SessionInactive);
-    require!(clock.unix_timestamp <= session.expires_at, ErrorCode::SessionExpired);
+    validate_and_update_limits(
+        &mut ctx.accounts.vault,
+        &mut ctx.accounts.session,
+        &clock,
+        amount
+    )?;
 
     // TODO: Call the oracle and add the find out the price of the token to SOL value so that we can add that in daily spend and do some checks
 
