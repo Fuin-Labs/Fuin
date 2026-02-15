@@ -5,6 +5,7 @@ declare_id!("6vHQB9y3UVUXPJgdJz4cUSxEQ9FMp7Zar6ey6LNnNsRm");
 pub mod state;
 pub mod handlers;
 pub mod error;
+pub mod pricing;
 
 #[program]
 pub mod fuin {

@@ -24,4 +24,8 @@ pub enum ErrorCode{
     MintMismatch,
     #[msg("Vault Owner Mismatch")]
     VaultOwnerMismatch,
+    #[msg("Oracle price is invalid or negative.")]
+    InvalidPrice,
+    #[msg("Math overflow during pricing.")]
+    PricingOverflow,
 }
