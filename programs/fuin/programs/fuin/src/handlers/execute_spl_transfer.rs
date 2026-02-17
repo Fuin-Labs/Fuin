@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked,transfer_checked}};
+use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
 use crate::{error::ErrorCode, state::{Session, Vault}};
 
 #[derive(Accounts)]
@@ -51,15 +52,24 @@ pub struct ExecuteSplTransfer<'info>{
     pub mint: InterfaceAccount<'info,Mint>,
 
     pub token_program: Interface<'info,TokenInterface>,
+
+    pub price_update: Account<'info,PriceUpdateV2>,
 }
 
 
 /// For Transferring tokens
 /// 
-pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, nonce_session: u64,amount: u64)->Result<()>{
+pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, nonce_session: u64,amount: u64,feed_id: String)->Result<()>{
     let vault = &ctx.accounts.vault;
     let session = &ctx.accounts.session;
     let clock = Clock::get()?;
+
+    let usd_spend_amount = calculate_usd_value(
+        &ctx.accounts.price_update,
+        &feed_id,
+        amount,
+        ctx.accounts.mint.decimals
+    )?;
 
     validate_and_update_limits(
         &mut ctx.accounts.vault,

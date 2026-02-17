@@ -28,4 +28,8 @@ pub enum ErrorCode{
     InvalidPrice,
     #[msg("Math overflow during pricing.")]
     PricingOverflow,
+    #[msg("Max length reached")]
+    WhitelistFull,
+    #[msg("Invalid Action for Session Control")]
+    InvalidAction,
 }

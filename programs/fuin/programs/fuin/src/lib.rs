@@ -25,9 +25,25 @@ pub mod fuin {
     }
 
     pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, nonce_session: u64,amount: u64)->Result<()>{
-        handlers::execute_spl_transfer(ctx, nonce_vault, nonce_session, amount)
+        handlers::execute_spl_transfer(ctx, nonce_vault, nonce_session, amount, feed_id)
     }
-}
 
-#[derive(Accounts)]
-pub struct Initialize {}
+    pub fn update_vault(ctx:Context<UpdateVault>,_nonce:u64, new_daily_limit: Option<u64>, new_whitelist: Option<Vec<Pubkey>>)->Result<()>{
+        handlers::update_vault(ctx, nonce, new_daily_limit, new_whitelist)
+    }
+
+    pub fn session_control(
+        ctx:Context<SessionControl>,
+        _nv: u64, 
+        _ns: u64,
+        status: u8, // 0 = Revoke , 1 = Pause , 2 = Active
+    )->Result<()>{
+        handlers::session_control(ctx, nv, ns, status)
+    }
+
+    pub fn withdraw(ctx:Context<Withdraw>, nonce: u64, amount: u64)->Result<()>{
+        handlers::withdraw(ctx, nonce, amount)
+    }
+
+
+}

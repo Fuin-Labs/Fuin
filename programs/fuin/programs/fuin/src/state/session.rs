@@ -15,6 +15,13 @@ pub struct Session{
     pub bump:u8,
 }
 
+#[derive(AnchorSerialize,AnchorDeserialize)]
+pub enum SessionStatus{
+    Active,
+    Paused,
+    Revoked,
+}
+
 impl LimitTracker for Session{
     fn get_limit(&self) -> Option<u64> {
         self.daily_limit
