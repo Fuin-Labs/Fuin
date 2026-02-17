@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 
 use crate::{state::{Session, Vault,LimitTracker},error::ErrorCode};
 
-pub fn validate_and_update_limit(
+pub fn validate_and_update_limits(
     vault: &mut Account<Vault>,
     session: &mut Account<Session>,
     clock: &Clock,

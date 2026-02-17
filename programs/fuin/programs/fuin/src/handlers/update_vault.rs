@@ -9,6 +9,7 @@ pub struct UpdateVault<'info>{
     pub guardian: Signer<'info>,
 
     #[account(
+        mut,
         seeds = [b"vault", guardian.key().as_ref(), &nonce.to_le_bytes()],
         bump = vault.bump,
         has_one = guardian
@@ -16,7 +17,7 @@ pub struct UpdateVault<'info>{
     pub vault : Account<'info, Vault>,
 }
 
-pub fn update_vault(ctx:Context<UpdateVault>,_nonce:u64, new_daily_limit: Option<u64>, new_whitelist: Option<Vec<Pubkey>>)->Result<()>{
+pub fn update_vault(ctx:Context<UpdateVault>,_nonce:u64, new_daily_limit: Option<u64>, _new_whitelist: Option<Vec<Pubkey>>)->Result<()>{
     let vault = &mut ctx.accounts.vault;
 
     if let Some(limit) = new_daily_limit{
@@ -24,11 +25,11 @@ pub fn update_vault(ctx:Context<UpdateVault>,_nonce:u64, new_daily_limit: Option
         msg!("Vault: Daily limit updated to {}", limit);
     }
 
-    if let Some(whitelist_program) = new_whitelist{
-        require!(whitelist_program.len() >32 , ErrorCode::WhitelistFull);
-        vault.whitelisted_address = whitelist;
-        msg!("Vault: Whitelist updated");
-    }
+    // if let Some(whitelist_program) = new_whitelist{
+    //     require!(whitelist_program.len() <32 , ErrorCode::WhitelistFull);
+    //     vault.whitelisted_address = whitelist_program;
+    //     msg!("Vault: Whitelist updated");
+    // }
 
     Ok(())
 }

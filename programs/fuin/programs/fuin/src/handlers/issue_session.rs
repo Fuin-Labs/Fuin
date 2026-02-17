@@ -3,7 +3,7 @@ use anchor_lang::prelude::*;
 use crate::state::{Session, Vault};
 
 #[derive(Accounts)]
-#[instruction(nonce:u64)]
+#[instruction(vault_nonce:u64, session_nonce: u64)]
 pub struct IssueSesson<'info>{
     #[account(mut)]
     pub guardian: Signer<'info>,
@@ -12,9 +12,9 @@ pub struct IssueSesson<'info>{
         seeds = [
             b"vault",
             guardian.key.as_ref(),
-            &nonce.to_le_bytes(),
+            &vault_nonce.to_le_bytes(),
         ],
-        bump = Vault.bump,
+        bump = vault.bump,
     )]
     pub vault: Account<'info,Vault>,
 
@@ -25,7 +25,7 @@ pub struct IssueSesson<'info>{
             b"session",
             guardian.key.as_ref(),
             vault.key().as_ref(),
-            nonce.to_le_bytes().as_ref(),
+            session_nonce.to_le_bytes().as_ref(),
         ],
         bump,
         space = Session::DISCRIMINATOR.len() + Session::INIT_SPACE,
@@ -35,7 +35,7 @@ pub struct IssueSesson<'info>{
     pub system_program: Program<'info,System>,
 }
 
-pub fn issue_session(ctx:Context<IssueSesson>, nonce: u64,session_key:Pubkey,validity_in_secs: i64,daily_limit: Option<u64>,session_spend:Option<u64> )->Result<()>{
+pub fn issue_session(ctx:Context<IssueSesson>,vault_nonce:u64, session_nonce: u64,session_key:Pubkey,validity_in_secs: i64,daily_limit: Option<u64>,session_spend:Option<u64> )->Result<()>{
     
     let session = &mut ctx.accounts.session;
 
@@ -43,12 +43,12 @@ pub fn issue_session(ctx:Context<IssueSesson>, nonce: u64,session_key:Pubkey,val
 
     session.set_inner(Session { 
         vault: ctx.accounts.vault.key(), 
-        authority: ctx.accounts.guardian.key(), 
+        authority: session_key,
         daily_limit,
         session_spend, 
         expires_at: expiry_time, 
         is_active: true, 
-        nonce, 
+        nonce:session_nonce, 
         bump: ctx.bumps.session,
     });
 

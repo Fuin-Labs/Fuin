@@ -1,6 +1,7 @@
 use anchor_lang::{prelude::*, system_program::{Transfer, transfer}};
 
 use crate::{error::ErrorCode, state::{Session, Vault}};
+use super::validate_and_update_limits;
 
 #[derive(Accounts)]
 #[instruction(nonce_vault:u64,nonce_session:u64)]
@@ -11,10 +12,11 @@ pub struct ExecuteTransfer<'info>{
 
     pub session_key: Signer<'info>,
 
+    /// CHECK: Validated via vault PDA seeds (vault is derived from guardian's key)
     pub guardian: AccountInfo<'info>,
 
     #[account(
-        mut, 
+        mut,
         seeds = [
             b"vault",
             guardian.key.as_ref(),
@@ -38,6 +40,7 @@ pub struct ExecuteTransfer<'info>{
     )]
     pub session: Account<'info,Session>,
 
+    /// CHECK: Destination is validated against the vault's whitelist
     #[account(mut)]
     pub destination: AccountInfo<'info>,
 
@@ -47,14 +50,12 @@ pub struct ExecuteTransfer<'info>{
 
 pub fn execute_transfer<'info>(ctx:Context<ExecuteTransfer>, nonce_vault:u64, nonce_session: u64, amount:u64)->Result<()>{
     
-    let vault = &mut ctx.accounts.vault;
-    let session = &ctx.accounts.session;
     let clock = Clock::get()?;
 
-    if !vault.whitelisted_address.is_empty() {
-        require!(vault.whitelisted_address.contains(&ctx.accounts.destination.key()), ErrorCode::AddressNotWhitelisted);
+    if !ctx.accounts.vault.whitelisted_address.is_empty() {
+        require!(ctx.accounts.vault.whitelisted_address.contains(&ctx.accounts.destination.key()), ErrorCode::AddressNotWhitelisted);
     }
-    
+
     validate_and_update_limits(
         &mut ctx.accounts.vault,
         &mut ctx.accounts.session,
@@ -62,6 +63,7 @@ pub fn execute_transfer<'info>(ctx:Context<ExecuteTransfer>, nonce_vault:u64, no
         amount
     )?;
 
+    let vault = &ctx.accounts.vault;
     let seeds: &[&[&[u8]]] = &[&[
         b"vault",
         vault.guardian.as_ref(),
@@ -80,7 +82,7 @@ pub fn execute_transfer<'info>(ctx:Context<ExecuteTransfer>, nonce_vault:u64, no
         seeds
     );
 
-    transfer(cpi_ctx, amount);
+    transfer(cpi_ctx, amount)?;
 
     msg!("Transfer executed: {} lamports. Daily Spent: {}", amount, vault.daily_spent);
     Ok(())

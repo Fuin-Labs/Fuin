@@ -6,7 +6,7 @@ use crate::state::Vault;
 #[instruction(nonce: u64)]
 pub struct Withdraw<'info>{
     #[account(mut)]
-    pub gaurdian: Signer<'info>,
+    pub guardian: Signer<'info>,
 
     #[account(
         mut,
@@ -22,30 +22,13 @@ pub struct Withdraw<'info>{
 pub fn withdraw(ctx:Context<Withdraw>, nonce: u64, amount: u64)->Result<()>{
 
     let vault = &mut ctx.accounts.vault;
-    let guardian_key = ctx.accounts.gaurdian.key();
+    let guardian = &mut ctx.accounts.guardian;
 
-    let nonce_bytes = vault.nonce.to_le_bytes();
+    let vault_info = vault.to_account_info();
+    let recipient_info = guardian.to_account_info();
 
-    let seeds : &[&[&[u8]]] = &[&[
-        b"vault",
-        guardian_key.as_ref(),
-        nonce_bytes.as_ref(),
-        &[vault.bump]
-    ]];
-
-    let cpi_transfer_accounts = Transfer{
-        from: vault.to_account_info(),
-        to: ctx.accounts.gaurdian.to_account_info()
-    };
-
-    let cpi_context = CpiContext::new_with_signer(
-        ctx.accounts.system_program.to_account_info(), 
-        cpi_transfer_accounts, 
-        seeds
-    );
-
-    transfer(cpi_context, amount);
-
+    **vault_info.try_borrow_mut_lamports()? -= amount;
+    **recipient_info.try_borrow_mut_lamports()? +=amount;
     msg!("Emergency Withdraw: {} lamports recovered", amount);
 
     Ok(())

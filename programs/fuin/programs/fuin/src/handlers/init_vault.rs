@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 // use solana_program::{clock::Clock, sysvar::Sysvar};
-use crate::{state::vault::Vault, error::ErrorCode}
+use crate::{state::vault::Vault, error::ErrorCode};
 
 #[derive(Accounts)]
 #[instruction(nonce:u64)]

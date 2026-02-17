@@ -6,7 +6,7 @@ use crate::{state::{Session, Vault}, error::ErrorCode};
 #[instruction(nonce_vault: u64, nonce_session: u64)]
 pub struct SessionControl<'info>{
     #[account(mut)]
-    pub gaurdian: Signer<'info>,
+    pub guardian: Signer<'info>,
 
     #[account(
         seeds = [b"vault", guardian.key().as_ref(), &nonce_vault.to_le_bytes()],

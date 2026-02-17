@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 use pyth_solana_receiver_sdk::price_update::{PriceUpdateV2, get_feed_id_from_hex};
-use crate::error::ErrorCode
+use crate::error::ErrorCode;
 
 // Price must be younger than 60 sec
 pub const MAXIMUM_AGE: u64 = 60;
@@ -32,29 +32,28 @@ pub fn calculate_usd_value(
     let u_price = price as u128;
     let u_amount = amount as u128;
 
-    let target_decimal = 6;
+    let target_decimal: i32 = 6;
 
     // Value = Price * Amount
     // Value = p * 10^e * amount * 10^-d (as amounts will be passed in lamports so we are converting that back to sol)
     // till now we got our answer in $USD, but we have to store that in Micro-USD so multiply by 10^6
 
-    let total_decimals = token_decimals + pyth_expo.abs();
+    let total_decimals = decimals as i32 + price_expo.abs();
     let numerator = u_amount * u_price;
 
-    if total_decimals > target_decimals {
-    // We need to divide to remove extra precision
-    let diff = total_decimals - target_decimals; // 9
-    let divisor = 10u128.pow(diff as u32);       // 10^9
-    
-    // (20,000,000,000,000,000) / 1,000,000,000 = 20,000,000
-    Ok((numerator / divisor) as u64)
-} else {
-    // We need to multiply to add precision
-    let diff = target_decimals - total_decimals;
-    let multiplier = 10u128.pow(diff as u32);
-    
-    Ok((numerator * multiplier) as u64)
-} 
+    if total_decimals > target_decimal {
+        // We need to divide to remove extra precision
+        let diff = total_decimals - target_decimal;
+        let divisor = 10u128.pow(diff as u32);
+
+        Ok((numerator / divisor) as u64)
+    } else {
+        // We need to multiply to add precision
+        let diff = target_decimal - total_decimals;
+        let multiplier = 10u128.pow(diff as u32);
+
+        Ok((numerator * multiplier) as u64)
+    }
 
 
 }

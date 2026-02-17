@@ -1,7 +1,8 @@
 use anchor_lang::prelude::*;
 use anchor_spl::{token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked,transfer_checked}};
 use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
-use crate::{error::ErrorCode, state::{Session, Vault}};
+use crate::{error::ErrorCode, state::{Session, Vault}, pricing::calculate_usd_value};
+use super::validate_and_update_limits;
 
 #[derive(Accounts)]
 #[instruction(nonce_vault:u64,nonce_session:u64)]
@@ -11,6 +12,7 @@ pub struct ExecuteSplTransfer<'info>{
 
     pub session_key: Signer<'info>, // Agent
 
+    /// CHECK: Validated via vault PDA seeds (vault is derived from guardian's key)
     pub guardian: AccountInfo<'info>,
 
     #[account(
@@ -60,11 +62,9 @@ pub struct ExecuteSplTransfer<'info>{
 /// For Transferring tokens
 /// 
 pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, nonce_session: u64,amount: u64,feed_id: String)->Result<()>{
-    let vault = &ctx.accounts.vault;
-    let session = &ctx.accounts.session;
     let clock = Clock::get()?;
 
-    let usd_spend_amount = calculate_usd_value(
+    let _usd_spend_amount = calculate_usd_value(
         &ctx.accounts.price_update,
         &feed_id,
         amount,
@@ -78,8 +78,7 @@ pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, no
         amount
     )?;
 
-    // TODO: Call the oracle and add the find out the price of the token to SOL value so that we can add that in daily spend and do some checks
-
+    let vault = &ctx.accounts.vault;
     let seeds:&[&[&[u8]]] = &[&[
         b"vault",
         vault.guardian.as_ref(),
@@ -101,10 +100,10 @@ pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, no
     );
 
     transfer_checked(
-        cpi_ctx, 
-        amount, 
+        cpi_ctx,
+        amount,
         ctx.accounts.mint.decimals
-    );
+    )?;
 
     msg!("SPL Transfer executed: {} tokens", amount);
 
