@@ -1,102 +1,173 @@
-import Image, { type ImageProps } from "next/image";
-import { Button } from "@repo/ui/button";
-import styles from "./page.module.css";
+"use client";
 
-type Props = Omit<ImageProps, "src"> & {
-  srcLight: string;
-  srcDark: string;
-};
-
-const ThemeImage = (props: Props) => {
-  const { srcLight, srcDark, ...rest } = props;
-
-  return (
-    <>
-      <Image {...rest} src={srcLight} className="imgLight" />
-      <Image {...rest} src={srcDark} className="imgDark" />
-    </>
-  );
-};
+import { useEffect, useState } from "react";
+import { useConnection, useWallet } from "@solana/wallet-adapter-react";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { FuinClient, findVaultPda } from "@fuin/sdk";
+import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { BN } from "@coral-xyz/anchor";
 
 export default function Home() {
-  return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <ThemeImage
-          className={styles.logo}
-          srcLight="turborepo-dark.svg"
-          srcDark="turborepo-light.svg"
-          alt="Turborepo logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol>
-          <li>
-            Get started by editing <code>apps/docs/app/page.tsx</code>
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+  const { connection } = useConnection();
+  const wallet = useWallet(); // Note: anchor.Wallet interface is slightly different from useWallet
+  
+  // State
+  const [client, setClient] = useState<FuinClient | null>(null);
+  const [vaultAddress, setVaultAddress] = useState<PublicKey | null>(null);
+  const [vaultData, setVaultData] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
 
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new/clone?demo-description=Learn+to+implement+a+monorepo+with+a+two+Next.js+sites+that+has+installed+three+local+packages.&demo-image=%2F%2Fimages.ctfassets.net%2Fe5382hct74si%2F4K8ZISWAzJ8X1504ca0zmC%2F0b21a1c6246add355e55816278ef54bc%2FBasic.png&demo-title=Monorepo+with+Turborepo&demo-url=https%3A%2F%2Fexamples-basic-web.vercel.sh%2F&from=templates&project-name=Monorepo+with+Turborepo&repository-name=monorepo-turborepo&repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fturborepo%2Ftree%2Fmain%2Fexamples%2Fbasic&root-directory=apps%2Fdocs&skippable-integrations=1&teamSlug=vercel&utm_source=create-turbo"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            href="https://turborepo.dev/docs?utm_source"
-            target="_blank"
-            rel="noopener noreferrer"
-            className={styles.secondary}
-          >
-            Read our docs
-          </a>
+  // Forms
+  const [dailyLimit, setDailyLimit] = useState("10"); // SOL
+  const [agentKey, setAgentKey] = useState("");
+
+  // 1. Initialize SDK when wallet connects
+  useEffect(() => {
+    if (wallet.connected && wallet.publicKey) {
+        // We need to cast the React Context wallet to an Anchor Wallet
+        // This is a known boilerplate in Solana Frontends
+        const providerWallet = {
+            publicKey: wallet.publicKey,
+            signTransaction: wallet.signTransaction,
+            signAllTransactions: wallet.signAllTransactions,
+        } as any;
+
+        const fuin = new FuinClient(connection, providerWallet);
+        setClient(fuin);
+
+        // Check if vault exists (Deterministic PDA)
+        // Hardcoding nonce=1 for demo simplicity. In prod, you'd fetch all or store nonce off-chain.
+        const [pda] = findVaultPda(wallet.publicKey, new BN(1));
+        setVaultAddress(pda);
+        
+        // Try to fetch account
+        fetchVault(fuin, pda);
+    }
+  }, [wallet.connected, wallet.publicKey]);
+
+  const fetchVault = async (sdk: FuinClient, pda: PublicKey) => {
+    try {
+        const account = await sdk.program.account.vault.fetch(pda);
+        setVaultData(account);
+    } catch (e) {
+        console.log("Vault not found (User needs to init)");
+        setVaultData(null);
+    }
+  };
+
+  // --- ACTIONS ---
+
+  const handleInitVault = async () => {
+    if (!client) return;
+    setLoading(true);
+    try {
+        await client.createVault(1, Number(dailyLimit));
+        alert("Vault Initialized!");
+        await fetchVault(client, vaultAddress!);
+    } catch (e) {
+        console.error(e);
+        alert("Failed: " + e);
+    }
+    setLoading(false);
+  };
+
+  const handleIssueSession = async () => {
+    if (!client || !vaultData) return;
+    setLoading(true);
+    try {
+        // Random nonce for session
+        const sessionNonce = Math.floor(Math.random() * 100000);
+        const agentPubkey = new PublicKey(agentKey);
+        
+        const { session } = await client.issueSession(
+            1, // Vault Nonce
+            sessionNonce,
+            agentPubkey,
+            60 * 60 * 24, // 24 Hours
+            1 // 1 SOL limit for agent
+        );
+        alert(`Session Issued! Address: ${session.toBase58()}`);
+    } catch (e) {
+        console.error(e);
+        alert("Failed to issue session");
+    }
+    setLoading(false);
+  };
+
+  // --- RENDER ---
+
+  return (
+    <main className="flex min-h-screen flex-col items-center p-24 bg-gray-900 text-white">
+      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex mb-10">
+        <p className="text-2xl font-bold">FUIN GUARDIAN</p>
+        <WalletMultiButton />
+      </div>
+
+      {!wallet.connected && (
+        <div className="text-center mt-20">
+            <h2 className="text-xl">Connect your wallet to manage your AI Agents.</h2>
         </div>
-        <Button appName="docs" className={styles.secondary}>
-          Open alert
-        </Button>
-      </main>
-      <footer className={styles.footer}>
-        <a
-          href="https://vercel.com/templates?search=turborepo&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          href="https://turborepo.dev?utm_source=create-turbo"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to turborepo.dev →
-        </a>
-      </footer>
-    </div>
+      )}
+
+      {wallet.connected && !vaultData && (
+        <div className="border border-gray-700 p-10 rounded-xl bg-gray-800">
+            <h2 className="text-2xl mb-4">Initialize Authorization Vault</h2>
+            <p className="mb-6 text-gray-400">You don't have a vault yet. Create one to start.</p>
+            
+            <label className="block mb-2">Daily Limit (SOL)</label>
+            <input 
+                type="number" 
+                value={dailyLimit} 
+                onChange={(e) => setDailyLimit(e.target.value)}
+                className="w-full p-2 mb-4 bg-gray-700 rounded text-white"
+            />
+            
+            <button 
+                onClick={handleInitVault}
+                disabled={loading}
+                className="w-full bg-blue-600 hover:bg-blue-500 p-3 rounded font-bold"
+            >
+                {loading ? "Creating..." : "Create Vault"}
+            </button>
+        </div>
+      )}
+
+      {wallet.connected && vaultData && (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
+            {/* Status Card */}
+            <div className="border border-green-800 p-6 rounded-xl bg-gray-800">
+                <h3 className="text-xl font-bold text-green-400 mb-4">Vault Active</h3>
+                <div className="space-y-2">
+                    <p><span className="text-gray-500">Guardian:</span> {vaultData.guardian.toBase58().slice(0, 6)}...</p>
+                    <p><span className="text-gray-500">Daily Limit:</span> {(vaultData.dailyLimit.toString() / LAMPORTS_PER_SOL)} SOL</p>
+                    <p><span className="text-gray-500">Spent Today:</span> {(vaultData.dailySpent.toString() / LAMPORTS_PER_SOL)} SOL</p>
+                    <p><span className="text-gray-500">Vault Address:</span> {vaultAddress?.toBase58()}</p>
+                </div>
+            </div>
+
+            {/* Action Card */}
+            <div className="border border-gray-700 p-6 rounded-xl bg-gray-800">
+                <h3 className="text-xl font-bold mb-4">Authorize AI Agent</h3>
+                
+                <label className="block mb-2 text-sm">Agent Public Key</label>
+                <input 
+                    type="text" 
+                    placeholder="Pubkey of the bot..."
+                    value={agentKey}
+                    onChange={(e) => setAgentKey(e.target.value)}
+                    className="w-full p-2 mb-4 bg-gray-700 rounded text-white text-sm"
+                />
+
+                <button 
+                    onClick={handleIssueSession}
+                    disabled={loading}
+                    className="w-full bg-purple-600 hover:bg-purple-500 p-3 rounded font-bold"
+                >
+                    {loading ? "Issuing..." : "Issue Session Key"}
+                </button>
+            </div>
+        </div>
+      )}
+    </main>
   );
 }

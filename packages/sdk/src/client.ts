@@ -1,9 +1,9 @@
 import * as anchor from "@coral-xyz/anchor";
-import { Program, Idl, AnchorProvider } from "@coral-xyz/anchor";
+import { Program, type Idl, AnchorProvider } from "@coral-xyz/anchor";
 import { Connection, PublicKey, SystemProgram, Keypair } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { BN } from "bn.js";
-import idl from "./idl/fuin.json"; // symlink
+import idl from "./idl/fuin.json";
 import { findSessionPda, findVaultPda } from "./pda";
 
 // Devnet Pyth Feed for SOL/USD (Hardcoded for now)
@@ -30,7 +30,7 @@ export class FuinClient {
     const [vaultPda] = findVaultPda(this.program.provider.publicKey!, bnNonce, this.program.programId);
 
     const tx = await this.program.methods
-      .initVault(bnNonce, limit, [])
+      .initVault!(bnNonce, limit, [])
       .accounts({
         guardian: this.program.provider.publicKey!,
         vault: vaultPda,
@@ -55,7 +55,7 @@ export class FuinClient {
     const [sessionPda] = findSessionPda(this.program.provider.publicKey!, vaultPda, bnSessionNonce, this.program.programId);
 
     const tx = await this.program.methods
-      .issueSession(bnSessionNonce, agentPubkey, new BN(validitySeconds), new BN(limitSol * 1_000_000_000), null)
+      .issueSession!(bnSessionNonce, agentPubkey, new BN(validitySeconds), new BN(limitSol * 1_000_000_000), null)
       .accounts({
         guardian: this.program.provider.publicKey!,
         vault: vaultPda,
@@ -86,7 +86,7 @@ export class FuinClient {
     const amount = new BN(amountSol * 1_000_000_000);
 
     const tx = await this.program.methods
-      .executeTransfer(bnVaultNonce, bnSessionNonce, amount)
+      .executeTransfer!(bnVaultNonce, bnSessionNonce, amount)
       .accounts({
         relayer: signer.publicKey,
         sessionKey: signer.publicKey,
@@ -121,7 +121,7 @@ export class FuinClient {
     const destAta = getAssociatedTokenAddressSync(mint, destination, true);
 
     const tx = await this.program.methods
-      .executeSplTransfer(bnVaultNonce, bnSessionNonce, new BN(amountTokens), PYTH_SOL_FEED_ID)
+      .executeSplTransfer!(bnVaultNonce, bnSessionNonce, new BN(amountTokens), PYTH_SOL_FEED_ID)
       .accounts({
         relayer: signer.publicKey,
         sessionKey: signer.publicKey,
