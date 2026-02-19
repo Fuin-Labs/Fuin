@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 import { FuinClient, findVaultPda } from "@fuin/sdk";
-import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { PublicKey, LAMPORTS_PER_SOL, Transaction, SystemProgram } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 
 export default function Home() {
@@ -94,7 +94,38 @@ export default function Home() {
     setLoading(false);
   };
 
-  // --- RENDER ---
+  const handleDeposit = async () => {
+    if (!wallet.publicKey || !wallet.signTransaction || !vaultAddress) return;
+    setLoading(true);
+    try {
+        // Send 1 SOL to the Vault PDA
+        const amount = 1 * LAMPORTS_PER_SOL; 
+        
+        const tx = new Transaction().add(
+            SystemProgram.transfer({
+                fromPubkey: wallet.publicKey,
+                toPubkey: vaultAddress,
+                lamports: amount,
+            })
+        );
+
+        // Get latest blockhash
+        const { blockhash } = await connection.getLatestBlockhash();
+        tx.recentBlockhash = blockhash;
+        tx.feePayer = wallet.publicKey;
+
+        const signedTx = await wallet.signTransaction(tx);
+        const txId = await connection.sendRawTransaction(signedTx.serialize());
+        await connection.confirmTransaction(txId);
+        
+        alert(`Deposited 1 SOL to Vault!`);
+        await fetchVault(client!, vaultAddress); // Refresh balance
+    } catch (e) {
+        console.error(e);
+        alert("Deposit failed");
+    }
+    setLoading(false);
+};
 
   return (
     <main className="flex min-h-screen flex-col items-center p-24 bg-gray-900 text-white">
@@ -165,6 +196,14 @@ export default function Home() {
                 >
                     {loading ? "Issuing..." : "Issue Session Key"}
                 </button>
+
+                <button 
+                  onClick={handleDeposit}
+                  disabled={loading}
+                  className="w-full bg-green-600 hover:bg-green-500 p-3 rounded font-bold mt-4"
+              >
+                  {loading ? "Processing..." : "Deposit 1 SOL to Vault"}
+              </button>
             </div>
         </div>
       )}
