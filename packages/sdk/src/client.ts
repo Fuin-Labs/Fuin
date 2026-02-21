@@ -4,7 +4,7 @@ import { Connection, PublicKey, SystemProgram, Keypair } from "@solana/web3.js";
 import { getAssociatedTokenAddressSync, TOKEN_PROGRAM_ID } from "@solana/spl-token";
 import { BN } from "bn.js";
 import idl from "./idl/fuin.json";
-import { findSessionPda, findVaultPda } from "./pda";
+import { findDelegatePda, findVaultPda } from "./pda";
 
 // Devnet Pyth Feed for SOL/USD (Hardcoded for now)
 export const PYTH_SOL_FEED_ID = "0xef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d";
@@ -24,47 +24,58 @@ export class FuinClient {
 
   // --- GUARDIAN ACTIONS ---
 
-  async createVault(nonce: number, dailyLimitSol: number) {
+  async createVault(nonce: number, dailyCapSol: number, perTxCapSol: number, allowedPrograms: PublicKey[] = []) {
     const bnNonce = new BN(nonce);
-    const limit = new BN(dailyLimitSol * 1_000_000_000); 
+    const dailyCap = new BN(dailyCapSol * 1_000_000_000);
+    const perTxCap = new BN(perTxCapSol * 1_000_000_000);
     const [vaultPda] = findVaultPda(this.program.provider.publicKey!, bnNonce, this.program.programId);
 
     const tx = await this.program.methods
-      .initVault!(bnNonce, limit, [])
+      .initVault!(bnNonce, dailyCap, perTxCap, allowedPrograms)
       .accounts({
         guardian: this.program.provider.publicKey!,
         vault: vaultPda,
         systemProgram: SystemProgram.programId,
       })
       .rpc();
-    
+
     return { signature: tx, vault: vaultPda };
   }
 
-  async issueSession(
+  async issueDelegate(
     vaultNonce: number,
-    sessionNonce: number,
+    delegateNonce: number,
     agentPubkey: PublicKey,
-    validitySeconds: number,
-    limitSol: number
+    permissions: number,
+    dailyLimitSol: number,
+    maxUses: number,
+    validitySeconds: number
   ) {
     const bnVaultNonce = new BN(vaultNonce);
-    const bnSessionNonce = new BN(sessionNonce);
-    
+    const bnDelegateNonce = new BN(delegateNonce);
+
     const [vaultPda] = findVaultPda(this.program.provider.publicKey!, bnVaultNonce, this.program.programId);
-    const [sessionPda] = findSessionPda(this.program.provider.publicKey!, vaultPda, bnSessionNonce, this.program.programId);
+    const [delegatePda] = findDelegatePda(vaultPda, bnDelegateNonce, this.program.programId);
 
     const tx = await this.program.methods
-      .issueSession!(bnSessionNonce, agentPubkey, new BN(validitySeconds), new BN(limitSol * 1_000_000_000), null)
+      .issueDelegate!(
+        bnVaultNonce,
+        bnDelegateNonce,
+        agentPubkey,
+        permissions,
+        new BN(dailyLimitSol * 1_000_000_000),
+        maxUses,
+        new BN(validitySeconds)
+      )
       .accounts({
         guardian: this.program.provider.publicKey!,
         vault: vaultPda,
-        session: sessionPda,
+        delegate: delegatePda,
         systemProgram: SystemProgram.programId,
       })
       .rpc();
 
-    return { signature: tx, session: sessionPda };
+    return { signature: tx, delegate: delegatePda };
   }
 
   // --- AGENT ACTIONS ---
@@ -72,27 +83,27 @@ export class FuinClient {
   async transferSol(
     guardian: PublicKey,
     vaultNonce: number,
-    sessionNonce: number,
+    delegateNonce: number,
     destination: PublicKey,
     amountSol: number,
-    signer: Keypair // Agent Keypair
+    signer: Keypair
   ) {
     const bnVaultNonce = new BN(vaultNonce);
-    const bnSessionNonce = new BN(sessionNonce);
-    
+    const bnDelegateNonce = new BN(delegateNonce);
+
     const [vaultPda] = findVaultPda(guardian, bnVaultNonce, this.program.programId);
-    const [sessionPda] = findSessionPda(guardian, vaultPda, bnSessionNonce, this.program.programId);
-    
+    const [delegatePda] = findDelegatePda(vaultPda, bnDelegateNonce, this.program.programId);
+
     const amount = new BN(amountSol * 1_000_000_000);
 
     const tx = await this.program.methods
-      .executeTransfer!(bnVaultNonce, bnSessionNonce, amount)
+      .executeTransfer!(bnVaultNonce, bnDelegateNonce, amount)
       .accounts({
         relayer: signer.publicKey,
-        sessionKey: signer.publicKey,
+        delegateKey: signer.publicKey,
         guardian: guardian,
         vault: vaultPda,
-        session: sessionPda,
+        delegate: delegatePda,
         destination: destination,
         systemProgram: SystemProgram.programId,
       })
@@ -105,36 +116,121 @@ export class FuinClient {
   async transferSpl(
     guardian: PublicKey,
     vaultNonce: number,
-    sessionNonce: number,
+    delegateNonce: number,
     mint: PublicKey,
     destination: PublicKey,
     amountTokens: number,
     signer: Keypair
   ) {
     const bnVaultNonce = new BN(vaultNonce);
-    const bnSessionNonce = new BN(sessionNonce);
-    
+    const bnDelegateNonce = new BN(delegateNonce);
+
     const [vaultPda] = findVaultPda(guardian, bnVaultNonce, this.program.programId);
-    const [sessionPda] = findSessionPda(guardian, vaultPda, bnSessionNonce, this.program.programId);
+    const [delegatePda] = findDelegatePda(vaultPda, bnDelegateNonce, this.program.programId);
 
     const vaultAta = getAssociatedTokenAddressSync(mint, vaultPda, true);
     const destAta = getAssociatedTokenAddressSync(mint, destination, true);
 
     const tx = await this.program.methods
-      .executeSplTransfer!(bnVaultNonce, bnSessionNonce, new BN(amountTokens), PYTH_SOL_FEED_ID)
+      .executeSplTransfer!(bnVaultNonce, bnDelegateNonce, new BN(amountTokens), PYTH_SOL_FEED_ID)
       .accounts({
         relayer: signer.publicKey,
-        sessionKey: signer.publicKey,
+        delegateKey: signer.publicKey,
         guardian: guardian,
         vault: vaultPda,
-        session: sessionPda,
+        delegate: delegatePda,
         vaultTokenAccount: vaultAta,
         destinationTokenAccount: destAta,
         mint: mint,
         tokenProgram: TOKEN_PROGRAM_ID,
-        priceUpdate: PYTH_SOL_FEED_ACCOUNT, 
+        priceUpdate: PYTH_SOL_FEED_ACCOUNT,
       })
       .signers([signer])
+      .rpc();
+
+    return tx;
+  }
+
+  // --- VAULT MANAGEMENT ---
+
+  async freezeVault(nonce: number) {
+    const bnNonce = new BN(nonce);
+    const [vaultPda] = findVaultPda(this.program.provider.publicKey!, bnNonce, this.program.programId);
+
+    const tx = await this.program.methods
+      .freezeVault!(bnNonce)
+      .accounts({
+        guardian: this.program.provider.publicKey!,
+        vault: vaultPda,
+      })
+      .rpc();
+
+    return tx;
+  }
+
+  async unfreezeVault(nonce: number) {
+    const bnNonce = new BN(nonce);
+    const [vaultPda] = findVaultPda(this.program.provider.publicKey!, bnNonce, this.program.programId);
+
+    const tx = await this.program.methods
+      .unfreezeVault!(bnNonce)
+      .accounts({
+        guardian: this.program.provider.publicKey!,
+        vault: vaultPda,
+      })
+      .rpc();
+
+    return tx;
+  }
+
+  async delegateControl(vaultNonce: number, delegateNonce: number, status: number) {
+    const bnVaultNonce = new BN(vaultNonce);
+    const bnDelegateNonce = new BN(delegateNonce);
+
+    const [vaultPda] = findVaultPda(this.program.provider.publicKey!, bnVaultNonce, this.program.programId);
+    const [delegatePda] = findDelegatePda(vaultPda, bnDelegateNonce, this.program.programId);
+
+    const tx = await this.program.methods
+      .delegateControl!(bnVaultNonce, bnDelegateNonce, status)
+      .accounts({
+        guardian: this.program.provider.publicKey!,
+        vault: vaultPda,
+        delegate: delegatePda,
+      })
+      .rpc();
+
+    return tx;
+  }
+
+  async updateVault(nonce: number, newDailyCapSol?: number, newPerTxCapSol?: number) {
+    const bnNonce = new BN(nonce);
+    const [vaultPda] = findVaultPda(this.program.provider.publicKey!, bnNonce, this.program.programId);
+
+    const newDailyCap = newDailyCapSol !== undefined ? new BN(newDailyCapSol * 1_000_000_000) : null;
+    const newPerTxCap = newPerTxCapSol !== undefined ? new BN(newPerTxCapSol * 1_000_000_000) : null;
+
+    const tx = await this.program.methods
+      .updateVault!(bnNonce, newDailyCap, newPerTxCap)
+      .accounts({
+        guardian: this.program.provider.publicKey!,
+        vault: vaultPda,
+      })
+      .rpc();
+
+    return tx;
+  }
+
+  async withdraw(nonce: number, amountSol: number) {
+    const bnNonce = new BN(nonce);
+    const [vaultPda] = findVaultPda(this.program.provider.publicKey!, bnNonce, this.program.programId);
+
+    const tx = await this.program.methods
+      .withdraw!(bnNonce, new BN(amountSol * 1_000_000_000))
+      .accounts({
+        guardian: this.program.provider.publicKey!,
+        vault: vaultPda,
+        systemProgram: SystemProgram.programId,
+      })
       .rpc();
 
     return tx;

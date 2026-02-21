@@ -1,4 +1,4 @@
-use anchor_lang::{prelude::*, system_program::{Transfer, transfer}};
+use anchor_lang::prelude::*;
 
 use crate::{error::ErrorCode, state::{Delegate, Vault, delegate::CAN_TRANSFER}};
 use super::{validate_and_update_limits, validate_program_policy};
@@ -63,26 +63,11 @@ pub fn execute_transfer<'info>(ctx: Context<ExecuteTransfer>, _nonce_vault: u64,
         amount
     )?;
 
-    let vault = &ctx.accounts.vault;
-    let seeds: &[&[&[u8]]] = &[&[
-        b"vault",
-        vault.guardian.as_ref(),
-        &vault.nonce.to_le_bytes(),
-        &[vault.bump]
-    ]];
+    let vault_info = ctx.accounts.vault.to_account_info();
+    let destination_info = ctx.accounts.destination.to_account_info();
 
-    let cpi_accounts = Transfer{
-        from: vault.to_account_info(),
-        to: ctx.accounts.destination.to_account_info()
-    };
-
-    let cpi_ctx = CpiContext::new_with_signer(
-        ctx.accounts.system_program.to_account_info(),
-        cpi_accounts,
-        seeds
-    );
-
-    transfer(cpi_ctx, amount)?;
+    **vault_info.try_borrow_mut_lamports()? -= amount;
+    **destination_info.try_borrow_mut_lamports()? += amount;
 
     msg!("Transfer executed: {} lamports", amount);
     Ok(())

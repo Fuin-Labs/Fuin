@@ -8,6 +8,100 @@
   },
   "instructions": [
     {
+      "name": "delegate_control",
+      "discriminator": [
+        229,
+        33,
+        220,
+        233,
+        130,
+        77,
+        101,
+        155
+      ],
+      "accounts": [
+        {
+          "name": "guardian",
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_vault"
+              }
+            ]
+          },
+          "relations": [
+            "delegate"
+          ]
+        },
+        {
+          "name": "delegate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_delegate"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "nv",
+          "type": "u64"
+        },
+        {
+          "name": "nd",
+          "type": "u64"
+        },
+        {
+          "name": "status",
+          "type": "u8"
+        }
+      ]
+    },
+    {
       "name": "execute_spl_transfer",
       "discriminator": [
         217,
@@ -26,7 +120,7 @@
           "signer": true
         },
         {
-          "name": "session_key",
+          "name": "delegate_key",
           "signer": true
         },
         {
@@ -59,25 +153,22 @@
           }
         },
         {
-          "name": "session",
+          "name": "delegate",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  115,
+                  100,
                   101,
-                  115,
-                  115,
-                  105,
-                  111,
-                  110
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "guardian"
               },
               {
                 "kind": "account",
@@ -85,7 +176,7 @@
               },
               {
                 "kind": "arg",
-                "path": "nonce_session"
+                "path": "nonce_delegate"
               }
             ]
           }
@@ -112,7 +203,7 @@
           "type": "u64"
         },
         {
-          "name": "nonce_session",
+          "name": "nonce_delegate",
           "type": "u64"
         },
         {
@@ -144,7 +235,7 @@
           "signer": true
         },
         {
-          "name": "session_key",
+          "name": "delegate_key",
           "signer": true
         },
         {
@@ -177,25 +268,22 @@
           }
         },
         {
-          "name": "session",
+          "name": "delegate",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  115,
+                  100,
                   101,
-                  115,
-                  115,
-                  105,
-                  111,
-                  110
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "guardian"
               },
               {
                 "kind": "account",
@@ -203,7 +291,7 @@
               },
               {
                 "kind": "arg",
-                "path": "nonce_session"
+                "path": "nonce_delegate"
               }
             ]
           }
@@ -223,11 +311,65 @@
           "type": "u64"
         },
         {
-          "name": "nonce_session",
+          "name": "nonce_delegate",
           "type": "u64"
         },
         {
           "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "freeze_vault",
+      "discriminator": [
+        144,
+        211,
+        63,
+        236,
+        97,
+        31,
+        170,
+        175
+      ],
+      "accounts": [
+        {
+          "name": "guardian",
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
           "type": "u64"
         }
       ]
@@ -287,11 +429,15 @@
           "type": "u64"
         },
         {
-          "name": "daily_limit",
+          "name": "daily_cap",
           "type": "u64"
         },
         {
-          "name": "whitelisted_address",
+          "name": "per_tx_cap",
+          "type": "u64"
+        },
+        {
+          "name": "allowed_programs",
           "type": {
             "vec": "pubkey"
           }
@@ -299,28 +445,29 @@
       ]
     },
     {
-      "name": "issue_session",
-      "docs": [
-        "Issues a Session key for a bot or Teenager"
-      ],
+      "name": "issue_delegate",
       "discriminator": [
-        135,
-        44,
-        20,
-        38,
-        8,
-        233,
-        232,
-        166
+        92,
+        118,
+        198,
+        58,
+        211,
+        45,
+        226,
+        120
       ],
       "accounts": [
         {
           "name": "guardian",
           "writable": true,
-          "signer": true
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
         },
         {
           "name": "vault",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -345,25 +492,22 @@
           }
         },
         {
-          "name": "session",
+          "name": "delegate",
           "writable": true,
           "pda": {
             "seeds": [
               {
                 "kind": "const",
                 "value": [
-                  115,
+                  100,
                   101,
-                  115,
-                  115,
-                  105,
-                  111,
-                  110
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
                 ]
-              },
-              {
-                "kind": "account",
-                "path": "guardian"
               },
               {
                 "kind": "account",
@@ -371,7 +515,7 @@
               },
               {
                 "kind": "arg",
-                "path": "session_nonce"
+                "path": "delegate_nonce"
               }
             ]
           }
@@ -387,47 +531,46 @@
           "type": "u64"
         },
         {
-          "name": "session_nonce",
+          "name": "delegate_nonce",
           "type": "u64"
         },
         {
-          "name": "session_key",
+          "name": "delegate_key",
           "type": "pubkey"
+        },
+        {
+          "name": "permissions",
+          "type": "u16"
+        },
+        {
+          "name": "daily_limit",
+          "type": "u64"
+        },
+        {
+          "name": "max_uses",
+          "type": "u32"
         },
         {
           "name": "validity_in_secs",
           "type": "i64"
-        },
-        {
-          "name": "daily_limit",
-          "type": {
-            "option": "u64"
-          }
-        },
-        {
-          "name": "session_spend",
-          "type": {
-            "option": "u64"
-          }
         }
       ]
     },
     {
-      "name": "session_control",
+      "name": "unfreeze_vault",
       "discriminator": [
+        145,
+        244,
+        206,
+        234,
+        251,
         250,
-        99,
-        169,
-        35,
-        29,
-        237,
-        177,
-        123
+        116,
+        183
       ],
       "accounts": [
         {
           "name": "guardian",
-          "writable": true,
           "signer": true,
           "relations": [
             "vault"
@@ -435,6 +578,7 @@
         },
         {
           "name": "vault",
+          "writable": true,
           "pda": {
             "seeds": [
               {
@@ -453,42 +597,7 @@
               },
               {
                 "kind": "arg",
-                "path": "nonce_vault"
-              }
-            ]
-          },
-          "relations": [
-            "session"
-          ]
-        },
-        {
-          "name": "session",
-          "writable": true,
-          "pda": {
-            "seeds": [
-              {
-                "kind": "const",
-                "value": [
-                  115,
-                  101,
-                  115,
-                  115,
-                  105,
-                  111,
-                  110
-                ]
-              },
-              {
-                "kind": "account",
-                "path": "guardian"
-              },
-              {
-                "kind": "account",
-                "path": "vault"
-              },
-              {
-                "kind": "arg",
-                "path": "nonce_session"
+                "path": "nonce"
               }
             ]
           }
@@ -496,16 +605,8 @@
       ],
       "args": [
         {
-          "name": "_nv",
+          "name": "nonce",
           "type": "u64"
-        },
-        {
-          "name": "_ns",
-          "type": "u64"
-        },
-        {
-          "name": "status",
-          "type": "u8"
         }
       ]
     },
@@ -559,21 +660,19 @@
       ],
       "args": [
         {
-          "name": "_nonce",
+          "name": "nonce",
           "type": "u64"
         },
         {
-          "name": "new_daily_limit",
+          "name": "new_daily_cap",
           "type": {
             "option": "u64"
           }
         },
         {
-          "name": "new_whitelist",
+          "name": "new_per_tx_cap",
           "type": {
-            "option": {
-              "vec": "pubkey"
-            }
+            "option": "u64"
           }
         }
       ]
@@ -644,6 +743,19 @@
   ],
   "accounts": [
     {
+      "name": "Delegate",
+      "discriminator": [
+        92,
+        145,
+        166,
+        111,
+        11,
+        38,
+        38,
+        247
+      ]
+    },
+    {
       "name": "PriceUpdateV2",
       "discriminator": [
         34,
@@ -654,19 +766,6 @@
         126,
         244,
         205
-      ]
-    },
-    {
-      "name": "Session",
-      "discriminator": [
-        243,
-        81,
-        72,
-        115,
-        214,
-        188,
-        72,
-        144
       ]
     },
     {
@@ -758,9 +857,150 @@
       "code": 6014,
       "name": "InvalidAction",
       "msg": "Invalid Action for Session Control"
+    },
+    {
+      "code": 6015,
+      "name": "VaultFrozen",
+      "msg": "Vault is frozen, no operations allowed"
+    },
+    {
+      "code": 6016,
+      "name": "PerTxLimitExceeded",
+      "msg": "Per-transaction limit exceeded"
+    },
+    {
+      "code": 6017,
+      "name": "ProgramNotAllowed",
+      "msg": "Program is not allowed by policy"
+    },
+    {
+      "code": 6018,
+      "name": "OutsideAllowedTime",
+      "msg": "Operation is outside allowed time window"
+    },
+    {
+      "code": 6019,
+      "name": "RequiresGuardianCosign",
+      "msg": "Transaction requires guardian co-signature"
+    },
+    {
+      "code": 6020,
+      "name": "PermissionDenied",
+      "msg": "Permission denied"
+    },
+    {
+      "code": 6021,
+      "name": "MaxUsesExceeded",
+      "msg": "Maximum uses exceeded"
+    },
+    {
+      "code": 6022,
+      "name": "DelegateExpired",
+      "msg": "Delegate has expired"
+    },
+    {
+      "code": 6023,
+      "name": "DelegateInactive",
+      "msg": "Delegate is inactive"
     }
   ],
   "types": [
+    {
+      "name": "Delegate",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "permissions",
+            "type": "u16"
+          },
+          {
+            "name": "daily_limit",
+            "type": "u64"
+          },
+          {
+            "name": "daily_spent",
+            "type": "u64"
+          },
+          {
+            "name": "last_reset_epoch",
+            "type": "u64"
+          },
+          {
+            "name": "max_uses",
+            "type": "u32"
+          },
+          {
+            "name": "uses",
+            "type": "u32"
+          },
+          {
+            "name": "expiry",
+            "type": "i64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PolicySet",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "spending",
+            "type": {
+              "defined": {
+                "name": "SpendingPolicy"
+              }
+            }
+          },
+          {
+            "name": "programs",
+            "type": {
+              "defined": {
+                "name": "ProgramPolicy"
+              }
+            }
+          },
+          {
+            "name": "time",
+            "type": {
+              "defined": {
+                "name": "TimePolicy"
+              }
+            }
+          },
+          {
+            "name": "risk",
+            "type": {
+              "defined": {
+                "name": "RiskPolicy"
+              }
+            }
+          }
+        ]
+      }
+    },
     {
       "name": "PriceFeedMessage",
       "repr": {
@@ -870,37 +1110,139 @@
       }
     },
     {
-      "name": "Session",
+      "name": "ProgramPolicy",
       "type": {
         "kind": "struct",
         "fields": [
           {
-            "name": "vault",
-            "type": "pubkey"
-          },
-          {
-            "name": "authority",
-            "type": "pubkey"
-          },
-          {
-            "name": "daily_limit",
+            "name": "allow_list",
             "type": {
-              "option": "u64"
+              "vec": "pubkey"
             }
           },
           {
-            "name": "session_spend",
+            "name": "deny_list",
             "type": {
-              "option": "u64"
+              "vec": "pubkey"
             }
-          },
+          }
+        ]
+      }
+    },
+    {
+      "name": "RecoveryConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
           {
-            "name": "expires_at",
+            "name": "timeout_seconds",
             "type": "i64"
           },
           {
-            "name": "is_active",
-            "type": "bool"
+            "name": "last_guardian_activity",
+            "type": "i64"
+          },
+          {
+            "name": "backup_guardian",
+            "type": {
+              "option": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "RiskPolicy",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "max_slippage_bps",
+            "type": "u16"
+          },
+          {
+            "name": "require_cosign_above",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SpendingPolicy",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "daily_cap",
+            "type": "u64"
+          },
+          {
+            "name": "per_tx_cap",
+            "type": "u64"
+          },
+          {
+            "name": "daily_spent",
+            "type": "u64"
+          },
+          {
+            "name": "last_reset_epoch",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TimePolicy",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "allowed_after",
+            "type": "i64"
+          },
+          {
+            "name": "allowed_before",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Vault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "state",
+            "type": {
+              "defined": {
+                "name": "VaultState"
+              }
+            }
+          },
+          {
+            "name": "guardian",
+            "type": "pubkey"
+          },
+          {
+            "name": "policies",
+            "type": {
+              "defined": {
+                "name": "PolicySet"
+              }
+            }
+          },
+          {
+            "name": "recovery",
+            "type": {
+              "defined": {
+                "name": "RecoveryConfig"
+              }
+            }
           },
           {
             "name": "nonce",
@@ -914,39 +1256,18 @@
       }
     },
     {
-      "name": "Vault",
+      "name": "VaultState",
       "type": {
-        "kind": "struct",
-        "fields": [
+        "kind": "enum",
+        "variants": [
           {
-            "name": "guardian",
-            "type": "pubkey"
+            "name": "Active"
           },
           {
-            "name": "daily_limit",
-            "type": "u64"
+            "name": "Frozen"
           },
           {
-            "name": "daily_spent",
-            "type": "u64"
-          },
-          {
-            "name": "last_reset_epoch",
-            "type": "u64"
-          },
-          {
-            "name": "whitelisted_address",
-            "type": {
-              "vec": "pubkey"
-            }
-          },
-          {
-            "name": "nonce",
-            "type": "u64"
-          },
-          {
-            "name": "bump",
-            "type": "u8"
+            "name": "Draining"
           }
         ]
       }
