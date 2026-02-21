@@ -1,22 +1,22 @@
 use anchor_lang::prelude::*;
-use anchor_spl::{token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked,transfer_checked}};
+use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked};
 use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
-use crate::{error::ErrorCode, state::{Session, Vault}, pricing::calculate_usd_value};
+use crate::{error::ErrorCode, state::{Delegate, Vault, delegate::CAN_TRANSFER}, pricing::calculate_usd_value};
 use super::validate_and_update_limits;
 
 #[derive(Accounts)]
-#[instruction(nonce_vault:u64,nonce_session:u64)]
+#[instruction(nonce_vault:u64, nonce_delegate:u64)]
 pub struct ExecuteSplTransfer<'info>{
     #[account(mut)]
     pub relayer: Signer<'info>,
 
-    pub session_key: Signer<'info>, // Agent
+    pub delegate_key: Signer<'info>,
 
     /// CHECK: Validated via vault PDA seeds (vault is derived from guardian's key)
     pub guardian: AccountInfo<'info>,
 
     #[account(
-        mut, 
+        mut,
         seeds = [
             b"vault",
             guardian.key.as_ref(),
@@ -24,45 +24,44 @@ pub struct ExecuteSplTransfer<'info>{
         ],
         bump = vault.bump,
     )]
-    pub vault: Account<'info,Vault>,
+    pub vault: Account<'info, Vault>,
 
     #[account(
         mut,
         seeds = [
-            b"session",
-            guardian.key.as_ref(),
+            b"delegate",
             vault.key().as_ref(),
-            nonce_session.to_le_bytes().as_ref(),
+            &nonce_delegate.to_le_bytes(),
         ],
-        bump = session.bump,
-        constraint = session.vault == vault.key() @ErrorCode::InvalidSession,
-        constraint = session.authority == session_key.key() @ErrorCode::InvalidSession, 
+        bump = delegate.bump,
+        constraint = delegate.vault == vault.key() @ErrorCode::InvalidSession,
+        constraint = delegate.authority == delegate_key.key() @ErrorCode::InvalidSession,
     )]
-    pub session: Account<'info,Session>,
+    pub delegate: Account<'info, Delegate>,
 
     #[account(
         constraint = vault_token_account.mint == mint.key() @ErrorCode::MintMismatch,
         constraint = vault_token_account.owner == vault.key() @ErrorCode::VaultOwnerMismatch,
     )]
-    pub vault_token_account: InterfaceAccount<'info,TokenAccount>,
+    pub vault_token_account: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
         constraint = destination_token_account.mint == mint.key() @ErrorCode::MintMismatch,
     )]
-    pub destination_token_account: InterfaceAccount<'info,TokenAccount>,
+    pub destination_token_account: InterfaceAccount<'info, TokenAccount>,
 
-    pub mint: InterfaceAccount<'info,Mint>,
+    pub mint: InterfaceAccount<'info, Mint>,
 
-    pub token_program: Interface<'info,TokenInterface>,
+    pub token_program: Interface<'info, TokenInterface>,
 
-    pub price_update: Account<'info,PriceUpdateV2>,
+    pub price_update: Account<'info, PriceUpdateV2>,
 }
 
-
-/// For Transferring tokens
-/// 
-pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, nonce_session: u64,amount: u64,feed_id: String)->Result<()>{
+pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>, _nonce_vault: u64, _nonce_delegate: u64, amount: u64, feed_id: String)->Result<()>{
     let clock = Clock::get()?;
+
+    // Permission check
+    require!(ctx.accounts.delegate.has_permission(CAN_TRANSFER), ErrorCode::PermissionDenied);
 
     let _usd_spend_amount = calculate_usd_value(
         &ctx.accounts.price_update,
@@ -73,20 +72,20 @@ pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, no
 
     validate_and_update_limits(
         &mut ctx.accounts.vault,
-        &mut ctx.accounts.session,
+        &mut ctx.accounts.delegate,
         &clock,
         amount
     )?;
 
     let vault = &ctx.accounts.vault;
-    let seeds:&[&[&[u8]]] = &[&[
+    let seeds: &[&[&[u8]]] = &[&[
         b"vault",
         vault.guardian.as_ref(),
         &vault.nonce.to_le_bytes(),
         &[vault.bump],
     ]];
 
-    let cpi_accounts= TransferChecked {
+    let cpi_accounts = TransferChecked {
         authority: vault.to_account_info(),
         from: ctx.accounts.vault_token_account.to_account_info(),
         mint: ctx.accounts.mint.to_account_info(),
@@ -94,19 +93,13 @@ pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>,nonce_vault:u64, no
     };
 
     let cpi_ctx = CpiContext::new_with_signer(
-        ctx.accounts.token_program.to_account_info(), 
-        cpi_accounts, 
+        ctx.accounts.token_program.to_account_info(),
+        cpi_accounts,
         seeds
     );
 
-    transfer_checked(
-        cpi_ctx,
-        amount,
-        ctx.accounts.mint.decimals
-    )?;
+    transfer_checked(cpi_ctx, amount, ctx.accounts.mint.decimals)?;
 
     msg!("SPL Transfer executed: {} tokens", amount);
-
-    
     Ok(())
 }

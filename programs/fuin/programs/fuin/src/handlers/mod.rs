@@ -1,8 +1,8 @@
 pub mod init_vault;
 pub use init_vault::*;
 
-pub mod issue_session;
-pub use issue_session::*;
+pub mod issue_delegate;
+pub use issue_delegate::*;
 
 pub mod execute_transfer;
 pub use execute_transfer::*;
@@ -16,8 +16,11 @@ pub use shared::*;
 pub mod update_vault;
 pub use update_vault::*;
 
-pub mod session_control;
-pub use session_control::*;
+pub mod delegate_control;
+pub use delegate_control::*;
 
 pub mod withdraw;
 pub use withdraw::*;
+
+pub mod freeze_vault;
+pub use freeze_vault::*;

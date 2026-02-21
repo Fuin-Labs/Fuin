@@ -1,6 +1,7 @@
 use anchor_lang::prelude::*;
-// use solana_program::{clock::Clock, sysvar::Sysvar};
-use crate::{state::vault::Vault, error::ErrorCode};
+
+use crate::state::vault::{Vault, VaultState, RecoveryConfig};
+use crate::state::policy::{PolicySet, SpendingPolicy, ProgramPolicy, TimePolicy, RiskPolicy};
 
 #[derive(Accounts)]
 #[instruction(nonce:u64)]
@@ -24,23 +25,42 @@ pub struct InitializeVault<'info>{
     pub system_program : Program<'info,System>,
 }
 
-pub fn init_vault(ctx: Context<InitializeVault>, nonce:u64, daily_limit: u64,whitelisted_address:Vec<Pubkey>)->Result<()>{
-
-    require!(!whitelisted_address.is_empty(), ErrorCode::WhitelistAccountsAreNotProvided);
+pub fn init_vault(ctx: Context<InitializeVault>, nonce:u64, daily_cap: u64, per_tx_cap: u64, allowed_programs: Vec<Pubkey>)->Result<()>{
 
     let clock = Clock::get()?;
 
-    let epoch = clock.epoch;
-
     let vault = &mut ctx.accounts.vault;
-    vault.set_inner(Vault { 
-        guardian: ctx.accounts.guardian.key(), 
-        daily_limit, 
-        daily_spent : 0, 
-        last_reset_epoch: epoch, 
-        nonce, 
-        whitelisted_address,
-        bump: ctx.bumps.vault, 
+    vault.set_inner(Vault {
+        version: 1,
+        state: VaultState::Active,
+        guardian: ctx.accounts.guardian.key(),
+        policies: PolicySet {
+            spending: SpendingPolicy {
+                daily_cap,
+                per_tx_cap,
+                daily_spent: 0,
+                last_reset_epoch: clock.epoch,
+            },
+            programs: ProgramPolicy {
+                allow_list: allowed_programs,
+                deny_list: Vec::new(),
+            },
+            time: TimePolicy {
+                allowed_after: 0,
+                allowed_before: 0,
+            },
+            risk: RiskPolicy {
+                max_slippage_bps: 0,
+                require_cosign_above: 0,
+            },
+        },
+        recovery: RecoveryConfig {
+            timeout_seconds: 0,
+            last_guardian_activity: clock.unix_timestamp,
+            backup_guardian: None,
+        },
+        nonce,
+        bump: ctx.bumps.vault,
     });
 
     Ok(())

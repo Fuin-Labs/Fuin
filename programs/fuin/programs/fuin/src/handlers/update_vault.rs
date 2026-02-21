@@ -1,6 +1,6 @@
 use anchor_lang::prelude::*;
 
-use crate::{state::Vault, error::ErrorCode};
+use crate::state::Vault;
 
 #[derive(Accounts)]
 #[instruction(nonce:u64)]
@@ -17,19 +17,20 @@ pub struct UpdateVault<'info>{
     pub vault : Account<'info, Vault>,
 }
 
-pub fn update_vault(ctx:Context<UpdateVault>,_nonce:u64, new_daily_limit: Option<u64>, _new_whitelist: Option<Vec<Pubkey>>)->Result<()>{
+pub fn update_vault(ctx:Context<UpdateVault>, _nonce:u64, new_daily_cap: Option<u64>, new_per_tx_cap: Option<u64>)->Result<()>{
+    let clock = Clock::get()?;
     let vault = &mut ctx.accounts.vault;
+    vault.recovery.last_guardian_activity = clock.unix_timestamp;
 
-    if let Some(limit) = new_daily_limit{
-        vault.daily_limit = limit;
-        msg!("Vault: Daily limit updated to {}", limit);
+    if let Some(cap) = new_daily_cap {
+        vault.policies.spending.daily_cap = cap;
+        msg!("Vault: Daily cap updated to {}", cap);
     }
 
-    // if let Some(whitelist_program) = new_whitelist{
-    //     require!(whitelist_program.len() <32 , ErrorCode::WhitelistFull);
-    //     vault.whitelisted_address = whitelist_program;
-    //     msg!("Vault: Whitelist updated");
-    // }
+    if let Some(cap) = new_per_tx_cap {
+        vault.policies.spending.per_tx_cap = cap;
+        msg!("Vault: Per-tx cap updated to {}", cap);
+    }
 
     Ok(())
 }

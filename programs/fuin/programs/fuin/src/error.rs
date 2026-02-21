@@ -32,4 +32,22 @@ pub enum ErrorCode{
     WhitelistFull,
     #[msg("Invalid Action for Session Control")]
     InvalidAction,
+    #[msg("Vault is frozen, no operations allowed")]
+    VaultFrozen,
+    #[msg("Per-transaction limit exceeded")]
+    PerTxLimitExceeded,
+    #[msg("Program is not allowed by policy")]
+    ProgramNotAllowed,
+    #[msg("Operation is outside allowed time window")]
+    OutsideAllowedTime,
+    #[msg("Transaction requires guardian co-signature")]
+    RequiresGuardianCosign,
+    #[msg("Permission denied")]
+    PermissionDenied,
+    #[msg("Maximum uses exceeded")]
+    MaxUsesExceeded,
+    #[msg("Delegate has expired")]
+    DelegateExpired,
+    #[msg("Delegate is inactive")]
+    DelegateInactive,
 }

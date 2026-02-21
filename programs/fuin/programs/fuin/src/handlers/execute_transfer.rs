@@ -1,16 +1,16 @@
 use anchor_lang::{prelude::*, system_program::{Transfer, transfer}};
 
-use crate::{error::ErrorCode, state::{Session, Vault}};
-use super::validate_and_update_limits;
+use crate::{error::ErrorCode, state::{Delegate, Vault, delegate::CAN_TRANSFER}};
+use super::{validate_and_update_limits, validate_program_policy};
 
 #[derive(Accounts)]
-#[instruction(nonce_vault:u64,nonce_session:u64)]
+#[instruction(nonce_vault:u64, nonce_delegate:u64)]
 pub struct ExecuteTransfer<'info>{
 
     #[account(mut)]
-    pub relayer:Signer<'info>,
+    pub relayer: Signer<'info>,
 
-    pub session_key: Signer<'info>,
+    pub delegate_key: Signer<'info>,
 
     /// CHECK: Validated via vault PDA seeds (vault is derived from guardian's key)
     pub guardian: AccountInfo<'info>,
@@ -24,41 +24,41 @@ pub struct ExecuteTransfer<'info>{
         ],
         bump = vault.bump,
     )]
-    pub vault: Account<'info,Vault>,
+    pub vault: Account<'info, Vault>,
 
     #[account(
         mut,
         seeds = [
-            b"session",
-            guardian.key.as_ref(),
+            b"delegate",
             vault.key().as_ref(),
-            nonce_session.to_le_bytes().as_ref(),
+            &nonce_delegate.to_le_bytes(),
         ],
-        bump = session.bump,
-        constraint = session.vault == vault.key() @ErrorCode::InvalidSession,
-        constraint = session.authority == session_key.key() @ErrorCode::InvalidSession, 
+        bump = delegate.bump,
+        constraint = delegate.vault == vault.key() @ErrorCode::InvalidSession,
+        constraint = delegate.authority == delegate_key.key() @ErrorCode::InvalidSession,
     )]
-    pub session: Account<'info,Session>,
+    pub delegate: Account<'info, Delegate>,
 
-    /// CHECK: Destination is validated against the vault's whitelist
+    /// CHECK: Destination address
     #[account(mut)]
     pub destination: AccountInfo<'info>,
 
-    pub system_program:Program<'info,System>,
-
+    pub system_program: Program<'info, System>,
 }
 
-pub fn execute_transfer<'info>(ctx:Context<ExecuteTransfer>, nonce_vault:u64, nonce_session: u64, amount:u64)->Result<()>{
-    
+pub fn execute_transfer<'info>(ctx: Context<ExecuteTransfer>, _nonce_vault: u64, _nonce_delegate: u64, amount: u64)->Result<()>{
+
     let clock = Clock::get()?;
 
-    if !ctx.accounts.vault.whitelisted_address.is_empty() {
-        require!(ctx.accounts.vault.whitelisted_address.contains(&ctx.accounts.destination.key()), ErrorCode::AddressNotWhitelisted);
-    }
+    // Permission check
+    require!(ctx.accounts.delegate.has_permission(CAN_TRANSFER), ErrorCode::PermissionDenied);
+
+    // Validate system program against program policy
+    validate_program_policy(&ctx.accounts.vault, &ctx.accounts.system_program.key())?;
 
     validate_and_update_limits(
         &mut ctx.accounts.vault,
-        &mut ctx.accounts.session,
+        &mut ctx.accounts.delegate,
         &clock,
         amount
     )?;
@@ -77,13 +77,13 @@ pub fn execute_transfer<'info>(ctx:Context<ExecuteTransfer>, nonce_vault:u64, no
     };
 
     let cpi_ctx = CpiContext::new_with_signer(
-        ctx.accounts.system_program.to_account_info(), 
-        cpi_accounts, 
+        ctx.accounts.system_program.to_account_info(),
+        cpi_accounts,
         seeds
     );
 
     transfer(cpi_ctx, amount)?;
 
-    msg!("Transfer executed: {} lamports. Daily Spent: {}", amount, vault.daily_spent);
+    msg!("Transfer executed: {} lamports", amount);
     Ok(())
 }
