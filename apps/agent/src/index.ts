@@ -1,5 +1,5 @@
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
-import { FuinClient } from "@fuinlabs/sdk";
+import { FuinClient } from "@fuin/sdk";
 import * as anchor from "@coral-xyz/anchor";
 
 // In a real app, the bot reads its private key from a secure enclave or .env
