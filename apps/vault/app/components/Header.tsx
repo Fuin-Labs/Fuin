@@ -1,7 +1,7 @@
 "use client";
 
+import Link from "next/link";
 import { motion } from "framer-motion";
-import { Key } from "lucide-react";
 
 export const Header = () => {
     return (
@@ -53,23 +53,25 @@ export const Header = () => {
                 <a href="#docs" style={{ color: "#d1d5db", textDecoration: "none", fontSize: "1rem", fontWeight: 500 }}>Documentation</a>
             </nav>
 
-            <motion.button
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-                style={{
-                    backgroundColor: "#FACC15",
-                    color: "#050505",
-                    border: "none",
-                    padding: "12px 24px",
-                    borderRadius: "8px",
-                    fontSize: "1rem",
-                    fontWeight: 700,
-                    cursor: "pointer",
-                    boxShadow: "0 0 20px rgba(250, 204, 21, 0.3)"
-                }}
-            >
-                Launch App
-            </motion.button>
+            <Link href="/dashboard" style={{ textDecoration: "none" }}>
+                <motion.button
+                    whileHover={{ scale: 1.05 }}
+                    whileTap={{ scale: 0.95 }}
+                    style={{
+                        backgroundColor: "#FACC15",
+                        color: "#050505",
+                        border: "none",
+                        padding: "12px 24px",
+                        borderRadius: "8px",
+                        fontSize: "1rem",
+                        fontWeight: 700,
+                        cursor: "pointer",
+                        boxShadow: "0 0 20px rgba(250, 204, 21, 0.3)"
+                    }}
+                >
+                    Launch App
+                </motion.button>
+            </Link>
         </motion.header>
     );
 };

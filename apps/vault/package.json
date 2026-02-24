@@ -1,5 +1,5 @@
 {
-  "name": "web",
+  "name": "vault",
   "version": "0.1.0",
   "type": "module",
   "private": true,
@@ -11,10 +11,18 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@fuin/sdk": "workspace:^",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@repo/ui": "workspace:*",
+    "@solana/wallet-adapter-base": "^0.9.27",
+    "@solana/wallet-adapter-react": "^0.15.39",
+    "@solana/wallet-adapter-react-ui": "^0.9.39",
+    "@solana/wallet-adapter-wallets": "^0.19.37",
+    "@solana/web3.js": "^1.98.4",
     "@types/three": "^0.183.1",
+    "bn.js": "^5.2.1",
     "framer-motion": "^12.34.3",
     "lucide-react": "^0.575.0",
     "next": "16.1.5",
@@ -25,6 +33,7 @@
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",
     "@repo/typescript-config": "workspace:*",
+    "@types/bn.js": "^5.2.0",
     "@types/node": "^22.15.3",
     "@types/react": "19.2.2",
     "@types/react-dom": "19.2.2",

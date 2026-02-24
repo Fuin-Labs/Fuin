@@ -3,6 +3,7 @@
 import { Canvas, useFrame } from "@react-three/fiber";
 import { Float, MeshDistortMaterial, Environment, Sparkles } from "@react-three/drei";
 import { motion } from "framer-motion";
+import Link from "next/link";
 import { useRef } from "react";
 import * as THREE from "three";
 
@@ -197,24 +198,26 @@ export const ShaderHero = () => {
                         transition={{ duration: 0.8, delay: 0.8 }}
                         style={{ display: "flex", gap: "16px", marginTop: "16px" }}
                     >
-                        <motion.button
-                            whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(250, 204, 21, 0.5)" }}
-                            whileTap={{ scale: 0.95 }}
-                            style={{
-                                padding: "16px 32px",
-                                backgroundColor: "#FACC15",
-                                color: "#050505",
-                                border: "none",
-                                borderRadius: "12px",
-                                fontSize: "1.1rem",
-                                fontWeight: 800,
-                                cursor: "pointer",
-                                boxShadow: "0 0 15px rgba(250, 204, 21, 0.2)",
-                                transition: "all 0.2s ease"
-                            }}
-                        >
-                            Start Building
-                        </motion.button>
+                        <Link href="/dashboard" style={{ textDecoration: "none" }}>
+                            <motion.button
+                                whileHover={{ scale: 1.05, boxShadow: "0 0 30px rgba(250, 204, 21, 0.5)" }}
+                                whileTap={{ scale: 0.95 }}
+                                style={{
+                                    padding: "16px 32px",
+                                    backgroundColor: "#FACC15",
+                                    color: "#050505",
+                                    border: "none",
+                                    borderRadius: "12px",
+                                    fontSize: "1.1rem",
+                                    fontWeight: 800,
+                                    cursor: "pointer",
+                                    boxShadow: "0 0 15px rgba(250, 204, 21, 0.2)",
+                                    transition: "all 0.2s ease"
+                                }}
+                            >
+                                Start Building
+                            </motion.button>
+                        </Link>
 
                         <motion.button
                             whileHover={{
