@@ -30,8 +30,8 @@ pub struct DelegateControl<'info>{
 
 pub fn delegate_control(
     ctx: Context<DelegateControl>,
-    _nv: u64,
-    _nd: u64,
+    _nonce_vault: u64,
+    _nonce_delegate: u64,
     status: u8, // 0 = Revoke, 1 = Pause, 2 = Resume
 )->Result<()>{
     let clock_now = Clock::get()?;

@@ -63,7 +63,7 @@ pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>, _nonce_vault: u64,
     // Permission check
     require!(ctx.accounts.delegate.has_permission(CAN_TRANSFER), ErrorCode::PermissionDenied);
 
-    let _usd_spend_amount = calculate_usd_value(
+    let usd_spend_amount = calculate_usd_value(
         &ctx.accounts.price_update,
         &feed_id,
         amount,
@@ -74,7 +74,7 @@ pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>, _nonce_vault: u64,
         &mut ctx.accounts.vault,
         &mut ctx.accounts.delegate,
         &clock,
-        amount
+        usd_spend_amount
     )?;
 
     let vault = &ctx.accounts.vault;

@@ -88,11 +88,11 @@
       ],
       "args": [
         {
-          "name": "nv",
+          "name": "nonce_vault",
           "type": "u64"
         },
         {
-          "name": "nd",
+          "name": "nonce_delegate",
           "type": "u64"
         },
         {

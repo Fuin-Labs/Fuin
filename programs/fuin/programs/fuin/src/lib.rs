@@ -42,8 +42,8 @@ pub mod fuin {
         handlers::update_vault(ctx, nonce, new_daily_cap, new_per_tx_cap)
     }
 
-    pub fn delegate_control(ctx: Context<DelegateControl>, nv: u64, nd: u64, status: u8)->Result<()>{
-        handlers::delegate_control(ctx, nv, nd, status)
+    pub fn delegate_control(ctx: Context<DelegateControl>, nonce_vault: u64, nonce_delegate: u64, status: u8)->Result<()>{
+        handlers::delegate_control(ctx, nonce_vault, nonce_delegate, status)
     }
 
     pub fn withdraw(ctx: Context<Withdraw>, nonce: u64, amount: u64)->Result<()>{
