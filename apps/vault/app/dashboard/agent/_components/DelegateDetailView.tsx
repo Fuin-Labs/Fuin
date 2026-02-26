@@ -2,17 +2,22 @@
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { Shield, Clock, Zap, Wallet, Copy } from "lucide-react";
+import { Shield, Clock, Zap, Wallet, Copy, Send, X } from "lucide-react";
+import { PublicKey } from "@solana/web3.js";
+import { CAN_TRANSFER } from "@fuin/sdk";
 import { GlassCard } from "../../_components/ui/GlassCard";
 import { Badge } from "../../_components/ui/Badge";
 import { ProgressBar } from "../../_components/ui/ProgressBar";
+import { Input } from "../../_components/ui/Input";
+import { TransactionButton } from "../../_components/TransactionButton";
 import { COLORS } from "../../_lib/constants";
-import { formatSol, formatAddress, formatTimestamp, copyToClipboard, getVaultState } from "../../_lib/format";
-import { parsePermissions } from "../../_lib/permissions";
+import { formatSol, formatAddress, formatTimestamp, copyToClipboard } from "../../_lib/format";
+import { parsePermissions, hasPermission } from "../../_lib/permissions";
+import { fetchVaultByPda } from "../../_lib/accounts";
 import { useToast } from "../../_hooks/useToast";
 import { useFuinClient } from "../../_hooks/useFuinClient";
 import { useIsMobile } from "../../_hooks/useMediaQuery";
-import type { DelegateAccount } from "../../_lib/accounts";
+import type { DelegateAccount, VaultAccount } from "../../_lib/accounts";
 
 interface DelegateDetailViewProps {
   delegate: DelegateAccount;
@@ -31,7 +36,7 @@ function getDelegateStatus(d: DelegateAccount["account"]) {
 
 export function DelegateDetailView({ delegate }: DelegateDetailViewProps) {
   const d = delegate.account;
-  const { connection } = useFuinClient();
+  const { client, connection } = useFuinClient();
   const { addToast } = useToast();
   const isMobile = useIsMobile();
   const status = getDelegateStatus(d);
@@ -43,17 +48,58 @@ export function DelegateDetailView({ delegate }: DelegateDetailViewProps) {
   const expiry = d.expiry.toNumber();
 
   const [vaultBalance, setVaultBalance] = useState<number | null>(null);
-  const [vaultState, setVaultState] = useState<string | null>(null);
+  const [vaultData, setVaultData] = useState<VaultAccount | null>(null);
+  const [showTransfer, setShowTransfer] = useState(false);
+  const [destination, setDestination] = useState("");
+  const [amount, setAmount] = useState("");
+
+  const canTransfer = hasPermission(d.permissions, CAN_TRANSFER) && status.variant === "active";
 
   useEffect(() => {
-    if (!connection) return;
+    if (!connection || !client) return;
     connection.getBalance(d.vault).then(setVaultBalance).catch(() => {});
-    // Try to fetch vault account for state
-    // We don't have the program here so just skip detailed vault state
-  }, [connection, d.vault]);
+    fetchVaultByPda(client.program, connection, d.vault).then(setVaultData).catch(() => {});
+  }, [connection, client, d.vault]);
 
   const handleCopy = async (text: string) => {
     if (await copyToClipboard(text)) addToast("Copied", "info");
+  };
+
+  const refetchBalance = () => {
+    if (!connection) return;
+    connection.getBalance(d.vault).then(setVaultBalance).catch(() => {});
+  };
+
+  const handleTransfer = async () => {
+    if (!client || !vaultData) throw new Error("Client not ready");
+    if (!destination) throw new Error("Destination required");
+    if (!amount || Number(amount) <= 0) throw new Error("Valid amount required");
+
+    let destPubkey: PublicKey;
+    try {
+      destPubkey = new PublicKey(destination);
+    } catch {
+      throw new Error("Invalid destination address");
+    }
+
+    const vaultNonce = vaultData.account.nonce.toNumber();
+    const delegateNonce = d.nonce.toNumber();
+    const guardian = vaultData.account.guardian;
+
+    const sig = await client.transferSolWallet(
+      guardian,
+      vaultNonce,
+      delegateNonce,
+      destPubkey,
+      Number(amount)
+    );
+
+    setDestination("");
+    setAmount("");
+    setShowTransfer(false);
+    refetchBalance();
+
+    return sig;
   };
 
   return (
@@ -158,6 +204,81 @@ export function DelegateDetailView({ delegate }: DelegateDetailViewProps) {
             </span>
           </div>
         </div>
+
+        {/* Transfer Action */}
+        {canTransfer && (
+          <div style={{ marginTop: "20px" }}>
+            {!showTransfer ? (
+              <button
+                type="button"
+                onClick={() => setShowTransfer(true)}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  borderRadius: "12px",
+                  border: `1px solid ${COLORS.yellowBorder}`,
+                  backgroundColor: COLORS.yellowSubtle,
+                  color: COLORS.yellow,
+                  fontSize: "0.95rem",
+                  fontWeight: 700,
+                  cursor: "pointer",
+                  fontFamily: "inherit",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "8px",
+                }}
+              >
+                <Send size={16} />
+                Send SOL
+              </button>
+            ) : (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                style={{
+                  backgroundColor: "rgba(255,255,255,0.03)",
+                  borderRadius: "12px",
+                  padding: "16px",
+                  border: `1px solid ${COLORS.border}`,
+                  display: "flex",
+                  flexDirection: "column",
+                  gap: "12px",
+                }}
+              >
+                <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                  <span style={{ fontSize: "0.9rem", fontWeight: 600, color: COLORS.text }}>Send SOL</span>
+                  <button
+                    type="button"
+                    onClick={() => { setShowTransfer(false); setDestination(""); setAmount(""); }}
+                    style={{ background: "none", border: "none", cursor: "pointer", padding: "2px" }}
+                  >
+                    <X size={16} color={COLORS.textDim} />
+                  </button>
+                </div>
+                <Input
+                  label="Destination"
+                  value={destination}
+                  onChange={setDestination}
+                  placeholder="Solana address (base58)"
+                />
+                <Input
+                  label="Amount (SOL)"
+                  value={amount}
+                  onChange={setAmount}
+                  type="number"
+                  placeholder="0.1"
+                />
+                <TransactionButton
+                  label="Send"
+                  loadingLabel="Sending..."
+                  onClick={handleTransfer}
+                  fullWidth
+                />
+              </motion.div>
+            )}
+          </div>
+        )}
       </GlassCard>
     </motion.div>
   );

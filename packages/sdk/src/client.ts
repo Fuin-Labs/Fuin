@@ -113,6 +113,38 @@ export class FuinClient {
     return tx;
   }
 
+  async transferSolWallet(
+    guardian: PublicKey,
+    vaultNonce: number,
+    delegateNonce: number,
+    destination: PublicKey,
+    amountSol: number
+  ) {
+    const bnVaultNonce = new BN(vaultNonce);
+    const bnDelegateNonce = new BN(delegateNonce);
+
+    const [vaultPda] = findVaultPda(guardian, bnVaultNonce, this.program.programId);
+    const [delegatePda] = findDelegatePda(vaultPda, bnDelegateNonce, this.program.programId);
+
+    const amount = new BN(amountSol * 1_000_000_000);
+    const walletKey = this.program.provider.publicKey!;
+
+    const tx = await this.program.methods
+      .executeTransfer!(bnVaultNonce, bnDelegateNonce, amount)
+      .accounts({
+        relayer: walletKey,
+        delegateKey: walletKey,
+        guardian: guardian,
+        vault: vaultPda,
+        delegate: delegatePda,
+        destination: destination,
+        systemProgram: SystemProgram.programId,
+      })
+      .rpc();
+
+    return tx;
+  }
+
   async transferSpl(
     guardian: PublicKey,
     vaultNonce: number,

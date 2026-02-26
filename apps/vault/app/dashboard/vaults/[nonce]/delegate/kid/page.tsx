@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Copy, ChevronDown, ChevronUp, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import { CAN_TRANSFER, findVaultPda, findDelegatePda } from "@fuin/sdk";
 import { useFuinClient } from "../../../../_hooks/useFuinClient";
@@ -69,14 +69,13 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
 
     const delegateNonce = Math.floor(Math.random() * 1000000);
     const validitySeconds = Number(validityDays) * 86400;
-    const limitLamports = Math.floor(Number(dailyAllowance) * LAMPORTS_PER_SOL);
 
     const result = await client.issueDelegate(
       vaultNonce,
       delegateNonce,
       kidPubkey,
       CAN_TRANSFER,
-      limitLamports,
+      Number(dailyAllowance),
       0, // unlimited uses
       validitySeconds
     );

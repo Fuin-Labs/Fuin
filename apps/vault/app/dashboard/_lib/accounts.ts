@@ -95,6 +95,20 @@ export async function fetchDelegatesByVault(
   return results.sort((a, b) => a.account.nonce.toNumber() - b.account.nonce.toNumber());
 }
 
+export async function fetchVaultByPda(
+  program: Program<Idl>,
+  connection: Connection,
+  vaultPda: PublicKey
+): Promise<VaultAccount | null> {
+  try {
+    const decoded = await (program.account as any).vault.fetch(vaultPda);
+    const balance = await connection.getBalance(vaultPda);
+    return { publicKey: vaultPda, account: decoded, balance };
+  } catch {
+    return null;
+  }
+}
+
 export async function fetchDelegatesByAuthority(
   connection: Connection,
   program: Program<Idl>,

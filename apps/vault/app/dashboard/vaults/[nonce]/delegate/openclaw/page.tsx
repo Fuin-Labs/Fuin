@@ -5,10 +5,11 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, Copy, ChevronDown, ChevronUp, CheckCircle2 } from "lucide-react";
 import Link from "next/link";
-import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
+import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 import { CAN_TRANSFER, findVaultPda, findDelegatePda } from "@fuin/sdk";
 import { useFuinClient } from "../../../../_hooks/useFuinClient";
+import { useIsMobile } from "../../../../_hooks/useMediaQuery";
 import { useToast } from "../../../../_hooks/useToast";
 import { GlassCard } from "../../../../_components/ui/GlassCard";
 import { Input } from "../../../../_components/ui/Input";
@@ -36,6 +37,7 @@ export default function OpenClawDelegatePage({ params }: { params: Promise<{ non
   const vaultNonce = Number(nonceStr);
   const router = useRouter();
   const { client, connected, publicKey } = useFuinClient();
+  const isMobile = useIsMobile();
   const { addToast } = useToast();
 
   const [agentKey, setAgentKey] = useState("");
@@ -71,14 +73,13 @@ export default function OpenClawDelegatePage({ params }: { params: Promise<{ non
 
     const delegateNonce = Math.floor(Math.random() * 1000000);
     const validitySeconds = Number(validityHours) * 3600;
-    const limitLamports = Math.floor(Number(dailyLimit) * LAMPORTS_PER_SOL);
 
     const result = await client.issueDelegate(
       vaultNonce,
       delegateNonce,
       agentPubkey,
       permissions,
-      limitLamports,
+      Number(dailyLimit),
       Number(maxUses),
       validitySeconds
     );
@@ -130,7 +131,7 @@ export default function OpenClawDelegatePage({ params }: { params: Promise<{ non
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ maxWidth: "600px" }}
+        style={{ maxWidth: isMobile ? "100%" : "600px" }}
       >
         <GlassCard>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "8px 0" }}>
@@ -243,7 +244,7 @@ await client.transferSol(
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      style={{ maxWidth: "560px" }}
+      style={{ maxWidth: isMobile ? "100%" : "560px" }}
     >
       <Link
         href={`/dashboard/vaults/${vaultNonce}/delegate/create`}
@@ -276,7 +277,7 @@ await client.transferSol(
             <PermissionCheckboxes value={permissions} onChange={setPermissions} />
           </div>
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: "12px" }}>
             <Input
               label="Daily Limit (SOL)"
               value={dailyLimit}

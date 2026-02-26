@@ -4,11 +4,12 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { Database, Bot, ArrowLeft, X } from "lucide-react";
+import { LayoutDashboard, Database, Bot, ArrowLeft, X } from "lucide-react";
 import { COLORS } from "../_lib/constants";
 import { useIsMobile } from "../_hooks/useMediaQuery";
 
 const NAV_ITEMS = [
+  { href: "/dashboard", label: "Overview", icon: LayoutDashboard },
   { href: "/dashboard/vaults", label: "Vaults", icon: Database },
   { href: "/dashboard/agent", label: "Agent View", icon: Bot },
 ];
@@ -65,7 +66,7 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
 
       {/* Nav Items */}
       {NAV_ITEMS.map((item) => {
-        const isActive = pathname.startsWith(item.href);
+        const isActive = item.href === "/dashboard" ? pathname === "/dashboard" : pathname.startsWith(item.href);
         const Icon = item.icon;
         return (
           <Link key={item.href} href={item.href} style={{ textDecoration: "none" }} onClick={isMobile ? onClose : undefined}>
