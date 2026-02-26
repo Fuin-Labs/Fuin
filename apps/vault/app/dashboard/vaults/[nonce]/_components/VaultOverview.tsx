@@ -7,6 +7,7 @@ import { GlassCard } from "../../../_components/ui/GlassCard";
 import { Badge } from "../../../_components/ui/Badge";
 import { ProgressBar } from "../../../_components/ui/ProgressBar";
 import { useToast } from "../../../_hooks/useToast";
+import { useIsMobile } from "../../../_hooks/useMediaQuery";
 import type { PublicKey } from "@solana/web3.js";
 
 interface VaultOverviewProps {
@@ -17,6 +18,7 @@ interface VaultOverviewProps {
 
 export function VaultOverview({ vault, vaultPda, balance }: VaultOverviewProps) {
   const { addToast } = useToast();
+  const isMobile = useIsMobile();
   const state = getVaultState(vault.state);
   const spending = vault.policies.spending;
   const dailyCap = spending.dailyCap.toNumber();
@@ -55,7 +57,7 @@ export function VaultOverview({ vault, vaultPda, balance }: VaultOverviewProps) 
       </div>
 
       {/* Stats Grid */}
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "24px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "16px", marginBottom: "24px" }}>
         <div style={{ backgroundColor: "rgba(255,255,255,0.03)", borderRadius: "12px", padding: "14px 16px" }}>
           <span style={{ fontSize: "0.75rem", color: COLORS.textDim, display: "block", marginBottom: "4px" }}>Daily Cap</span>
           <span style={{ fontSize: "1rem", fontWeight: 600, color: COLORS.text }}>{formatSol(dailyCap)} SOL</span>

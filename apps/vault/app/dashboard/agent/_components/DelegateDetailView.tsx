@@ -11,6 +11,7 @@ import { formatSol, formatAddress, formatTimestamp, copyToClipboard, getVaultSta
 import { parsePermissions } from "../../_lib/permissions";
 import { useToast } from "../../_hooks/useToast";
 import { useFuinClient } from "../../_hooks/useFuinClient";
+import { useIsMobile } from "../../_hooks/useMediaQuery";
 import type { DelegateAccount } from "../../_lib/accounts";
 
 interface DelegateDetailViewProps {
@@ -32,6 +33,7 @@ export function DelegateDetailView({ delegate }: DelegateDetailViewProps) {
   const d = delegate.account;
   const { connection } = useFuinClient();
   const { addToast } = useToast();
+  const isMobile = useIsMobile();
   const status = getDelegateStatus(d);
   const perms = parsePermissions(d.permissions);
   const dailyLimit = d.dailyLimit.toNumber();
@@ -136,7 +138,7 @@ export function DelegateDetailView({ delegate }: DelegateDetailViewProps) {
         </div>
 
         {/* Meta */}
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px" }}>
           <div style={{ backgroundColor: "rgba(255,255,255,0.03)", borderRadius: "12px", padding: "14px 16px" }}>
             <div style={{ display: "flex", alignItems: "center", gap: "6px", marginBottom: "4px" }}>
               <Zap size={12} color={COLORS.textDim} />

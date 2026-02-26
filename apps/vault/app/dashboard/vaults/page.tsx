@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Plus, Database } from "lucide-react";
+import { Plus, Database, Search } from "lucide-react";
 import { useVaults } from "../_hooks/useVaults";
 import { useFuinClient } from "../_hooks/useFuinClient";
 import { VaultCard } from "../_components/VaultCard";
@@ -11,12 +11,17 @@ import { Button } from "../_components/ui/Button";
 import { Spinner } from "../_components/ui/Spinner";
 import { EmptyState } from "../_components/ui/EmptyState";
 import { COLORS } from "../_lib/constants";
+import { useIsMobile } from "../_hooks/useMediaQuery";
 import { fetchVaultLabelsByGuardian } from "../_actions/vaults";
+import { fetchDelegatesByVault } from "../_lib/accounts";
 
 export default function VaultsPage() {
-  const { connected, publicKey } = useFuinClient();
+  const { connected, publicKey, connection, client } = useFuinClient();
   const { vaults, loading } = useVaults();
+  const isMobile = useIsMobile();
   const [vaultLabels, setVaultLabels] = useState<Record<string, string>>({});
+  const [delegateCounts, setDelegateCounts] = useState<Record<string, number>>({});
+  const [search, setSearch] = useState("");
 
   useEffect(() => {
     if (!publicKey) return;
@@ -24,6 +29,22 @@ export default function VaultsPage() {
       .then(setVaultLabels)
       .catch(() => {});
   }, [publicKey?.toBase58(), vaults.length]);
+
+  // Fetch delegate counts for each vault
+  useEffect(() => {
+    if (!client || !connection || vaults.length === 0) return;
+    const counts: Record<string, number> = {};
+    Promise.all(
+      vaults.map(async (v) => {
+        try {
+          const delegates = await fetchDelegatesByVault(connection, client.program, v.publicKey);
+          counts[v.publicKey.toBase58()] = delegates.length;
+        } catch {
+          counts[v.publicKey.toBase58()] = 0;
+        }
+      })
+    ).then(() => setDelegateCounts(counts));
+  }, [client, connection, vaults.length]);
 
   if (!connected) {
     return (
@@ -43,14 +64,26 @@ export default function VaultsPage() {
     );
   }
 
+  const filteredVaults = vaults.filter((v) => {
+    if (!search.trim()) return true;
+    const q = search.trim().toLowerCase();
+    const nonce = v.account.nonce.toNumber();
+    const label = vaultLabels[v.publicKey.toBase58()] || "";
+    return (
+      label.toLowerCase().includes(q) ||
+      String(nonce).includes(q) ||
+      `vault #${nonce}`.includes(q)
+    );
+  });
+
   return (
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ maxWidth: "900px" }}
+      style={{ maxWidth: isMobile ? "100%" : "900px" }}
     >
       {/* Header */}
-      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "32px" }}>
+      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "stretch" : "center", gap: isMobile ? "16px" : "0", marginBottom: "24px" }}>
         <div>
           <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: 0, letterSpacing: "-0.025em" }}>
             Your Vaults
@@ -68,6 +101,34 @@ export default function VaultsPage() {
         </Link>
       </div>
 
+      {/* Search */}
+      {vaults.length > 0 && (
+        <div style={{ marginBottom: "20px", position: "relative" }}>
+          <Search
+            size={16}
+            color={COLORS.textDim}
+            style={{ position: "absolute", left: "14px", top: "50%", transform: "translateY(-50%)" }}
+          />
+          <input
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Search by name or nonce..."
+            style={{
+              width: "100%",
+              padding: "12px 14px 12px 40px",
+              borderRadius: "12px",
+              border: `1px solid ${COLORS.border}`,
+              backgroundColor: COLORS.bgInput,
+              color: COLORS.text,
+              fontSize: "0.9rem",
+              fontFamily: "inherit",
+              outline: "none",
+              boxSizing: "border-box",
+            }}
+          />
+        </div>
+      )}
+
       {/* Vault Grid */}
       {vaults.length === 0 ? (
         <EmptyState
@@ -80,10 +141,19 @@ export default function VaultsPage() {
             </Link>
           }
         />
+      ) : filteredVaults.length === 0 ? (
+        <div style={{ textAlign: "center", padding: "40px 0", color: COLORS.textMuted, fontSize: "0.95rem" }}>
+          No vaults match &ldquo;{search}&rdquo;
+        </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))", gap: "20px" }}>
-          {vaults.map((v) => (
-            <VaultCard key={v.publicKey.toBase58()} vault={v} label={vaultLabels[v.publicKey.toBase58()]} />
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "repeat(auto-fill, minmax(380px, 1fr))", gap: "20px" }}>
+          {filteredVaults.map((v) => (
+            <VaultCard
+              key={v.publicKey.toBase58()}
+              vault={v}
+              label={vaultLabels[v.publicKey.toBase58()]}
+              delegateCount={delegateCounts[v.publicKey.toBase58()]}
+            />
           ))}
         </div>
       )}

@@ -7,6 +7,7 @@ import { TransactionButton } from "../../../_components/TransactionButton";
 import { useFuinClient } from "../../../_hooks/useFuinClient";
 import { formatSol } from "../../../_lib/format";
 import { COLORS } from "../../../_lib/constants";
+import { useIsMobile } from "../../../_hooks/useMediaQuery";
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
 
 interface UpdatePoliciesFormProps {
@@ -18,6 +19,7 @@ interface UpdatePoliciesFormProps {
 
 export function UpdatePoliciesForm({ nonce, currentDailyCap, currentPerTxCap, onSuccess }: UpdatePoliciesFormProps) {
   const { client } = useFuinClient();
+  const isMobile = useIsMobile();
   const [dailyCap, setDailyCap] = useState(String(currentDailyCap / LAMPORTS_PER_SOL));
   const [perTxCap, setPerTxCap] = useState(String(currentPerTxCap / LAMPORTS_PER_SOL));
 
@@ -31,7 +33,7 @@ export function UpdatePoliciesForm({ nonce, currentDailyCap, currentPerTxCap, on
       <h3 style={{ color: COLORS.text, fontSize: "1rem", fontWeight: 700, margin: "0 0 16px" }}>
         Update Policies
       </h3>
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
         <Input
           label="Daily Cap (SOL)"
           value={dailyCap}

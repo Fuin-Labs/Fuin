@@ -6,16 +6,18 @@ import { ArrowLeft, UserRound, Bot } from "lucide-react";
 import Link from "next/link";
 import { GlassCard } from "../../../../_components/ui/GlassCard";
 import { COLORS } from "../../../../_lib/constants";
+import { useIsMobile } from "../../../../_hooks/useMediaQuery";
 
 export default function CreateDelegatePage({ params }: { params: Promise<{ nonce: string }> }) {
   const { nonce: nonceStr } = use(params);
   const vaultNonce = Number(nonceStr);
+  const isMobile = useIsMobile();
 
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      style={{ maxWidth: "600px" }}
+      style={{ maxWidth: isMobile ? "100%" : "600px" }}
     >
       <Link
         href={`/dashboard/vaults/${vaultNonce}`}
@@ -31,7 +33,7 @@ export default function CreateDelegatePage({ params }: { params: Promise<{ nonce
         Choose who you want to authorize with scoped permissions and spending limits.
       </p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "16px" }}>
         <Link href={`/dashboard/vaults/${vaultNonce}/delegate/kid`} style={{ textDecoration: "none" }}>
           <GlassCard hover accent={COLORS.yellowBorder} style={{ height: "100%" }}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "16px 0" }}>

@@ -1,55 +1,59 @@
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
+@import "tailwindcss";
 
-@media (prefers-color-scheme: dark) {
+@layer base {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-.imgDark {
-  display: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
+    --background: #ffffff;
+    --foreground: #171717;
   }
 
-  .imgLight {
-    display: none;
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --background: #0a0a0a;
+      --foreground: #ededed;
+    }
+  }
+
+  html,
+  body {
+    max-width: 100vw;
+  }
+
+  body {
+    color: var(--foreground);
+    background: var(--background);
+  }
+
+  * {
+    box-sizing: border-box;
+    padding: 0;
+    margin: 0;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
   }
 
   .imgDark {
-    display: unset;
+    display: none;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html {
+      color-scheme: dark;
+    }
+
+    .imgLight {
+      display: none;
+    }
+
+    .imgDark {
+      display: unset;
+    }
   }
 }
 
-/* Wallet adapter modal overrides */
+/* Wallet adapter modal overrides — kept unlayered so !important wins */
 .wallet-adapter-modal-wrapper {
   background-color: rgba(5, 5, 5, 0.95) !important;
   backdrop-filter: blur(12px);

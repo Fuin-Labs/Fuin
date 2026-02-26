@@ -11,12 +11,14 @@ import { GlassCard } from "../../_components/ui/GlassCard";
 import { Input } from "../../_components/ui/Input";
 import { TransactionButton } from "../../_components/TransactionButton";
 import { COLORS } from "../../_lib/constants";
+import { useIsMobile } from "../../_hooks/useMediaQuery";
 import { saveVault } from "../../_actions/vaults";
 
 export default function CreateVaultPage() {
   const router = useRouter();
   const { client, connected, publicKey } = useFuinClient();
   const { nextNonce } = useAutoNonce();
+  const isMobile = useIsMobile();
 
   const [nonce, setNonce] = useState("");
   const [dailyCap, setDailyCap] = useState("10");
@@ -56,7 +58,7 @@ export default function CreateVaultPage() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      style={{ maxWidth: "560px" }}
+      style={{ maxWidth: isMobile ? "100%" : "560px" }}
     >
       <Link href="/dashboard/vaults" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px", color: COLORS.textMuted, fontSize: "0.9rem", marginBottom: "24px" }}>
         <ArrowLeft size={16} /> Back to Vaults
@@ -79,7 +81,7 @@ export default function CreateVaultPage() {
             hint="Unique identifier for this vault. Auto-filled with next available."
           />
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "16px" }}>
             <Input
               label="Daily Cap (SOL)"
               value={dailyCap}

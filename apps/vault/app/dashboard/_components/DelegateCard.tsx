@@ -3,6 +3,7 @@
 import { motion } from "framer-motion";
 import { User, Clock, Zap } from "lucide-react";
 import { COLORS, GLASS_STYLE } from "../_lib/constants";
+import { useIsMobile } from "../_hooks/useMediaQuery";
 import { formatAddress, formatSol, formatTimestamp } from "../_lib/format";
 import { parsePermissions } from "../_lib/permissions";
 import { getDelegateLabel } from "../_lib/delegateLabels";
@@ -33,6 +34,7 @@ function getDelegateStatus(d: DelegateAccount["account"]): { label: string; vari
 }
 
 export function DelegateCard({ delegate, onPause, onResume, onRevoke, loading, readOnly }: DelegateCardProps) {
+  const isMobile = useIsMobile();
   const d = delegate.account;
   const status = getDelegateStatus(d);
   const label = getDelegateLabel(delegate.publicKey.toBase58());
@@ -104,20 +106,20 @@ export function DelegateCard({ delegate, onPause, onResume, onRevoke, loading, r
       {/* Actions */}
       {!readOnly && status.variant === "active" && (
         <div style={{ display: "flex", gap: "8px" }}>
-          <Button variant="secondary" size="sm" onClick={onPause} disabled={loading}>
+          <Button variant="secondary" size={isMobile ? "md" : "sm"} onClick={onPause} disabled={loading}>
             Pause
           </Button>
-          <Button variant="danger" size="sm" onClick={onRevoke} disabled={loading}>
+          <Button variant="danger" size={isMobile ? "md" : "sm"} onClick={onRevoke} disabled={loading}>
             Revoke
           </Button>
         </div>
       )}
       {!readOnly && status.variant === "paused" && (
         <div style={{ display: "flex", gap: "8px" }}>
-          <Button variant="primary" size="sm" onClick={onResume} disabled={loading}>
+          <Button variant="primary" size={isMobile ? "md" : "sm"} onClick={onResume} disabled={loading}>
             Resume
           </Button>
-          <Button variant="danger" size="sm" onClick={onRevoke} disabled={loading}>
+          <Button variant="danger" size={isMobile ? "md" : "sm"} onClick={onRevoke} disabled={loading}>
             Revoke
           </Button>
         </div>

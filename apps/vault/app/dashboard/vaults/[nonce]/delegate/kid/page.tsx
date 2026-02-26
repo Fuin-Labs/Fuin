@@ -14,6 +14,7 @@ import { GlassCard } from "../../../../_components/ui/GlassCard";
 import { Input } from "../../../../_components/ui/Input";
 import { TransactionButton } from "../../../../_components/TransactionButton";
 import { COLORS, GLASS_STYLE } from "../../../../_lib/constants";
+import { useIsMobile } from "../../../../_hooks/useMediaQuery";
 import { copyToClipboard, formatAddress } from "../../../../_lib/format";
 import { setSingleLabelCache } from "../../../../_lib/delegateLabels";
 import { saveDelegateLabel } from "../../../../_actions/delegates";
@@ -33,6 +34,7 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
   const router = useRouter();
   const { client, connected, publicKey } = useFuinClient();
   const { addToast } = useToast();
+  const isMobile = useIsMobile();
 
   const [name, setName] = useState("");
   const [walletAddress, setWalletAddress] = useState("");
@@ -122,7 +124,7 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ maxWidth: "560px" }}
+        style={{ maxWidth: isMobile ? "100%" : "560px" }}
       >
         <GlassCard>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "8px 0" }}>
@@ -219,7 +221,7 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      style={{ maxWidth: "560px" }}
+      style={{ maxWidth: isMobile ? "100%" : "560px" }}
     >
       <Link
         href={`/dashboard/vaults/${vaultNonce}/delegate/create`}
@@ -253,7 +255,7 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
             hint="Your kid's wallet address"
           />
 
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px" }}>
             <Input
               label="Daily Allowance (SOL)"
               value={dailyAllowance}

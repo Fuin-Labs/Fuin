@@ -2,7 +2,7 @@
 
 import { use, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, Pencil, Check, X } from "lucide-react";
+import { ArrowLeft, Pencil, Check, X, ScrollText } from "lucide-react";
 import Link from "next/link";
 import { useVaultDetail } from "../../_hooks/useVaultDetail";
 import { useFuinClient } from "../../_hooks/useFuinClient";
@@ -16,12 +16,14 @@ import { UpdatePoliciesForm } from "./_components/UpdatePoliciesForm";
 import { DelegateList } from "./_components/DelegateList";
 import { getVaultState } from "../../_lib/format";
 import { COLORS } from "../../_lib/constants";
+import { useIsMobile } from "../../_hooks/useMediaQuery";
 import { fetchVaultLabel, setVaultLabel, saveVault } from "../../_actions/vaults";
 
 export default function VaultDetailPage({ params }: { params: Promise<{ nonce: string }> }) {
   const { nonce: nonceStr } = use(params);
   const nonce = Number(nonceStr);
   const { connected, publicKey } = useFuinClient();
+  const isMobile = useIsMobile();
   const { vault, loading, refetch } = useVaultDetail(nonce);
 
   const [vaultLabel, setVaultLabelState] = useState<string | null>(null);
@@ -83,7 +85,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ maxWidth: "800px" }}
+      style={{ maxWidth: isMobile ? "100%" : "800px" }}
     >
       <Link
         href="/dashboard/vaults"
@@ -157,7 +159,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
 
         <FreezeToggle nonce={nonce} isFrozen={isFrozen} onSuccess={refetch} />
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
+        <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "20px" }}>
           <DepositSection vaultPda={vault.publicKey} onSuccess={refetch} />
           <WithdrawSection nonce={nonce} onSuccess={refetch} />
         </div>
@@ -170,6 +172,21 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
         />
 
         <DelegateList vaultPda={vault.publicKey} vaultNonce={nonce} />
+
+        <Link
+          href={`/dashboard/vaults/${nonce}/audit`}
+          style={{
+            textDecoration: "none",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "8px",
+            color: COLORS.textMuted,
+            fontSize: "0.9rem",
+            padding: "12px 0",
+          }}
+        >
+          <ScrollText size={16} /> View Audit Log
+        </Link>
       </div>
     </motion.div>
   );
