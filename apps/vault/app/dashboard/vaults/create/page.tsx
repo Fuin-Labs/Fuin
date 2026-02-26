@@ -11,10 +11,11 @@ import { GlassCard } from "../../_components/ui/GlassCard";
 import { Input } from "../../_components/ui/Input";
 import { TransactionButton } from "../../_components/TransactionButton";
 import { COLORS } from "../../_lib/constants";
+import { saveVault } from "../../_actions/vaults";
 
 export default function CreateVaultPage() {
   const router = useRouter();
-  const { client, connected } = useFuinClient();
+  const { client, connected, publicKey } = useFuinClient();
   const { nextNonce } = useAutoNonce();
 
   const [nonce, setNonce] = useState("");
@@ -33,13 +34,21 @@ export default function CreateVaultPage() {
   }
 
   const handleCreate = async () => {
-    if (!client) throw new Error("Client not ready");
+    if (!client || !publicKey) throw new Error("Client not ready");
     const result = await client.createVault(
       Number(effectiveNonce),
       Number(dailyCap),
       Number(perTxCap),
       []
     );
+
+    // Persist vault to DB (fire-and-forget)
+    saveVault({
+      pda: result.vault.toBase58(),
+      guardian: publicKey.toBase58(),
+      nonce: Number(effectiveNonce),
+    }).catch(() => {});
+
     return result.signature;
   };
 

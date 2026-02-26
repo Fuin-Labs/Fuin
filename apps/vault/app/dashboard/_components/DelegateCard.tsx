@@ -5,6 +5,7 @@ import { User, Clock, Zap } from "lucide-react";
 import { COLORS, GLASS_STYLE } from "../_lib/constants";
 import { formatAddress, formatSol, formatTimestamp } from "../_lib/format";
 import { parsePermissions } from "../_lib/permissions";
+import { getDelegateLabel } from "../_lib/delegateLabels";
 import { Badge } from "./ui/Badge";
 import { ProgressBar } from "./ui/ProgressBar";
 import { Button } from "./ui/Button";
@@ -20,7 +21,12 @@ interface DelegateCardProps {
 }
 
 function getDelegateStatus(d: DelegateAccount["account"]): { label: string; variant: "active" | "paused" | "revoked" | "expired" } {
-  if (!d.isActive) return { label: "Revoked", variant: "revoked" };
+  if (!d.isActive) {
+    // Revoke sets expiry=0; pause leaves expiry unchanged (>0)
+    return d.expiry.toNumber() === 0
+      ? { label: "Revoked", variant: "revoked" }
+      : { label: "Paused", variant: "paused" };
+  }
   const now = Date.now() / 1000;
   if (d.expiry.toNumber() > 0 && d.expiry.toNumber() < now) return { label: "Expired", variant: "expired" };
   return { label: "Active", variant: "active" };
@@ -29,6 +35,7 @@ function getDelegateStatus(d: DelegateAccount["account"]): { label: string; vari
 export function DelegateCard({ delegate, onPause, onResume, onRevoke, loading, readOnly }: DelegateCardProps) {
   const d = delegate.account;
   const status = getDelegateStatus(d);
+  const label = getDelegateLabel(delegate.publicKey.toBase58());
   const perms = parsePermissions(d.permissions);
   const dailyLimit = d.dailyLimit.toNumber();
   const dailySpent = d.dailySpent.toNumber();
@@ -52,9 +59,16 @@ export function DelegateCard({ delegate, onPause, onResume, onRevoke, loading, r
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
           <User size={18} color={COLORS.textMuted} />
-          <span style={{ color: COLORS.text, fontWeight: 600, fontFamily: "var(--font-geist-mono), monospace", fontSize: "0.9rem" }}>
-            {formatAddress(d.authority)}
-          </span>
+          <div style={{ display: "flex", flexDirection: "column" }}>
+            {label && (
+              <span style={{ color: COLORS.yellow, fontWeight: 600, fontSize: "0.85rem" }}>
+                {label}
+              </span>
+            )}
+            <span style={{ color: COLORS.text, fontWeight: 600, fontFamily: "var(--font-geist-mono), monospace", fontSize: "0.9rem" }}>
+              {formatAddress(d.authority)}
+            </span>
+          </div>
         </div>
         <Badge variant={status.variant} dot>{status.label}</Badge>
       </div>

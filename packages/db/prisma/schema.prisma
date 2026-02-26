@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+/// Wallet-based user identity
+model User {
+  id        String   @id @default(cuid())
+  wallet    String   @unique /// Solana public key (base58)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  vaults    Vault[]
+  delegates DelegateLabel[]
+}
+
+/// Off-chain vault metadata (on-chain state lives in Solana)
+model Vault {
+  id        String   @id @default(cuid())
+  pda       String   @unique /// Vault PDA (base58)
+  guardian  String   /// Guardian wallet (base58)
+  nonce     Int
+  label     String?  /// Human-readable name for the vault
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  user      User            @relation(fields: [guardian], references: [wallet])
+  delegates DelegateLabel[]
+
+  @@index([guardian])
+}
+
+/// Human-readable labels for delegates (replaces localStorage)
+model DelegateLabel {
+  id          String   @id @default(cuid())
+  delegatePda String   @unique /// Delegate PDA (base58)
+  vaultPda    String   /// Parent vault PDA (base58)
+  guardian    String   /// Guardian wallet who created the delegate
+  label       String   /// Display name (e.g. kid's name, agent identifier)
+  kind        String   @default("kid") /// "kid" | "openclaw"
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  vault Vault @relation(fields: [vaultPda], references: [pda])
+  user  User  @relation(fields: [guardian], references: [wallet])
+
+  @@index([vaultPda])
+  @@index([guardian])
+}
+
+/// Audit log for delegate control actions (pause/resume/revoke)
+model AuditLog {
+  id          String   @id @default(cuid())
+  delegatePda String
+  vaultPda    String
+  guardian    String
+  action      String   /// "created" | "paused" | "resumed" | "revoked"
+  txSignature String?  /// Solana transaction signature
+  metadata    Json?    /// Additional context
+  createdAt   DateTime @default(now())
+
+  @@index([delegatePda])
+  @@index([vaultPda])
+  @@index([guardian])
+}

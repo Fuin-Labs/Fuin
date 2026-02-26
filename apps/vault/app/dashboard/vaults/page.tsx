@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import { Plus, Database } from "lucide-react";
@@ -10,10 +11,19 @@ import { Button } from "../_components/ui/Button";
 import { Spinner } from "../_components/ui/Spinner";
 import { EmptyState } from "../_components/ui/EmptyState";
 import { COLORS } from "../_lib/constants";
+import { fetchVaultLabelsByGuardian } from "../_actions/vaults";
 
 export default function VaultsPage() {
-  const { connected } = useFuinClient();
+  const { connected, publicKey } = useFuinClient();
   const { vaults, loading } = useVaults();
+  const [vaultLabels, setVaultLabels] = useState<Record<string, string>>({});
+
+  useEffect(() => {
+    if (!publicKey) return;
+    fetchVaultLabelsByGuardian(publicKey.toBase58())
+      .then(setVaultLabels)
+      .catch(() => {});
+  }, [publicKey?.toBase58(), vaults.length]);
 
   if (!connected) {
     return (
@@ -73,7 +83,7 @@ export default function VaultsPage() {
       ) : (
         <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(380px, 1fr))", gap: "20px" }}>
           {vaults.map((v) => (
-            <VaultCard key={v.publicKey.toBase58()} vault={v} />
+            <VaultCard key={v.publicKey.toBase58()} vault={v} label={vaultLabels[v.publicKey.toBase58()]} />
           ))}
         </div>
       )}

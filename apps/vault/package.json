@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
+    "@fuin/db": "workspace:^",
     "@fuin/sdk": "workspace:^",
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",

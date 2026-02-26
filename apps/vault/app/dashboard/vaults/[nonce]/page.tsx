@@ -1,8 +1,8 @@
 "use client";
 
-import { use } from "react";
+import { use, useEffect, useState } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Pencil, Check, X } from "lucide-react";
 import Link from "next/link";
 import { useVaultDetail } from "../../_hooks/useVaultDetail";
 import { useFuinClient } from "../../_hooks/useFuinClient";
@@ -16,12 +16,35 @@ import { UpdatePoliciesForm } from "./_components/UpdatePoliciesForm";
 import { DelegateList } from "./_components/DelegateList";
 import { getVaultState } from "../../_lib/format";
 import { COLORS } from "../../_lib/constants";
+import { fetchVaultLabel, setVaultLabel, saveVault } from "../../_actions/vaults";
 
 export default function VaultDetailPage({ params }: { params: Promise<{ nonce: string }> }) {
   const { nonce: nonceStr } = use(params);
   const nonce = Number(nonceStr);
-  const { connected } = useFuinClient();
+  const { connected, publicKey } = useFuinClient();
   const { vault, loading, refetch } = useVaultDetail(nonce);
+
+  const [vaultLabel, setVaultLabelState] = useState<string | null>(null);
+  const [editing, setEditing] = useState(false);
+  const [editValue, setEditValue] = useState("");
+
+  // Fetch label from DB and ensure vault record exists
+  useEffect(() => {
+    if (!vault || !publicKey) return;
+    const pda = vault.publicKey.toBase58();
+    // Ensure vault is in DB
+    saveVault({ pda, guardian: publicKey.toBase58(), nonce }).catch(() => {});
+    fetchVaultLabel(pda).then(setVaultLabelState).catch(() => {});
+  }, [vault?.publicKey.toBase58(), publicKey?.toBase58()]);
+
+  const handleSaveLabel = async () => {
+    if (!vault) return;
+    const trimmed = editValue.trim();
+    if (!trimmed) return;
+    await setVaultLabel(vault.publicKey.toBase58(), trimmed);
+    setVaultLabelState(trimmed);
+    setEditing(false);
+  };
 
   if (!connected) {
     return (
@@ -77,9 +100,57 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
         <ArrowLeft size={16} /> Back to Vaults
       </Link>
 
-      <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: "0 0 32px", letterSpacing: "-0.025em" }}>
-        Vault #{nonce}
-      </h2>
+      <div style={{ marginBottom: "32px" }}>
+        {editing ? (
+          <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+            <input
+              autoFocus
+              value={editValue}
+              onChange={(e) => setEditValue(e.target.value)}
+              onKeyDown={(e) => { if (e.key === "Enter") handleSaveLabel(); if (e.key === "Escape") setEditing(false); }}
+              placeholder="Vault name..."
+              style={{
+                background: "transparent",
+                border: `1px solid ${COLORS.yellowBorder}`,
+                borderRadius: "8px",
+                padding: "6px 12px",
+                color: COLORS.text,
+                fontSize: "1.8rem",
+                fontWeight: 800,
+                fontFamily: "inherit",
+                outline: "none",
+                letterSpacing: "-0.025em",
+                width: "300px",
+              }}
+            />
+            <button type="button" onClick={handleSaveLabel} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}>
+              <Check size={20} color={COLORS.green} />
+            </button>
+            <button type="button" onClick={() => setEditing(false)} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}>
+              <X size={20} color={COLORS.textDim} />
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
+            <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: 0, letterSpacing: "-0.025em" }}>
+              {vaultLabel || `Vault #${nonce}`}
+            </h2>
+            <button
+              type="button"
+              onClick={() => { setEditValue(vaultLabel || ""); setEditing(true); }}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: "4px", opacity: 0.5 }}
+              title="Rename vault"
+            >
+              <Pencil size={16} color={COLORS.textMuted} />
+            </button>
+            {vaultLabel && (
+              <span style={{ fontSize: "0.85rem", color: COLORS.textDim }}>
+                (#{nonce})
+              </span>
+            )}
+          </div>
+        )}
+      </div>
 
       <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
         <VaultOverview vault={vault.account} vaultPda={vault.publicKey} balance={vault.balance} />

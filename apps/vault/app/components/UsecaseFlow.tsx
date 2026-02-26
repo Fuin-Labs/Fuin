@@ -56,16 +56,16 @@ const AnimatedOpenClaw = () => (
 
             {/* Glowing Pupils - Scanning */}
             <motion.circle
-                cx="46" cy="34" r="2.5" fill="#00e5cc"
+                cx="46" cy="34" r="2.5" fill="#34d399"
                 animate={{ cx: [44, 48, 44], cy: [34, 34, 34] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                style={{ filter: "drop-shadow(0 0 4px #00e5cc)" }}
+                style={{ filter: "drop-shadow(0 0 4px #34d399)" }}
             />
             <motion.circle
-                cx="76" cy="34" r="2.5" fill="#00e5cc"
+                cx="76" cy="34" r="2.5" fill="#34d399"
                 animate={{ cx: [74, 78, 74], cy: [34, 34, 34] }}
                 transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                style={{ filter: "drop-shadow(0 0 4px #00e5cc)" }}
+                style={{ filter: "drop-shadow(0 0 4px #34d399)" }}
             />
         </svg>
     </motion.div>
@@ -79,16 +79,7 @@ const FlowStepCard = ({ step, title, desc, icon, delay, accentColor }: any) => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay }}
-            style={{
-                display: "flex",
-                gap: "20px",
-                padding: "24px",
-                backgroundColor: "rgba(255, 255, 255, 0.02)",
-                border: "1px solid rgba(255, 255, 255, 0.05)",
-                borderRadius: "20px",
-                position: "relative",
-                overflow: "hidden"
-            }}
+            className="flex gap-5 p-6 bg-white/[0.02] border border-white/[0.05] rounded-[20px] relative overflow-hidden group hover:bg-white/[0.04] transition-colors"
         >
             {/* Ambient accent glow behind the card */}
             <div style={{
@@ -111,14 +102,14 @@ const FlowStepCard = ({ step, title, desc, icon, delay, accentColor }: any) => {
                 {icon}
             </div>
 
-            <div>
-                <div style={{ color: accentColor, fontSize: "0.8rem", fontWeight: 700, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: "4px" }}>
+            <div className="font-geist">
+                <div style={{ color: accentColor }} className="text-xs font-bold tracking-[0.1em] uppercase mb-1">
                     Phase 0{step}
                 </div>
-                <h4 style={{ color: "white", fontSize: "1.25rem", fontWeight: 700, margin: "0 0 8px 0" }}>
+                <h4 className="text-white text-xl font-bold m-0 mb-2 font-geist">
                     {title}
                 </h4>
-                <p style={{ color: "#9ca3af", fontSize: "0.95rem", lineHeight: 1.5, margin: 0 }}>
+                <p className="text-white/60 text-[0.95rem] leading-relaxed m-0 font-geist">
                     {desc}
                 </p>
             </div>
@@ -131,76 +122,27 @@ export const UsecaseFlow = () => {
     const [activeTab, setActiveTab] = useState<"agent" | "junior">("agent");
 
     return (
-        <section id="usecase-flow" style={{
-            position: "relative",
-            width: "100%",
-            backgroundColor: "#050505", // Matches page dark theme
-            padding: "120px 40px",
-            display: "flex",
-            flexDirection: "column",
-            alignItems: "center",
-            fontFamily: "sans-serif",
-            overflow: "hidden"
-        }}>
+        <section id="usecase-flow" className="relative z-10 w-full py-24 md:py-32 px-6 flex flex-col items-center font-geist overflow-hidden border-t border-white/5 bg-white/[0.01]">
 
             {/* Header / Toggle Section */}
-            <div style={{ maxWidth: "1000px", width: "100%", zIndex: 10, textAlign: "center", marginBottom: "60px" }}>
-                <h2 style={{
-                    fontSize: "3.5rem",
-                    fontWeight: 900,
-                    color: "white",
-                    letterSpacing: "-0.025em",
-                    marginBottom: "2rem"
-                }}>
-                    Web3 For <span style={{ color: activeTab === "agent" ? "#ff4d4d" : "#00e5cc", transition: "color 0.4s ease" }}>Everyone</span>
+            <div className="max-w-4xl w-full z-10 text-center mb-16">
+                <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium text-white/70 font-geist uppercase tracking-widest mb-6">Usecases</span>
+                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white font-geist mb-8">
+                    Web3 For <span className={activeTab === "agent" ? "text-rose-400" : "text-emerald-400"} style={{ transition: "color 0.4s ease" }}>Everyone</span>
                 </h2>
 
                 {/* Glassmorphism Toggle Switch */}
-                <div style={{
-                    display: "inline-flex",
-                    backgroundColor: "rgba(255, 255, 255, 0.05)",
-                    backdropFilter: "blur(12px)",
-                    border: "1px solid rgba(255, 255, 255, 0.1)",
-                    borderRadius: "100px",
-                    padding: "6px",
-                    position: "relative",
-                }}>
+                <div className="inline-flex bg-white/5 backdrop-blur-md border border-white/10 rounded-full p-1.5 relative">
                     <button
                         onClick={() => setActiveTab("agent")}
-                        style={{
-                            padding: "12px 32px",
-                            borderRadius: "100px",
-                            border: "none",
-                            background: activeTab === "agent" ? "rgba(255, 77, 77, 0.15)" : "transparent",
-                            color: activeTab === "agent" ? "#ff4d4d" : "#9ca3af",
-                            fontSize: "1rem",
-                            fontWeight: 600,
-                            cursor: "pointer",
-                            transition: "all 0.3s ease",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px"
-                        }}
+                        className={`px-8 py-3 rounded-full border-none text-base font-semibold cursor-pointer transition-all duration-300 flex items-center gap-2 ${activeTab === "agent" ? 'bg-rose-500/15 text-rose-400' : 'bg-transparent text-white/60'}`}
                     >
                         <Bot size={18} />
                         Autonomous Agents
                     </button>
                     <button
                         onClick={() => setActiveTab("junior")}
-                        style={{
-                            padding: "12px 32px",
-                            borderRadius: "100px",
-                            border: "none",
-                            background: activeTab === "junior" ? "rgba(0, 229, 204, 0.15)" : "transparent",
-                            color: activeTab === "junior" ? "#00e5cc" : "#9ca3af",
-                            fontSize: "1rem",
-                            fontWeight: 600,
-                            cursor: "pointer",
-                            transition: "all 0.3s ease",
-                            display: "flex",
-                            alignItems: "center",
-                            gap: "8px"
-                        }}
+                        className={`px-8 py-3 rounded-full border-none text-base font-semibold cursor-pointer transition-all duration-300 flex items-center gap-2 ${activeTab === "junior" ? 'bg-emerald-400/15 text-emerald-400' : 'bg-transparent text-white/60'}`}
                     >
                         <Shield size={18} />
                         Junior Vaults
@@ -244,7 +186,7 @@ export const UsecaseFlow = () => {
                                     transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
                                 />
                                 <motion.div
-                                    style={{ position: "absolute", width: "250px", height: "250px", border: "1px solid rgba(0,229,204,0.2)", borderRadius: "50%" }}
+                                    style={{ position: "absolute", width: "250px", height: "250px", border: "1px solid rgba(52,211,153,0.2)", borderRadius: "50%" }}
                                     animate={{ rotate: -360 }}
                                     transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
                                 />
@@ -302,19 +244,19 @@ export const UsecaseFlow = () => {
                                 display: "flex",
                                 alignItems: "center",
                                 justifyContent: "center",
-                                background: "radial-gradient(circle at center, rgba(0, 229, 204, 0.1) 0%, transparent 60%)"
+                                background: "radial-gradient(circle at center, rgba(52, 211, 153, 0.1) 0%, transparent 60%)"
                             }}>
                                 {/* Holographic Shield Animation */}
                                 <motion.div
                                     animate={{ y: [-15, 15, -15], scale: [1, 1.05, 1] }}
                                     transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
                                 >
-                                    <Shield size={180} color="#00e5cc" strokeWidth={1} style={{ filter: "drop-shadow(0 0 30px rgba(0,229,204,0.5))" }} />
+                                    <Shield size={180} color="#34d399" strokeWidth={1} style={{ filter: "drop-shadow(0 0 30px rgba(52,211,153,0.5))" }} />
                                     <Sparkles size={40} color="#FACC15" style={{ position: "absolute", top: -10, right: -10 }} />
                                 </motion.div>
                                 {/* Defense rings revolving around the shield */}
                                 <motion.div
-                                    style={{ position: "absolute", width: "350px", height: "350px", border: "1px dashed rgba(0,229,204,0.3)", borderRadius: "50%" }}
+                                    style={{ position: "absolute", width: "350px", height: "350px", border: "1px dashed rgba(52,211,153,0.3)", borderRadius: "50%" }}
                                     animate={{ rotate: 360 }}
                                     transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
                                 />
@@ -331,25 +273,25 @@ export const UsecaseFlow = () => {
                                     step={1}
                                     title="Parental Vault Setup"
                                     desc="Parent deploys a smart PDA vault. They establish the PolicySet: a strict $20 daily limit, and a whitelist of approved dApps (e.g., specific games or DEXs)."
-                                    icon={<Shield color="#00e5cc" />}
+                                    icon={<Shield color="#34d399" />}
                                     delay={0.1}
-                                    accentColor="#00e5cc"
+                                    accentColor="#34d399"
                                 />
                                 <FlowStepCard
                                     step={2}
                                     title="Invisible Delegation"
                                     desc="The junior user is silently issued a time-bound Session Key. Their frontend interactions feel identical to Web2, without pop-ups or seed phrase risks."
-                                    icon={<Zap color="#00e5cc" />}
+                                    icon={<Zap color="#34d399" />}
                                     delay={0.3}
-                                    accentColor="#00e5cc"
+                                    accentColor="#34d399"
                                 />
                                 <FlowStepCard
                                     step={3}
                                     title="Sponsored Execution"
                                     desc="When trading or playing, a Relayer pushes the transaction. Gas is sponsored by the Parent's GasTank. The on-chain policy verifies limits mathematically."
-                                    icon={<Activity color="#00e5cc" />}
+                                    icon={<Activity color="#34d399" />}
                                     delay={0.5}
-                                    accentColor="#00e5cc"
+                                    accentColor="#34d399"
                                 />
                             </div>
                         </motion.div>

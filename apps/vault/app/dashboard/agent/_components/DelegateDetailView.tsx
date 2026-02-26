@@ -18,7 +18,11 @@ interface DelegateDetailViewProps {
 }
 
 function getDelegateStatus(d: DelegateAccount["account"]) {
-  if (!d.isActive) return { label: "Revoked", variant: "revoked" as const };
+  if (!d.isActive) {
+    return d.expiry.toNumber() === 0
+      ? { label: "Revoked", variant: "revoked" as const }
+      : { label: "Paused", variant: "paused" as const };
+  }
   const now = Date.now() / 1000;
   if (d.expiry.toNumber() > 0 && d.expiry.toNumber() < now) return { label: "Expired", variant: "expired" as const };
   return { label: "Active", variant: "active" as const };

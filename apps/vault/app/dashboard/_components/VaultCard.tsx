@@ -12,9 +12,10 @@ import type { VaultAccount } from "../_lib/accounts";
 interface VaultCardProps {
   vault: VaultAccount;
   delegateCount?: number;
+  label?: string | null;
 }
 
-export function VaultCard({ vault, delegateCount }: VaultCardProps) {
+export function VaultCard({ vault, delegateCount, label }: VaultCardProps) {
   const state = getVaultState(vault.account.state);
   const nonce = vault.account.nonce.toNumber();
   const dailyCap = vault.account.policies.spending.dailyCap.toNumber();
@@ -51,7 +52,7 @@ export function VaultCard({ vault, delegateCount }: VaultCardProps) {
             </div>
             <div>
               <h3 style={{ color: COLORS.text, fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>
-                Vault #{nonce}
+                {label || `Vault #${nonce}`}
               </h3>
               <span style={{ fontSize: "0.8rem", color: COLORS.textDim }}>
                 {formatSol(vault.balance)} SOL
