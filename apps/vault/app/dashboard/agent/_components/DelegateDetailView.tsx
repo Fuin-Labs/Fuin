@@ -155,7 +155,7 @@ export function DelegateDetailView({ delegate }: DelegateDetailViewProps) {
               onClick={() => handleCopy(d.vault.toBase58())}
             />
             {vaultBalance !== null && (
-              <span style={{ color: COLORS.yellow, fontSize: "0.85rem", fontWeight: 600, marginLeft: "auto" }}>
+              <span style={{ color: COLORS.emerald, fontSize: "0.85rem", fontWeight: 600, marginLeft: "auto" }}>
                 {formatSol(vaultBalance)} SOL
               </span>
             )}
@@ -216,9 +216,9 @@ export function DelegateDetailView({ delegate }: DelegateDetailViewProps) {
                   width: "100%",
                   padding: "12px",
                   borderRadius: "12px",
-                  border: `1px solid ${COLORS.yellowBorder}`,
-                  backgroundColor: COLORS.yellowSubtle,
-                  color: COLORS.yellow,
+                  border: `1px solid ${COLORS.emeraldBorder}`,
+                  backgroundColor: COLORS.emeraldSubtle,
+                  color: COLORS.emerald,
                   fontSize: "0.95rem",
                   fontWeight: 700,
                   cursor: "pointer",

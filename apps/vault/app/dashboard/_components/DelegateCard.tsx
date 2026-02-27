@@ -63,7 +63,7 @@ export function DelegateCard({ delegate, onPause, onResume, onRevoke, loading, r
           <User size={18} color={COLORS.textMuted} />
           <div style={{ display: "flex", flexDirection: "column" }}>
             {label && (
-              <span style={{ color: COLORS.yellow, fontWeight: 600, fontSize: "0.85rem" }}>
+              <span style={{ color: COLORS.emerald, fontWeight: 600, fontSize: "0.85rem" }}>
                 {label}
               </span>
             )}

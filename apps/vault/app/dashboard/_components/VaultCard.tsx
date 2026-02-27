@@ -41,14 +41,14 @@ export function VaultCard({ vault, delegateCount, label }: VaultCardProps) {
                 width: "42px",
                 height: "42px",
                 borderRadius: "12px",
-                backgroundColor: COLORS.yellowSubtle,
+                backgroundColor: COLORS.emeraldSubtle,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid ${COLORS.yellowBorder}`,
+                border: `1px solid ${COLORS.emeraldBorder}`,
               }}
             >
-              <Database size={20} color={COLORS.yellow} />
+              <Database size={20} color={COLORS.emerald} />
             </div>
             <div>
               <h3 style={{ color: COLORS.text, fontSize: "1.1rem", fontWeight: 700, margin: 0 }}>

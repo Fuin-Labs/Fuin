@@ -18,9 +18,9 @@ interface ButtonProps {
 
 const VARIANT_STYLES: Record<ButtonVariant, CSSProperties> = {
   primary: {
-    backgroundColor: COLORS.yellow,
+    backgroundColor: COLORS.emerald,
     color: COLORS.bg,
-    boxShadow: `0 0 20px ${COLORS.yellowGlow}`,
+    boxShadow: `0 0 20px ${COLORS.emeraldGlow}`,
   },
   secondary: {
     backgroundColor: "rgba(255, 255, 255, 0.05)",

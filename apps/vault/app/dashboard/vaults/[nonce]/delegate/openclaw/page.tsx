@@ -131,17 +131,12 @@ export default function OpenClawDelegatePage({ params }: { params: Promise<{ non
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ maxWidth: isMobile ? "100%" : "600px" }}
+        style={{ width: "100%", maxWidth: "600px", margin: "0 auto" }}
       >
         <GlassCard>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "8px 0" }}>
             <CheckCircle2 size={48} color={COLORS.green} />
-            <h2 style={{ color: COLORS.text, fontSize: "1.5rem", fontWeight: 800, margin: 0 }}>
-              Agent Delegate Created
-            </h2>
-            <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: 0, lineHeight: 1.6 }}>
-              Your AI agent is authorized with {perms.join(", ")} permissions.
-            </p>
+            
           </div>
 
           {/* Details */}
@@ -244,7 +239,7 @@ await client.transferSol(
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      style={{ maxWidth: isMobile ? "100%" : "560px" }}
+      style={{ width: "100%", maxWidth: "560px", margin: "0 auto" }}
     >
       <Link
         href={`/dashboard/vaults/${vaultNonce}/delegate/create`}
@@ -253,9 +248,7 @@ await client.transferSol(
         <ArrowLeft size={16} /> Back
       </Link>
 
-      <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.025em" }}>
-        OpenClaw / AI Agent
-      </h2>
+      
       <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: "0 0 32px", lineHeight: 1.6 }}>
         Authorize an AI agent with granular permissions and policy constraints.
       </p>

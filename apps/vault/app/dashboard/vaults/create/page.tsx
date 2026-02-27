@@ -58,15 +58,13 @@ export default function CreateVaultPage() {
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      style={{ maxWidth: isMobile ? "100%" : "560px" }}
+      style={{ width: "100%", maxWidth: "560px", margin: "0 auto" }}
     >
       <Link href="/dashboard/vaults" style={{ textDecoration: "none", display: "inline-flex", alignItems: "center", gap: "6px", color: COLORS.textMuted, fontSize: "0.9rem", marginBottom: "24px" }}>
         <ArrowLeft size={16} /> Back to Vaults
       </Link>
 
-      <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.025em" }}>
-        Create Vault
-      </h2>
+      
       <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: "0 0 32px", lineHeight: 1.6 }}>
         Initialize an on-chain authorization vault with spending policies.
       </p>

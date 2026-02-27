@@ -9,7 +9,7 @@ interface ProgressBarProps {
   color?: string;
 }
 
-export function ProgressBar({ value, max, label, color = COLORS.yellow }: ProgressBarProps) {
+export function ProgressBar({ value, max, label, color = COLORS.emerald }: ProgressBarProps) {
   const pct = max > 0 ? Math.min((value / max) * 100, 100) : 0;
   const isOverHalf = pct > 75;
 

@@ -40,10 +40,13 @@ export function Input({ value, onChange, placeholder, type = "text", label, hint
           transition: "border-color 0.2s",
           width: "100%",
           opacity: disabled ? 0.5 : 1,
+          backdropFilter: "blur(12px)",
+          WebkitBackdropFilter: "blur(12px)",
+          boxShadow: "inset 0 2px 4px rgba(0,0,0,0.5)",
           ...style,
         }}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = COLORS.yellowBorder;
+          e.currentTarget.style.borderColor = COLORS.emeraldBorder;
         }}
         onBlur={(e) => {
           e.currentTarget.style.borderColor = COLORS.border;

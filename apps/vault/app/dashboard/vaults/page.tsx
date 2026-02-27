@@ -12,6 +12,7 @@ import { Spinner } from "../_components/ui/Spinner";
 import { EmptyState } from "../_components/ui/EmptyState";
 import { COLORS } from "../_lib/constants";
 import { useIsMobile } from "../_hooks/useMediaQuery";
+import { PageHeader } from "../_components/PageHeader";
 import { fetchVaultLabelsByGuardian } from "../_actions/vaults";
 import { fetchDelegatesByVault } from "../_lib/accounts";
 
@@ -27,7 +28,7 @@ export default function VaultsPage() {
     if (!publicKey) return;
     fetchVaultLabelsByGuardian(publicKey.toBase58())
       .then(setVaultLabels)
-      .catch(() => {});
+      .catch(() => { });
   }, [publicKey?.toBase58(), vaults.length]);
 
   // Fetch delegate counts for each vault
@@ -80,26 +81,19 @@ export default function VaultsPage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ maxWidth: isMobile ? "100%" : "900px" }}
+      style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}
     >
-      {/* Header */}
-      <div style={{ display: "flex", flexDirection: isMobile ? "column" : "row", justifyContent: "space-between", alignItems: isMobile ? "stretch" : "center", gap: isMobile ? "16px" : "0", marginBottom: "24px" }}>
-        <div>
-          <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: 0, letterSpacing: "-0.025em" }}>
-            Your Vaults
-          </h2>
-          <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: "6px 0 0" }}>
-            Manage authorization vaults for your agents and juniors.
-          </p>
-        </div>
-        <Link href="/dashboard/vaults/create" style={{ textDecoration: "none" }}>
-          <Button>
-            <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-              <Plus size={18} /> Create Vault
-            </span>
-          </Button>
-        </Link>
-      </div>
+      <PageHeader
+        action={
+          <Link href="/dashboard/vaults/create" style={{ textDecoration: "none" }}>
+            <Button size="sm">
+              <span style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+                <Plus size={16} /> Create Vault
+              </span>
+            </Button>
+          </Link>
+        }
+      />
 
       {/* Search */}
       {vaults.length > 0 && (

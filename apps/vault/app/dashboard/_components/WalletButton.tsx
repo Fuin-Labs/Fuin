@@ -22,7 +22,7 @@ export function WalletButton() {
         whileTap={{ scale: 0.98 }}
         onClick={() => setVisible(true)}
         style={{
-          backgroundColor: COLORS.yellow,
+          backgroundColor: COLORS.emerald,
           color: COLORS.bg,
           border: "none",
           padding: isMobile ? "8px 14px" : "10px 20px",
@@ -34,7 +34,7 @@ export function WalletButton() {
           alignItems: "center",
           gap: "8px",
           fontFamily: "inherit",
-          boxShadow: `0 0 15px ${COLORS.yellowGlow}`,
+          boxShadow: `0 0 15px ${COLORS.emeraldGlow}`,
         }}
       >
         <Wallet size={16} />
@@ -48,11 +48,11 @@ export function WalletButton() {
       {balance !== null && (
         <div
           style={{
-            backgroundColor: COLORS.yellowSubtle,
-            border: `1px solid ${COLORS.yellowBorder}`,
+            backgroundColor: COLORS.emeraldSubtle,
+            border: `1px solid ${COLORS.emeraldBorder}`,
             borderRadius: "10px",
             padding: isMobile ? "8px 10px" : "10px 14px",
-            color: COLORS.yellow,
+            color: COLORS.emerald,
             fontSize: "0.85rem",
             fontWeight: 600,
             whiteSpace: "nowrap",
@@ -62,7 +62,12 @@ export function WalletButton() {
         </div>
       )}
       {!isMobile && (
-        <div
+        <motion.div
+          whileHover={{ scale: 1.02, backgroundColor: COLORS.bgCardHover }}
+          whileTap={{ scale: 0.98 }}
+          onClick={() => {
+            navigator.clipboard.writeText(publicKey.toBase58());
+          }}
           style={{
             backgroundColor: COLORS.bgInput,
             border: `1px solid ${COLORS.border}`,
@@ -71,11 +76,12 @@ export function WalletButton() {
             color: COLORS.text,
             fontSize: "0.85rem",
             fontWeight: 500,
-            fontFamily: "var(--font-geist-mono), monospace",
+            cursor: "pointer",
           }}
+          title="Copy Address"
         >
           {formatAddress(publicKey)}
-        </div>
+        </motion.div>
       )}
       <motion.button
         whileHover={{ scale: 1.05 }}

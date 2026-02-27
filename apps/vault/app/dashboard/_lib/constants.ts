@@ -1,19 +1,19 @@
 import type { CSSProperties } from "react";
 
 export const COLORS = {
-  bg: "#050505",
-  bgCard: "rgba(255, 255, 255, 0.02)",
-  bgCardHover: "rgba(255, 255, 255, 0.04)",
+  bg: "#000000",
+  bgCard: "rgba(255, 255, 255, 0.04)",
+  bgCardHover: "rgba(255, 255, 255, 0.08)",
   bgInput: "rgba(255, 255, 255, 0.05)",
-  yellow: "#FACC15",
-  yellowGlow: "rgba(250, 204, 21, 0.4)",
-  yellowSubtle: "rgba(250, 204, 21, 0.1)",
-  yellowBorder: "rgba(250, 204, 21, 0.2)",
+  emerald: "#34d399",
+  emeraldGlow: "rgba(52, 211, 153, 0.4)",
+  emeraldSubtle: "rgba(52, 211, 153, 0.1)",
+  emeraldBorder: "rgba(52, 211, 153, 0.2)",
   text: "#ffffff",
   textSecondary: "#d1d5db",
   textMuted: "#9ca3af",
   textDim: "#6b7280",
-  border: "rgba(255, 255, 255, 0.08)",
+  border: "rgba(255, 255, 255, 0.1)",
   borderLight: "rgba(255, 255, 255, 0.15)",
   green: "#22c55e",
   greenSubtle: "rgba(34, 197, 94, 0.1)",
@@ -34,11 +34,12 @@ export const GLASS_STYLE: CSSProperties = {
   borderRadius: "24px",
   backdropFilter: "blur(12px)",
   WebkitBackdropFilter: "blur(12px)",
+  boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 4px 6px -1px rgba(0, 0, 0, 0.5)",
 };
 
 export const GLASS_CARD_HOVER = {
   y: -4,
-  boxShadow: `0 20px 40px rgba(0,0,0,0.5), inset 0 0 0 1px ${COLORS.yellowBorder}`,
+  boxShadow: `0 20px 40px rgba(0,0,0,0.5), inset 0 0 0 1px ${COLORS.emeraldBorder}`,
   backgroundColor: COLORS.bgCardHover,
 };
 

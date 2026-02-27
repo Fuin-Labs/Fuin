@@ -65,16 +65,9 @@ export default function DashboardPage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ maxWidth: isMobile ? "100%" : "800px" }}
+      style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}
     >
-      <div style={{ marginBottom: "32px" }}>
-        <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: 0, letterSpacing: "-0.025em" }}>
-          Overview
-        </h2>
-        <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: "6px 0 0" }}>
-          Your vault dashboard at a glance.
-        </p>
-      </div>
+      
 
       {/* Stat Cards */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: "16px", marginBottom: "32px" }}>
@@ -85,14 +78,14 @@ export default function DashboardPage() {
                 width: "36px",
                 height: "36px",
                 borderRadius: "10px",
-                backgroundColor: COLORS.yellowSubtle,
+                backgroundColor: COLORS.emeraldSubtle,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid ${COLORS.yellowBorder}`,
+                border: `1px solid ${COLORS.emeraldBorder}`,
               }}
             >
-              <Database size={18} color={COLORS.yellow} />
+              <Database size={18} color={COLORS.emerald} />
             </div>
             <span style={{ fontSize: "0.8rem", color: COLORS.textDim }}>Total Vaults</span>
           </div>
@@ -176,14 +169,14 @@ export default function DashboardPage() {
                 width: "40px",
                 height: "40px",
                 borderRadius: "10px",
-                backgroundColor: COLORS.yellowSubtle,
+                backgroundColor: COLORS.emeraldSubtle,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid ${COLORS.yellowBorder}`,
+                border: `1px solid ${COLORS.emeraldBorder}`,
               }}
             >
-              <Plus size={18} color={COLORS.yellow} />
+              <Plus size={18} color={COLORS.emerald} />
             </div>
             <div>
               <span style={{ fontSize: "0.95rem", fontWeight: 600, color: COLORS.text, display: "block" }}>

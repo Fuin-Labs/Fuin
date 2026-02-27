@@ -133,9 +133,9 @@ export function DelegateList({ vaultPda, vaultNonce }: DelegateListProps) {
                 style={{
                   padding: isMobile ? "8px 14px" : "6px 12px",
                   borderRadius: "8px",
-                  border: `1px solid ${isActive ? COLORS.yellowBorder : COLORS.border}`,
-                  backgroundColor: isActive ? COLORS.yellowSubtle : "transparent",
-                  color: isActive ? COLORS.yellow : COLORS.textMuted,
+                  border: `1px solid ${isActive ? COLORS.emeraldBorder : COLORS.border}`,
+                  backgroundColor: isActive ? COLORS.emeraldSubtle : "transparent",
+                  color: isActive ? COLORS.emerald : COLORS.textMuted,
                   fontSize: "0.8rem",
                   fontWeight: 600,
                   cursor: "pointer",

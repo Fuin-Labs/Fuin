@@ -120,7 +120,8 @@ export const Footer = () => {
                     <div style={{ display: "flex", gap: "16px" }}>
                         {/* Twitter / X */}
                         <motion.a
-                            href="#"
+                            href="https://x.com/Jayant818x"
+                            target="_blank"
                             whileHover={{
                                 y: -5,
                                 backgroundColor: "rgba(255,255,255,0.1)",
@@ -141,30 +142,7 @@ export const Footer = () => {
                             <Twitter size={20} />
                         </motion.a>
 
-                        {/* Discord (Blurple Hover) */}
-                        <motion.a
-                            href="#"
-                            whileHover={{
-                                y: -5,
-                                backgroundColor: "rgba(88, 101, 242, 0.1)",
-                                boxShadow: "0 10px 20px rgba(0,0,0,0.5), inset 0 0 0 1px rgba(88, 101, 242, 0.5), 0 0 20px rgba(88, 101, 242, 0.3)"
-                            }}
-                            transition={{ type: "spring", stiffness: 400, damping: 10 }}
-                            style={{
-                                width: "48px", height: "48px",
-                                borderRadius: "12px",
-                                backgroundColor: "rgba(255,255,255,0.03)",
-                                border: "1px solid rgba(255,255,255,0.1)",
-                                display: "flex", alignItems: "center", justifyContent: "center",
-                                color: "white",
-                                backdropFilter: "blur(10px)",
-                                WebkitBackdropFilter: "blur(10px)"
-                            }}
-                        >
-                            <Discord size={20} />
-                        </motion.a>
 
-                        {/* GitHub (White/Silver Hover) */}
                         <motion.a
                             href="#"
                             whileHover={{

@@ -70,7 +70,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
         title="Vault Not Found"
         description={`No vault found with nonce ${nonce} for your wallet.`}
         action={
-          <Link href="/dashboard/vaults" style={{ textDecoration: "none", color: COLORS.yellow }}>
+          <Link href="/dashboard/vaults" style={{ textDecoration: "none", color: COLORS.emerald }}>
             Back to Vaults
           </Link>
         }
@@ -85,7 +85,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ maxWidth: isMobile ? "100%" : "800px" }}
+      style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}
     >
       <Link
         href="/dashboard/vaults"
@@ -113,7 +113,7 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
               placeholder="Vault name..."
               style={{
                 background: "transparent",
-                border: `1px solid ${COLORS.yellowBorder}`,
+                border: `1px solid ${COLORS.emeraldBorder}`,
                 borderRadius: "8px",
                 padding: "6px 12px",
                 color: COLORS.text,

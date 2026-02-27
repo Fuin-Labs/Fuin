@@ -94,7 +94,7 @@ export default function AuditLogPage({ params }: { params: Promise<{ nonce: stri
         title="Vault Not Found"
         description={`No vault found with nonce ${nonce} for your wallet.`}
         action={
-          <Link href="/dashboard/vaults" style={{ textDecoration: "none", color: COLORS.yellow }}>
+          <Link href="/dashboard/vaults" style={{ textDecoration: "none", color: COLORS.emerald }}>
             Back to Vaults
           </Link>
         }
@@ -106,7 +106,7 @@ export default function AuditLogPage({ params }: { params: Promise<{ nonce: stri
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ maxWidth: "800px" }}
+      style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}
     >
       <Link
         href={`/dashboard/vaults/${nonce}`}
@@ -123,14 +123,7 @@ export default function AuditLogPage({ params }: { params: Promise<{ nonce: stri
         <ArrowLeft size={16} /> Back to Vault
       </Link>
 
-      <div style={{ marginBottom: "32px" }}>
-        <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: 0, letterSpacing: "-0.025em" }}>
-          Audit Log
-        </h2>
-        <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: "6px 0 0" }}>
-          Activity history for Vault #{nonce}
-        </p>
-      </div>
+      
 
       {logs.length === 0 ? (
         <EmptyState

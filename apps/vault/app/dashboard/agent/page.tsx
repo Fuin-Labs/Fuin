@@ -37,16 +37,9 @@ export default function AgentPage() {
     <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      style={{ maxWidth: isMobile ? "100%" : "700px" }}
+      style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}
     >
-      <div style={{ marginBottom: "32px" }}>
-        <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: 0, letterSpacing: "-0.025em" }}>
-          Agent View
-        </h2>
-        <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: "6px 0 0" }}>
-          Delegate keys issued to your wallet. View permissions, spending limits, and execute transfers.
-        </p>
-      </div>
+      
 
       {delegates.length === 0 ? (
         <EmptyState

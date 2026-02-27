@@ -42,7 +42,7 @@ export function VaultOverview({ vault, vaultPda, balance }: VaultOverviewProps) 
       {/* Balance */}
       <div style={{ marginBottom: "24px" }}>
         <span style={{ fontSize: "0.8rem", color: COLORS.textMuted, display: "block", marginBottom: "4px" }}>Balance</span>
-        <span style={{ fontSize: "2rem", fontWeight: 800, color: COLORS.yellow }}>
+        <span style={{ fontSize: "2rem", fontWeight: 800, color: COLORS.emerald }}>
           {formatSol(balance)} <span style={{ fontSize: "1rem", color: COLORS.textMuted }}>SOL</span>
         </span>
       </div>

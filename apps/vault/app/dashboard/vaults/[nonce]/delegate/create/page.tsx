@@ -17,7 +17,7 @@ export default function CreateDelegatePage({ params }: { params: Promise<{ nonce
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      style={{ maxWidth: isMobile ? "100%" : "600px" }}
+      style={{ width: "100%", maxWidth: "600px", margin: "0 auto" }}
     >
       <Link
         href={`/dashboard/vaults/${vaultNonce}`}
@@ -26,30 +26,28 @@ export default function CreateDelegatePage({ params }: { params: Promise<{ nonce
         <ArrowLeft size={16} /> Back to Vault #{vaultNonce}
       </Link>
 
-      <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.025em" }}>
-        Issue Delegate
-      </h2>
+      
       <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: "0 0 32px", lineHeight: 1.6 }}>
         Choose who you want to authorize with scoped permissions and spending limits.
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "16px" }}>
         <Link href={`/dashboard/vaults/${vaultNonce}/delegate/kid`} style={{ textDecoration: "none" }}>
-          <GlassCard hover accent={COLORS.yellowBorder} style={{ height: "100%" }}>
+          <GlassCard hover accent={COLORS.emeraldBorder} style={{ height: "100%" }}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "16px 0" }}>
               <div
                 style={{
                   width: "56px",
                   height: "56px",
                   borderRadius: "16px",
-                  backgroundColor: COLORS.yellowSubtle,
-                  border: `1px solid ${COLORS.yellowBorder}`,
+                  backgroundColor: COLORS.emeraldSubtle,
+                  border: `1px solid ${COLORS.emeraldBorder}`,
                   display: "flex",
                   alignItems: "center",
                   justifyContent: "center",
                 }}
               >
-                <UserRound size={28} color={COLORS.yellow} />
+                <UserRound size={28} color={COLORS.emerald} />
               </div>
               <div>
                 <h3 style={{ color: COLORS.text, fontSize: "1.15rem", fontWeight: 700, margin: "0 0 6px" }}>

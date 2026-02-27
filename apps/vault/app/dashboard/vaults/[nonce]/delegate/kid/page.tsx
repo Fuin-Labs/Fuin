@@ -123,17 +123,12 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
-        style={{ maxWidth: isMobile ? "100%" : "560px" }}
+        style={{ width: "100%", maxWidth: "560px", margin: "0 auto" }}
       >
         <GlassCard>
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "8px 0" }}>
             <CheckCircle2 size={48} color={COLORS.green} />
-            <h2 style={{ color: COLORS.text, fontSize: "1.5rem", fontWeight: 800, margin: 0 }}>
-              Delegate Created
-            </h2>
-            <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: 0, lineHeight: 1.6 }}>
-              <strong style={{ color: COLORS.yellow }}>{name}</strong> can now spend up to {created.dailyAllowance} SOL per epoch.
-            </p>
+            
           </div>
 
           {/* Details */}
@@ -167,7 +162,7 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
               marginTop: "16px",
               background: "none",
               border: "none",
-              color: COLORS.yellow,
+              color: COLORS.emerald,
               fontSize: "0.85rem",
               fontWeight: 600,
               cursor: "pointer",
@@ -199,9 +194,9 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
                 width: "100%",
                 padding: "14px",
                 borderRadius: "12px",
-                border: `1px solid ${COLORS.yellowBorder}`,
-                backgroundColor: COLORS.yellowSubtle,
-                color: COLORS.yellow,
+                border: `1px solid ${COLORS.emeraldBorder}`,
+                backgroundColor: COLORS.emeraldSubtle,
+                color: COLORS.emerald,
                 fontSize: "1rem",
                 fontWeight: 700,
                 cursor: "pointer",
@@ -220,7 +215,7 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      style={{ maxWidth: isMobile ? "100%" : "560px" }}
+      style={{ width: "100%", maxWidth: "560px", margin: "0 auto" }}
     >
       <Link
         href={`/dashboard/vaults/${vaultNonce}/delegate/create`}
@@ -229,9 +224,7 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
         <ArrowLeft size={16} /> Back
       </Link>
 
-      <h2 style={{ color: COLORS.text, fontSize: "1.8rem", fontWeight: 800, margin: "0 0 8px", letterSpacing: "-0.025em" }}>
-        Kid Allowance
-      </h2>
+      
       <p style={{ color: COLORS.textMuted, fontSize: "0.95rem", margin: "0 0 32px", lineHeight: 1.6 }}>
         Set up a simple spending allowance with transfer-only access.
       </p>
@@ -275,8 +268,8 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
           <div
             style={{
               ...GLASS_STYLE,
-              backgroundColor: COLORS.yellowSubtle,
-              borderColor: COLORS.yellowBorder,
+              backgroundColor: COLORS.emeraldSubtle,
+              borderColor: COLORS.emeraldBorder,
               padding: "14px 16px",
               borderRadius: "12px",
               fontSize: "0.85rem",

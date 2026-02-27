@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { LayoutDashboard, Database, Bot, ArrowLeft, X } from "lucide-react";
+import { LayoutDashboard, Database, Bot, ArrowLeft, X, ChevronsLeft, ChevronsRight } from "lucide-react";
 import { COLORS } from "../_lib/constants";
 import { useIsMobile } from "../_hooks/useMediaQuery";
 
@@ -17,52 +17,74 @@ const NAV_ITEMS = [
 interface DashboardSidebarProps {
   isOpen?: boolean;
   onClose?: () => void;
+  isCollapsed?: boolean;
+  onToggleCollapse?: () => void;
 }
 
-function SidebarContent({ onClose }: { onClose?: () => void }) {
+function SidebarContent({ onClose, isCollapsed, onToggleCollapse }: { onClose?: () => void; isCollapsed?: boolean; onToggleCollapse?: () => void }) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
 
   return (
     <>
-      {/* Logo */}
-      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "32px", padding: "0 8px" }}>
-        <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "12px" }}>
-          <div
-            style={{
-              width: "36px",
-              height: "36px",
-              borderRadius: "10px",
-              backgroundColor: COLORS.yellow,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              boxShadow: `0 0 20px ${COLORS.yellowGlow}`,
-            }}
-          >
-            <span style={{ color: COLORS.bg, fontWeight: 900, fontSize: "18px" }}>F</span>
-          </div>
-          <span style={{ color: COLORS.text, fontSize: "1.4rem", fontWeight: 800, letterSpacing: "-0.05em" }}>
-            Fuin
-          </span>
-        </Link>
-        {isMobile && onClose && (
-          <button
-            type="button"
-            onClick={onClose}
-            style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}
-          >
-            <X size={20} color={COLORS.textMuted} />
-          </button>
-        )}
+      {/* Logo & Toggle */}
+      <div style={{ display: "flex", alignItems: "center", justifyContent: isCollapsed ? "center" : "space-between", marginBottom: "32px", padding: isCollapsed ? "0" : "0 8px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px", pointerEvents: isCollapsed ? "none" : "auto" }}>
+            <iconify-icon icon="solar:shield-keyhole-linear" class="text-2xl text-emerald-400" style={{ color: COLORS.emerald, fontSize: "1.5rem" }}></iconify-icon>
+            {!isCollapsed && (
+              <span style={{ color: COLORS.text, fontSize: "1.25rem", fontWeight: 600, letterSpacing: "-0.025em" }}>
+                Fuin
+              </span>
+            )}
+          </Link>
+        </div>
+
+        <div style={{ display: "flex", gap: "8px" }}>
+          {isMobile && onClose && !isCollapsed && (
+            <button
+              type="button"
+              onClick={onClose}
+              style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}
+            >
+              <X size={20} color={COLORS.textMuted} />
+            </button>
+          )}
+
+          {/* Desktop Collapse Toggle */}
+          {!isMobile && onToggleCollapse && (
+            <button
+              onClick={onToggleCollapse}
+              style={{
+                background: "none",
+                border: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: COLORS.textMuted,
+                padding: "4px",
+                opacity: 0.7,
+                transition: "opacity 0.2s"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = "0.7"}
+              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+            >
+              {isCollapsed ? <ChevronsRight size={20} /> : <ChevronsLeft size={20} />}
+            </button>
+          )}
+        </div>
       </div>
 
       {/* Section Label */}
-      <div style={{ padding: "0 12px", marginBottom: "4px" }}>
-        <span style={{ fontSize: "0.7rem", fontWeight: 600, color: COLORS.textDim, textTransform: "uppercase", letterSpacing: "0.1em" }}>
-          Dashboard
-        </span>
-      </div>
+      {!isCollapsed && (
+        <div style={{ padding: "0 12px", marginBottom: "4px" }}>
+          <span style={{ fontSize: "0.7rem", fontWeight: 600, color: COLORS.textDim, textTransform: "uppercase", letterSpacing: "0.1em" }}>
+            Dashboard
+          </span>
+        </div>
+      )}
 
       {/* Nav Items */}
       {NAV_ITEMS.map((item) => {
@@ -75,25 +97,28 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
               style={{
                 display: "flex",
                 alignItems: "center",
+                justifyContent: isCollapsed ? "center" : "flex-start",
                 gap: "12px",
-                padding: "12px 16px",
+                padding: isCollapsed ? "12px 0" : "12px 16px",
                 borderRadius: "12px",
-                backgroundColor: isActive ? "rgba(250, 204, 21, 0.08)" : "transparent",
-                border: isActive ? `1px solid ${COLORS.yellowBorder}` : "1px solid transparent",
+                backgroundColor: isActive ? "rgba(52, 211, 153, 0.08)" : "transparent",
+                border: isActive ? `1px solid ${COLORS.emeraldBorder}` : "1px solid transparent",
                 cursor: "pointer",
                 transition: "background-color 0.15s",
               }}
             >
-              <Icon size={18} color={isActive ? COLORS.yellow : COLORS.textMuted} />
-              <span
-                style={{
-                  fontSize: "0.9rem",
-                  fontWeight: isActive ? 600 : 500,
-                  color: isActive ? COLORS.yellow : COLORS.textSecondary,
-                }}
-              >
-                {item.label}
-              </span>
+              <Icon size={18} color={isActive ? COLORS.emerald : COLORS.textMuted} />
+              {!isCollapsed && (
+                <span
+                  style={{
+                    fontSize: "0.9rem",
+                    fontWeight: isActive ? 600 : 500,
+                    color: isActive ? COLORS.emerald : COLORS.textSecondary,
+                  }}
+                >
+                  {item.label}
+                </span>
+              )}
             </motion.div>
           </Link>
         );
@@ -109,21 +134,22 @@ function SidebarContent({ onClose }: { onClose?: () => void }) {
           style={{
             display: "flex",
             alignItems: "center",
+            justifyContent: isCollapsed ? "center" : "flex-start",
             gap: "10px",
-            padding: "12px 16px",
+            padding: isCollapsed ? "12px 0" : "12px 16px",
             borderRadius: "12px",
             cursor: "pointer",
           }}
         >
           <ArrowLeft size={16} color={COLORS.textDim} />
-          <span style={{ fontSize: "0.85rem", color: COLORS.textDim }}>Back to Home</span>
+          {!isCollapsed && <span style={{ fontSize: "0.85rem", color: COLORS.textDim }}>Back to Home</span>}
         </motion.div>
       </Link>
     </>
   );
 }
 
-export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
+export function DashboardSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: DashboardSidebarProps) {
   const pathname = usePathname();
   const isMobile = useIsMobile();
 
@@ -137,7 +163,8 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
     return (
       <aside
         style={{
-          width: "260px",
+          width: isCollapsed ? "80px" : "260px",
+          transition: "width 0.2s ease",
           minHeight: "100vh",
           backgroundColor: "rgba(5, 5, 5, 0.8)",
           borderRight: `1px solid ${COLORS.border}`,
@@ -153,7 +180,7 @@ export function DashboardSidebar({ isOpen, onClose }: DashboardSidebarProps) {
           WebkitBackdropFilter: "blur(12px)",
         }}
       >
-        <SidebarContent />
+        <SidebarContent isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} />
       </aside>
     );
   }

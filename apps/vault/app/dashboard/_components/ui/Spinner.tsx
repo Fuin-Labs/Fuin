@@ -16,7 +16,7 @@ export function Spinner({ size = 24 }: SpinnerProps) {
         width: size,
         height: size,
         border: `2px solid ${COLORS.border}`,
-        borderTopColor: COLORS.yellow,
+        borderTopColor: COLORS.emerald,
         borderRadius: "50%",
       }}
     />

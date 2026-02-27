@@ -45,7 +45,7 @@ export default function Home() {
             <div className="hidden md:flex md:gap-x-2 bg-white/5 border-white/10 border rounded-full pt-1 pr-1 pb-1 pl-1 backdrop-blur-lg gap-x-2 gap-y-1 items-center">
               <Link href="#primitives" className="hover:text-white text-sm font-medium text-white/80 font-geist pt-2 pr-3 pb-2 pl-3 transition-colors">Primitives</Link>
               <Link href="#actors" className="px-3 py-2 text-sm font-medium text-white/80 hover:text-white font-geist transition-colors">Actors</Link>
-              <Link href="#lifecycle" className="px-3 py-2 text-sm font-medium text-white/80 hover:text-white font-geist transition-colors">Lifecycle</Link>
+              <Link href="/dashboard/vaults" className="px-3 py-2 text-sm font-medium text-emerald-400 hover:text-emerald-300 font-geist transition-colors">Launch App</Link>
               <div className="relative inline-block group text-xs rounded-full">
                 <button className="animate-[slideInBlur_0.8s_ease-out_1.2s_forwards] relative z-10 overflow-hidden transition-[transform] duration-150 ease-out active:scale-[0.98] text-white bg-neutral-900/60 border-white/20 border pt-3 pr-6 pb-3 pl-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] text-xs rounded-full cursor-pointer">
                   <span className="relative z-10 inline-flex items-center gap-2 font-medium text-xs rounded-full font-geist">Read Docs</span>
@@ -68,7 +68,7 @@ export default function Home() {
               <div className="flex flex-col gap-4">
                 <Link href="#primitives" className="text-white/80 font-geist" onClick={() => setMobileMenuOpen(false)}>Primitives</Link>
                 <Link href="#actors" className="text-white/80 font-geist" onClick={() => setMobileMenuOpen(false)}>Actors</Link>
-                <Link href="#lifecycle" className="text-white/80 font-geist" onClick={() => setMobileMenuOpen(false)}>Lifecycle</Link>
+                <Link href="/dashboard/vaults" className="text-emerald-400 font-geist font-medium" onClick={() => setMobileMenuOpen(false)}>Launch App</Link>
               </div>
             </div>
           )}
@@ -90,10 +90,10 @@ export default function Home() {
             </p>
 
             <div className="flex flex-col sm:flex-row [animation:fadeSlideIn_1s_ease-out_0.4s_both] mt-10 gap-x-4 gap-y-3 items-center justify-center">
-              <button className="group relative inline-flex min-w-[160px] cursor-pointer transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] hover:-translate-y-[3px] hover:text-white shadow-[0_2.8px_2.2px_rgba(0,0,0,0.3),_0_6.7px_5.3px_rgba(0,0,0,0.35),_0_12.5px_10px_rgba(0,0,0,0.4)] overflow-hidden font-medium text-black tracking-tight bg-emerald-400 rounded-full pt-[14px] pr-[24px] pb-[14px] pl-[24px] items-center justify-center">
-                <span className="relative z-10 font-medium rounded-full font-geist">Explore Architecture</span>
+              <Link href="/dashboard/vaults" className="group relative inline-flex min-w-[160px] cursor-pointer transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] hover:-translate-y-[3px] hover:text-white shadow-[0_2.8px_2.2px_rgba(0,0,0,0.3),_0_6.7px_5.3px_rgba(0,0,0,0.35),_0_12.5px_10px_rgba(0,0,0,0.4)] overflow-hidden font-medium text-black tracking-tight bg-emerald-400 rounded-full pt-[14px] pr-[24px] pb-[14px] pl-[24px] items-center justify-center no-underline">
+                <span className="relative z-10 font-medium rounded-full font-geist">Launch App</span>
                 <span aria-hidden="true" className="absolute bottom-0 left-1/2 h-[1px] w-[70%] -translate-x-1/2 transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] group-hover:opacity-80 bg-gradient-to-r from-transparent via-white to-transparent rounded-full blur-[2px]"></span>
-              </button>
+              </Link>
               <button className="inline-flex items-center gap-2 hover:bg-white/10 text-base font-medium text-white/90 bg-white/5 border-white/10 border rounded-full pt-[14px] pr-[24px] pb-[14px] pl-[24px] backdrop-blur font-geist transition-colors">
                 <iconify-icon icon="solar:code-circle-linear" class="text-lg"></iconify-icon>
                 View GitHub
@@ -109,7 +109,6 @@ export default function Home() {
         <div className="flex flex-wrap gap-x-12 gap-y-8 items-center justify-center [animation:fadeSlideIn_1s_ease-out_0.6s_both] opacity-50 grayscale">
           <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:cpu-bold-duotone"></iconify-icon> Solana</span>
           <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:chart-bold-duotone"></iconify-icon> Pyth Network</span>
-          <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:database-bold-duotone"></iconify-icon> Switchboard</span>
           <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:bolt-circle-bold-duotone"></iconify-icon> Helius</span>
         </div>
       </section>
@@ -123,7 +122,7 @@ export default function Home() {
                 <span className="text-xs font-medium font-geist tracking-wide">THE PROBLEM</span>
               </div>
               <h2 className="text-3xl sm:text-4xl md:text-5xl [animation:fadeSlideIn_1s_ease-out_0.1s_both] animate-on-scroll font-geist tracking-tighter text-white">Delegation shouldn't mean losing custody.</h2>
-              <p className="mt-6 text-base text-white/60 leading-relaxed [animation:fadeSlideIn_1s_ease-out_0.2s_both] animate-on-scroll font-geist">Traditional wallets operate on an all-or-nothing model. Fuin introduces <strong>Fuinjutsu (Sealing Techniques)</strong>—a programmable layer that lets you issue highly restricted session keys to AI agents or human delegates. They can transact on your behalf, but only within the exact boundaries you define.</p>
+              <p className="mt-6 text-base text-white/60 leading-relaxed [animation:fadeSlideIn_1s_ease-out_0.2s_both] animate-on-scroll font-geist">Traditional wallets operate on an all-or-nothing model. Fuin introduces - a programmable layer that lets you issue highly restricted session keys to AI agents or human delegates. They can transact on your behalf, but only within the exact boundaries you define.</p>
               <div className="flex [animation:fadeSlideIn_1s_ease-out_0.3s_both] animate-on-scroll mt-8 gap-x-3 gap-y-3 items-center">
                 <ul className="space-y-3">
                   <li className="flex items-center gap-3 text-sm text-white/80 font-geist"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 text-lg"></iconify-icon> Prevent AI hallucination-led exploits</li>
@@ -350,9 +349,9 @@ export default function Home() {
             <div className="">
               <h4 className="text-xs font-semibold tracking-widest uppercase text-white/80 font-geist mb-4">Protocol</h4>
               <ul className="space-y-3 text-sm text-white/50">
+                <li><Link href="/dashboard/vaults" className="hover:text-white transition-colors font-geist text-emerald-400 hover:text-emerald-300">Launch App</Link></li>
                 <li><Link href="#primitives" className="hover:text-white transition-colors font-geist">Architecture</Link></li>
                 <li><Link href="#actors" className="hover:text-white transition-colors font-geist">Actors</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors font-geist">Audits</Link></li>
                 <li><Link href="#" className="hover:text-white transition-colors font-geist">GitHub</Link></li>
               </ul>
             </div>
@@ -360,8 +359,7 @@ export default function Home() {
             <div className="">
               <h4 className="text-xs font-semibold tracking-widest uppercase text-white/80 font-geist mb-4">Community</h4>
               <ul className="space-y-3 text-sm text-white/50">
-                <li><Link href="#" className="hover:text-white transition-colors font-geist flex items-center gap-2"><iconify-icon icon="solar:chat-round-linear"></iconify-icon> Discord</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors font-geist flex items-center gap-2"><iconify-icon icon="solar:bird-linear"></iconify-icon> Twitter / X</Link></li>
+                <li><Link href="https://x.com/Jayant818x" target="_blank" className="hover:text-white transition-colors font-geist flex items-center gap-2"><iconify-icon icon="solar:bird-linear"></iconify-icon> Twitter / X</Link></li>
               </ul>
             </div>
           </div>
@@ -375,7 +373,7 @@ export default function Home() {
             </div>
           </div>
         </div>
-      </footer>
-    </div>
+      </footer >
+    </div >
   );
 }
