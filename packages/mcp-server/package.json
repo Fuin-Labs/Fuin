@@ -38,6 +38,7 @@
     "url": "https://github.com/jayanth-kumar-morem/fuin.git",
     "directory": "packages/mcp-server"
   },
+  "author": "Jayant",
   "license": "MIT",
   "engines": {
     "node": ">=18"

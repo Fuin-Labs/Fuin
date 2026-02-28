@@ -42,3 +42,9 @@ target
 **/*.rs.bk
 test-ledger
 .yarn
+
+
+architecture.md
+agent-1.json
+TASKS.md
+test_guide.md
