@@ -1,6 +1,6 @@
 # @fuin-labs/mcp-server
 
-MCP (Model Context Protocol) server for [Fuin](https://github.com/jayanth-kumar-morem/fuin) — a programmable authorization layer on Solana. Lets AI agents manage delegate keys, check vault balances, and execute SOL transfers within on-chain policy constraints.
+MCP (Model Context Protocol) server for [Fuin](https://github.com/Fuin-Labs/Fuin) — a programmable authorization layer on Solana. Lets AI agents manage delegate keys, check vault balances, and execute SOL transfers within on-chain policy constraints.
 
 ## Quick Start
 

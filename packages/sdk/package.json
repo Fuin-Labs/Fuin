@@ -25,9 +25,10 @@
     "delegate",
     "anchor"
   ],
+  "homepage": "https://github.com/Fuin-Labs/Fuin#readme",
   "repository": {
     "type": "git",
-    "url": "https://github.com/jayanth-kumar-morem/fuin.git",
+    "url": "https://github.com/Fuin-Labs/Fuin.git",
     "directory": "packages/sdk"
   },
   "license": "MIT",
