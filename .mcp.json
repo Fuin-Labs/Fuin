@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "fuin": {
+      "command": "npx",
+      "args": ["tsx", "/home/jayant/Desktop/fuin/packages/mcp-server/src/index.ts"],
+      "env": {
+        "DELEGATE_PRIVATE_KEY": "1anPL1F2DGQhChpgHSBJBLudGSQuf2ygtStrGfmvzsdPvtjFiXG9txjArhztH4u1TXXmDZTFdc9in8jGdg6uoJh",
+        "SOLANA_RPC_URL": "https://api.devnet.solana.com"
+      }
+    }
+  }
+}

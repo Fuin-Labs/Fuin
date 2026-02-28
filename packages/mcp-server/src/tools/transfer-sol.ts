@@ -4,10 +4,10 @@ import type { Config } from "../config.js";
 
 export const transferSolSchema = {
   guardian: z.string().describe("Guardian wallet public key (base58)"),
-  vault_nonce: z.number().int().describe("Vault nonce"),
-  delegate_nonce: z.number().int().describe("Delegate nonce"),
+  vault_nonce: z.coerce.number().int().describe("Vault nonce"),
+  delegate_nonce: z.coerce.number().int().describe("Delegate nonce"),
   destination: z.string().describe("Destination wallet public key (base58)"),
-  amount_sol: z
+  amount_sol: z.coerce
     .number()
     .positive()
     .describe("Amount of SOL to transfer"),

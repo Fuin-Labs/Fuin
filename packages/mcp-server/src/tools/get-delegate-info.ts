@@ -7,8 +7,8 @@ import type { Config } from "../config.js";
 
 export const getDelegateInfoSchema = {
   guardian: z.string().describe("Guardian wallet public key (base58)"),
-  vault_nonce: z.number().int().describe("Vault nonce"),
-  delegate_nonce: z.number().int().describe("Delegate nonce"),
+  vault_nonce: z.coerce.number().int().describe("Vault nonce"),
+  delegate_nonce: z.coerce.number().int().describe("Delegate nonce"),
 };
 
 function formatPermissions(perms: number): string {

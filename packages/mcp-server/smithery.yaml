@@ -1,0 +1,22 @@
+type: stdio
+configSchema:
+  type: object
+  required:
+    - delegatePrivateKey
+  properties:
+    delegatePrivateKey:
+      type: string
+      description: Base58-encoded secret key of the delegate keypair
+    solanaRpcUrl:
+      type: string
+      description: Solana RPC endpoint URL
+      default: https://api.devnet.solana.com
+commandFunction: |-
+  (config) => ({
+    command: "node",
+    args: ["dist/index.js"],
+    env: {
+      DELEGATE_PRIVATE_KEY: config.delegatePrivateKey,
+      ...(config.solanaRpcUrl ? { SOLANA_RPC_URL: config.solanaRpcUrl } : {})
+    }
+  })

@@ -7,7 +7,7 @@ import type { Config } from "../config.js";
 
 export const getBalanceSchema = {
   guardian: z.string().describe("Guardian wallet public key (base58)"),
-  vault_nonce: z.number().int().describe("Vault nonce"),
+  vault_nonce: z.coerce.number().int().describe("Vault nonce"),
 };
 
 function formatState(state: Record<string, unknown>): string {

@@ -173,20 +173,6 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
 
         <DelegateList vaultPda={vault.publicKey} vaultNonce={nonce} />
 
-        <Link
-          href={`/dashboard/vaults/${nonce}/audit`}
-          style={{
-            textDecoration: "none",
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "8px",
-            color: COLORS.textMuted,
-            fontSize: "0.9rem",
-            padding: "12px 0",
-          }}
-        >
-          <ScrollText size={16} /> View Audit Log
-        </Link>
       </div>
     </motion.div>
   );

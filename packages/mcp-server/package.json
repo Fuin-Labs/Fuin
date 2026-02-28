@@ -1,7 +1,7 @@
 {
   "name": "@fuin/mcp-server",
   "version": "1.0.0",
-  "description": "MCP server for Fuin delegate key operations on Solana",
+  "description": "MCP server for Fuin delegate key operations on Solana — manage vaults, check balances, and transfer SOL via AI agents",
   "type": "module",
   "main": "./src/index.ts",
   "bin": {
@@ -9,8 +9,38 @@
   },
   "scripts": {
     "start": "tsx src/index.ts",
-    "build": "tsc --noEmit",
-    "check-types": "tsc --noEmit"
+    "build": "tsup",
+    "check-types": "tsc --noEmit",
+    "prepublishOnly": "pnpm build"
+  },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts",
+    "bin": {
+      "fuin-mcp": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "keywords": [
+    "mcp",
+    "solana",
+    "fuin",
+    "ai-agent",
+    "delegate",
+    "vault",
+    "model-context-protocol"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/jayanth-kumar-morem/fuin.git",
+    "directory": "packages/mcp-server"
+  },
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
   },
   "dependencies": {
     "@coral-xyz/anchor": "^0.32.1",
@@ -22,6 +52,7 @@
     "zod": "^3.24.0"
   },
   "devDependencies": {
+    "tsup": "^8.5.1",
     "tsx": "^4.19.0",
     "typescript": "5.9.2"
   }
