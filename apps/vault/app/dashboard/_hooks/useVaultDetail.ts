@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { useFuinClient } from "./useFuinClient";
-import { findVaultPda } from "@fuin/sdk";
+import { findVaultPda } from "@fuin-labs/sdk";
 import { BN } from "bn.js";
 import type { PublicKey } from "@solana/web3.js";
 

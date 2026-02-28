@@ -4,7 +4,7 @@ import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
 import { Shield, Clock, Zap, Wallet, Copy, Send, X } from "lucide-react";
 import { PublicKey } from "@solana/web3.js";
-import { CAN_TRANSFER } from "@fuin/sdk";
+import { CAN_TRANSFER } from "@fuin-labs/sdk";
 import { GlassCard } from "../../_components/ui/GlassCard";
 import { Badge } from "../../_components/ui/Badge";
 import { ProgressBar } from "../../_components/ui/ProgressBar";

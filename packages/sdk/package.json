@@ -1,5 +1,5 @@
 {
-  "name": "@fuin/sdk",
+  "name": "@fuin-labs/sdk",
   "version": "1.0.0",
   "description": "TypeScript SDK for the Fuin programmable authorization layer on Solana",
   "main": "./src/index.ts",

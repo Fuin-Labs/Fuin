@@ -7,7 +7,7 @@ import { ArrowLeft, Copy, ChevronDown, ChevronUp, CheckCircle2 } from "lucide-re
 import Link from "next/link";
 import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
-import { CAN_TRANSFER, findVaultPda, findDelegatePda } from "@fuin/sdk";
+import { CAN_TRANSFER, findVaultPda, findDelegatePda } from "@fuin-labs/sdk";
 import { useFuinClient } from "../../../../_hooks/useFuinClient";
 import { useIsMobile } from "../../../../_hooks/useMediaQuery";
 import { useToast } from "../../../../_hooks/useToast";
@@ -156,8 +156,8 @@ export default function OpenClawDelegatePage({ params }: { params: Promise<{ non
             <h4 style={{ color: COLORS.text, fontSize: "0.95rem", fontWeight: 700, margin: "0 0 12px" }}>
               Quick Start
             </h4>
-            <CodeBlock>{`npm install @fuin/sdk`}</CodeBlock>
-            <CodeBlock>{`import { FuinClient } from "@fuin/sdk";
+            <CodeBlock>{`npm install @fuin-labs/sdk`}</CodeBlock>
+            <CodeBlock>{`import { FuinClient } from "@fuin-labs/sdk";
 
 const client = new FuinClient(connection, agentWallet);
 await client.transferSol(
@@ -195,7 +195,7 @@ await client.transferSol(
 
           {showFull && (
             <ol style={{ color: COLORS.textMuted, fontSize: "0.85rem", lineHeight: 1.8, margin: "12px 0 0", paddingLeft: "20px" }}>
-              <li>Install the SDK: <code style={{ color: COLORS.purple }}>npm install @fuin/sdk @solana/web3.js @coral-xyz/anchor bn.js</code></li>
+              <li>Install the SDK: <code style={{ color: COLORS.purple }}>npm install @fuin-labs/sdk @solana/web3.js @coral-xyz/anchor bn.js</code></li>
               <li>Set up connection to Solana (devnet/mainnet)</li>
               <li>Load your agent keypair (the public key you registered above)</li>
               <li>Initialize FuinClient with connection + wallet</li>

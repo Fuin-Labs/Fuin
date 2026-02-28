@@ -1,4 +1,4 @@
-import { CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin/sdk";
+import { CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin-labs/sdk";
 
 export const PERMISSION_LIST = [
   { value: CAN_TRANSFER, name: "Transfer", icon: "Send" },

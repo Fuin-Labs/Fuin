@@ -12,7 +12,7 @@
 
 import { Connection, Keypair, LAMPORTS_PER_SOL, PublicKey, SystemProgram, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
-import { FuinClient, findVaultPda, findDelegatePda, CAN_TRANSFER } from "@fuin/sdk";
+import { FuinClient, findVaultPda, findDelegatePda, CAN_TRANSFER } from "@fuin-labs/sdk";
 import bs58 from "bs58";
 
 // MCP tool functions

@@ -5,7 +5,7 @@ import {
   getDelegateLabel as dbGetLabel,
   getDelegateLabels as dbGetLabels,
   getDelegateLabelsByVault as dbGetLabelsByVault,
-} from "@fuin/db";
+} from "@fuin-labs/db";
 
 export async function saveDelegateLabel(params: {
   delegatePda: string;

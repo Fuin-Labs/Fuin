@@ -1,5 +1,5 @@
 import { LAMPORTS_PER_SOL } from "@solana/web3.js";
-import { CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin/sdk";
+import { CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin-labs/sdk";
 import { fetchDelegatesByAuthority, fetchVaultByPda } from "../accounts.js";
 import type { Config } from "../config.js";
 

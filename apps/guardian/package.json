@@ -11,7 +11,7 @@
     "check-types": "next typegen && tsc --noEmit"
   },
   "dependencies": {
-    "@fuin/sdk": "workspace:^",
+    "@fuin-labs/sdk": "workspace:^",
     "@repo/ui": "workspace:*",
     "@solana/wallet-adapter-base": "^0.9.27",
     "@solana/wallet-adapter-react": "^0.15.39",

@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import BN from "bn.js";
-import { findVaultPda, findDelegatePda, CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin/sdk";
+import { findVaultPda, findDelegatePda, CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin-labs/sdk";
 import { fetchDelegateByPda } from "../accounts.js";
 import type { Config } from "../config.js";
 

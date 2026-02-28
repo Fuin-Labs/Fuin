@@ -1,7 +1,7 @@
 import { Connection, PublicKey } from "@solana/web3.js";
 import type { Program, Idl } from "@coral-xyz/anchor";
 import type BN from "bn.js";
-import { FUIN_PROGRAM_ID } from "@fuin/sdk";
+import { FUIN_PROGRAM_ID } from "@fuin-labs/sdk";
 
 const VAULT_DISCRIMINATOR = Buffer.from([211, 8, 232, 43, 2, 152, 117, 119]);
 const DELEGATE_DISCRIMINATOR = Buffer.from([

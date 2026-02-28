@@ -1,6 +1,6 @@
 "use server";
 
-import { upsertVault, getVaultsByGuardian, updateVaultLabel, getVaultByPda } from "@fuin/db";
+import { upsertVault, getVaultsByGuardian, updateVaultLabel, getVaultByPda } from "@fuin-labs/db";
 
 export async function saveVault(params: {
   pda: string;

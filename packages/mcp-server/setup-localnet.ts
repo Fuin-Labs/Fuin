@@ -6,7 +6,7 @@
 
 import { Connection, Keypair, LAMPORTS_PER_SOL, SystemProgram, Transaction, sendAndConfirmTransaction } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
-import { FuinClient, CAN_TRANSFER } from "@fuin/sdk";
+import { FuinClient, CAN_TRANSFER } from "@fuin-labs/sdk";
 import bs58 from "bs58";
 
 const RPC = "http://127.0.0.1:8899";

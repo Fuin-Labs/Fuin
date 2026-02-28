@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
 import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
-import { FuinClient, findVaultPda, CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin/sdk";
+import { FuinClient, findVaultPda, CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin-labs/sdk";
 import { PublicKey, LAMPORTS_PER_SOL, Transaction, SystemProgram } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
 

@@ -1,6 +1,6 @@
 "use server";
 
-import { logDelegateAction, getAuditLogsByVault, type AuditAction } from "@fuin/db";
+import { logDelegateAction, getAuditLogsByVault, type AuditAction } from "@fuin-labs/db";
 
 export async function logDelegateControlAction(params: {
   delegatePda: string;

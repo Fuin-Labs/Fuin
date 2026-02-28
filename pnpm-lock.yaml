@@ -64,7 +64,7 @@ importers:
 
   apps/guardian:
     dependencies:
-      '@fuin/sdk':
+      '@fuin-labs/sdk':
         specifier: workspace:^
         version: link:../../packages/sdk
       '@repo/ui':
@@ -122,10 +122,10 @@ importers:
       '@coral-xyz/anchor':
         specifier: ^0.32.1
         version: 0.32.1(bufferutil@4.1.0)(typescript@5.9.2)(utf-8-validate@5.0.10)
-      '@fuin/db':
+      '@fuin-labs/db':
         specifier: workspace:^
         version: link:../../packages/db
-      '@fuin/sdk':
+      '@fuin-labs/sdk':
         specifier: workspace:^
         version: link:../../packages/sdk
       '@react-three/drei':
@@ -265,7 +265,7 @@ importers:
       '@coral-xyz/anchor':
         specifier: ^0.32.1
         version: 0.32.1(bufferutil@4.1.0)(typescript@5.9.2)(utf-8-validate@5.0.10)
-      '@fuin/sdk':
+      '@fuin-labs/sdk':
         specifier: workspace:*
         version: link:../sdk
       '@modelcontextprotocol/sdk':

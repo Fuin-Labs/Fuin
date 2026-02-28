@@ -1,4 +1,4 @@
-# @fuin/mcp-server
+# @fuin-labs/mcp-server
 
 MCP (Model Context Protocol) server for [Fuin](https://github.com/jayanth-kumar-morem/fuin) — a programmable authorization layer on Solana. Lets AI agents manage delegate keys, check vault balances, and execute SOL transfers within on-chain policy constraints.
 
@@ -13,7 +13,7 @@ Add to `~/Library/Application Support/Claude/claude_desktop_config.json`:
   "mcpServers": {
     "fuin": {
       "command": "npx",
-      "args": ["-y", "@fuin/mcp-server"],
+      "args": ["-y", "@fuin-labs/mcp-server"],
       "env": {
         "DELEGATE_PRIVATE_KEY": "<base58-encoded-secret-key>"
       }
@@ -31,7 +31,7 @@ Add to `.cursor/mcp.json` or `.vscode/mcp.json`:
   "servers": {
     "fuin": {
       "command": "npx",
-      "args": ["-y", "@fuin/mcp-server"],
+      "args": ["-y", "@fuin-labs/mcp-server"],
       "env": {
         "DELEGATE_PRIVATE_KEY": "<base58-encoded-secret-key>"
       }
@@ -43,7 +43,7 @@ Add to `.cursor/mcp.json` or `.vscode/mcp.json`:
 ### Smithery
 
 ```bash
-npx @smithery/cli install @fuin/mcp-server
+npx @smithery/cli install @fuin-labs/mcp-server
 ```
 
 ## Tools

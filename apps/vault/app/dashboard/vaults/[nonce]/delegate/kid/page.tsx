@@ -7,7 +7,7 @@ import { ArrowLeft, Copy, ChevronDown, ChevronUp, CheckCircle2 } from "lucide-re
 import Link from "next/link";
 import { PublicKey } from "@solana/web3.js";
 import { BN } from "@coral-xyz/anchor";
-import { CAN_TRANSFER, findVaultPda, findDelegatePda } from "@fuin/sdk";
+import { CAN_TRANSFER, findVaultPda, findDelegatePda } from "@fuin-labs/sdk";
 import { useFuinClient } from "../../../../_hooks/useFuinClient";
 import { useToast } from "../../../../_hooks/useToast";
 import { GlassCard } from "../../../../_components/ui/GlassCard";

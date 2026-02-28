@@ -2,7 +2,7 @@
 
 import { createContext, useEffect, useState, type ReactNode } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
-import { FuinClient } from "@fuin/sdk";
+import { FuinClient } from "@fuin-labs/sdk";
 import type { PublicKey, Connection } from "@solana/web3.js";
 
 export interface FuinContextValue {

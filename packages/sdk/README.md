@@ -1,17 +1,17 @@
-# @fuin/sdk
+# @fuin-labs/sdk
 
 TypeScript SDK for [Fuin](https://github.com/jayanth-kumar-morem/fuin) — a programmable authorization layer (IAM) on Solana. Create vaults, issue delegate keys with scoped permissions, and execute policy-constrained transfers.
 
 ## Install
 
 ```bash
-npm install @fuin/sdk
+npm install @fuin-labs/sdk
 ```
 
 ## Usage
 
 ```typescript
-import { FuinClient, findVaultPda, findDelegatePda, CAN_TRANSFER, CAN_SWAP } from "@fuin/sdk";
+import { FuinClient, findVaultPda, findDelegatePda, CAN_TRANSFER, CAN_SWAP } from "@fuin-labs/sdk";
 import { Connection } from "@solana/web3.js";
 
 const connection = new Connection("https://api.devnet.solana.com");

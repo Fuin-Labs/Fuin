@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import BN from "bn.js";
-import { findVaultPda } from "@fuin/sdk";
+import { findVaultPda } from "@fuin-labs/sdk";
 import { fetchVaultByPda } from "../accounts.js";
 import type { Config } from "../config.js";
 

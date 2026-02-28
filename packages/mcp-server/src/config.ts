@@ -1,6 +1,6 @@
 import { Connection, Keypair } from "@solana/web3.js";
 import * as anchor from "@coral-xyz/anchor";
-import { FuinClient } from "@fuin/sdk";
+import { FuinClient } from "@fuin-labs/sdk";
 import bs58 from "bs58";
 
 export interface Config {

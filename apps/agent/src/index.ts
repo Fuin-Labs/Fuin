@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
-import { FuinClient } from "@fuin/sdk";
+import { FuinClient } from "@fuin-labs/sdk";
 import * as anchor from "@coral-xyz/anchor";
 import bs58 from "bs58";
 
