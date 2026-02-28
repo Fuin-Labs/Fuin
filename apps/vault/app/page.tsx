@@ -367,7 +367,6 @@ export default function Home() {
           <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10 pt-8">
             <p className="text-xs text-white/40 font-geist">© <span className="font-geist">{currentYear}</span> Fuin Protocol. All rights reserved.</p>
             <div className="flex gap-4 text-xs text-white/40 font-geist">
-              <span>Mainnet-beta (Coming Soon)</span>
               <span className="w-1 h-1 rounded-full bg-white/20 my-auto"></span>
               <span className="text-emerald-400">Devnet Live</span>
             </div>

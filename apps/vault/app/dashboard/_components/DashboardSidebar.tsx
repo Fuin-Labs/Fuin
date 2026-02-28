@@ -52,9 +52,12 @@ function SidebarContent({ onClose, isCollapsed, onToggleCollapse }: { onClose?: 
           )}
 
           {/* Desktop Collapse Toggle */}
-          {!isMobile && onToggleCollapse && (
+          {!isMobile && onToggleCollapse && !isCollapsed && (
             <button
-              onClick={onToggleCollapse}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleCollapse();
+              }}
               style={{
                 background: "none",
                 border: "none",
@@ -69,9 +72,9 @@ function SidebarContent({ onClose, isCollapsed, onToggleCollapse }: { onClose?: 
               }}
               onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
               onMouseLeave={(e) => e.currentTarget.style.opacity = "0.7"}
-              title={isCollapsed ? "Expand Sidebar" : "Collapse Sidebar"}
+              title="Collapse Sidebar"
             >
-              {isCollapsed ? <ChevronsRight size={20} /> : <ChevronsLeft size={20} />}
+              <ChevronsLeft size={20} />
             </button>
           )}
         </div>
@@ -158,10 +161,10 @@ export function DashboardSidebar({ isOpen, onClose, isCollapsed, onToggleCollaps
     if (isMobile && onClose) onClose();
   }, [pathname]);
 
-  // Desktop: fixed sidebar
   if (!isMobile) {
     return (
       <aside
+        onClick={isCollapsed && onToggleCollapse ? onToggleCollapse : undefined}
         style={{
           width: isCollapsed ? "80px" : "260px",
           transition: "width 0.2s ease",
@@ -178,7 +181,9 @@ export function DashboardSidebar({ isOpen, onClose, isCollapsed, onToggleCollaps
           zIndex: 50,
           backdropFilter: "blur(12px)",
           WebkitBackdropFilter: "blur(12px)",
+          cursor: isCollapsed ? "pointer" : "default",
         }}
+        title={isCollapsed ? "Click to expand sidebar" : undefined}
       >
         <SidebarContent isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} />
       </aside>
