@@ -17,6 +17,9 @@ export default function Home() {
   const [vaultData, setVaultData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
 
+  // Vault nonce
+  const [vaultNonce, setVaultNonce] = useState(1);
+
   // Vault init forms
   const [dailyCap, setDailyCap] = useState("10");
   const [perTxCap, setPerTxCap] = useState("1");
@@ -40,12 +43,12 @@ export default function Home() {
         const fuin = new FuinClient(connection, providerWallet);
         setClient(fuin);
 
-        const [pda] = findVaultPda(wallet.publicKey, new BN(1));
+        const [pda] = findVaultPda(wallet.publicKey, new BN(vaultNonce));
         setVaultAddress(pda);
 
         fetchVault(fuin, pda);
     }
-  }, [wallet.connected, wallet.publicKey]);
+  }, [wallet.connected, wallet.publicKey, vaultNonce]);
 
   const fetchVault = async (sdk: FuinClient, pda: PublicKey) => {
     try {
@@ -63,7 +66,7 @@ export default function Home() {
     if (!client) return;
     setLoading(true);
     try {
-        await client.createVault(1, Number(dailyCap), Number(perTxCap), []);
+        await client.createVault(vaultNonce, Number(dailyCap), Number(perTxCap), []);
         alert("Vault Initialized!");
         await fetchVault(client, vaultAddress!);
     } catch (e) {
@@ -81,7 +84,7 @@ export default function Home() {
         const agentPubkey = new PublicKey(agentKey);
 
         const { delegate } = await client.issueDelegate(
-            1, // Vault Nonce
+            vaultNonce,
             delegateNonce,
             agentPubkey,
             permissions,
@@ -132,7 +135,7 @@ export default function Home() {
     if (!client) return;
     setLoading(true);
     try {
-        await client.freezeVault(1);
+        await client.freezeVault(vaultNonce);
         alert("Vault Frozen!");
         await fetchVault(client, vaultAddress!);
     } catch (e) {
@@ -146,7 +149,7 @@ export default function Home() {
     if (!client) return;
     setLoading(true);
     try {
-        await client.unfreezeVault(1);
+        await client.unfreezeVault(vaultNonce);
         alert("Vault Unfrozen!");
         await fetchVault(client, vaultAddress!);
     } catch (e) {
@@ -186,6 +189,15 @@ export default function Home() {
             <h2 className="text-2xl mb-4">Initialize Authorization Vault</h2>
             <p className="mb-6 text-gray-400">You don't have a vault yet. Create one to start.</p>
 
+            <label className="block mb-2">Vault Nonce</label>
+            <input
+                type="number"
+                value={vaultNonce}
+                onChange={(e) => setVaultNonce(Number(e.target.value))}
+                className="w-full p-2 mb-4 bg-gray-700 rounded text-white"
+                min={1}
+            />
+
             <label className="block mb-2">Daily Cap (SOL)</label>
             <input
                 type="number"
@@ -213,7 +225,18 @@ export default function Home() {
       )}
 
       {wallet.connected && vaultData && (
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full max-w-5xl">
+        <div className="w-full max-w-5xl">
+          <div className="flex items-center gap-4 mb-6">
+            <label className="text-sm text-gray-400">Vault Nonce:</label>
+            <input
+              type="number"
+              value={vaultNonce}
+              onChange={(e) => setVaultNonce(Number(e.target.value))}
+              className="w-24 p-2 bg-gray-700 rounded text-white text-sm"
+              min={1}
+            />
+          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 w-full">
             {/* Status Card */}
             <div className="border border-green-800 p-6 rounded-xl bg-gray-800">
                 <h3 className="text-xl font-bold text-green-400 mb-4">
@@ -326,6 +349,7 @@ export default function Home() {
                   {loading ? "Processing..." : "Deposit 1 SOL to Vault"}
               </button>
             </div>
+        </div>
         </div>
       )}
     </main>

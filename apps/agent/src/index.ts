@@ -1,45 +1,67 @@
+import "dotenv/config";
 import { Connection, Keypair, PublicKey } from "@solana/web3.js";
 import { FuinClient } from "@fuin/sdk";
 import * as anchor from "@coral-xyz/anchor";
+import bs58 from "bs58";
 
-// In a real app, the bot reads its private key from a secure enclave or .env
-// For testing, generate a new keypair or paste the secret key array here.
-const AGENT_KEYPAIR = Keypair.generate();
-const CONNECTION = new Connection("https://api.devnet.solana.com", "confirmed");
+// --- Config from environment ---
 
-// The Guardian's public key (the owner of the vault)
-const GUARDIAN_PUBKEY = new PublicKey("YOUR_GUARDIAN_WALLET_PUBKEY_HERE");
+const DELEGATE_PRIVATE_KEY = process.env.DELEGATE_PRIVATE_KEY;
+if (!DELEGATE_PRIVATE_KEY) {
+    console.error("Error: DELEGATE_PRIVATE_KEY env var is required (base58-encoded secret key)");
+    process.exit(1);
+}
 
-// The destination where the bot wants to send funds
-const DESTINATION = new PublicKey("SomeRandomAddressHere...");
+const GUARDIAN = process.env.GUARDIAN_PUBKEY;
+if (!GUARDIAN) {
+    console.error("Error: GUARDIAN_PUBKEY env var is required");
+    process.exit(1);
+}
+
+const DEST = process.env.DESTINATION_PUBKEY;
+if (!DEST) {
+    console.error("Error: DESTINATION_PUBKEY env var is required");
+    process.exit(1);
+}
+
+const RPC_URL = process.env.SOLANA_RPC_URL || "https://api.devnet.solana.com";
+const VAULT_NONCE = Number(process.env.VAULT_NONCE || "1");
+const DELEGATE_NONCE = Number(process.env.DELEGATE_NONCE || "1");
+const AMOUNT_SOL = Number(process.env.AMOUNT_SOL || "0.1");
+
+const AGENT_KEYPAIR = Keypair.fromSecretKey(bs58.decode(DELEGATE_PRIVATE_KEY));
+const CONNECTION = new Connection(RPC_URL, "confirmed");
+const GUARDIAN_PUBKEY = new PublicKey(GUARDIAN);
+const DESTINATION = new PublicKey(DEST);
 
 async function main() {
     console.log("AI Agent Booting Up...");
     console.log(`Agent Pubkey: ${AGENT_KEYPAIR.publicKey.toBase58()}`);
+    console.log(`Guardian:     ${GUARDIAN_PUBKEY.toBase58()}`);
+    console.log(`Destination:  ${DESTINATION.toBase58()}`);
+    console.log(`Vault Nonce:  ${VAULT_NONCE}, Delegate Nonce: ${DELEGATE_NONCE}`);
+    console.log(`Amount:       ${AMOUNT_SOL} SOL`);
 
-    // 1. Initialize the SDK with the Agent's credentials
     const agentWallet = new anchor.Wallet(AGENT_KEYPAIR);
     const client = new FuinClient(CONNECTION, agentWallet);
 
     try {
-        console.log("Attempting to execute transfer...");
+        console.log("\nAttempting to execute transfer...");
 
-        // 2. Execute the Transfer
-        // Parameters: Guardian Pubkey, Vault Nonce, Delegate Nonce, Dest, Amount, Signer
         const txSig = await client.transferSol(
             GUARDIAN_PUBKEY,
-            1, // Vault Nonce (match what you used in Guardian UI)
-            1, // Delegate Nonce (match what you used in Guardian UI)
+            VAULT_NONCE,
+            DELEGATE_NONCE,
             DESTINATION,
-            0.1, // Amount in SOL
+            AMOUNT_SOL,
             AGENT_KEYPAIR
         );
 
-        console.log(`Success! Transaction Signature: ${txSig}`);
+        console.log(`\nSuccess! Transaction Signature: ${txSig}`);
         console.log(`https://explorer.solana.com/tx/${txSig}?cluster=devnet`);
 
     } catch (error: any) {
-        console.error("Agent Action Failed!");
+        console.error("\nAgent Action Failed!");
         console.error(error.message);
 
         if (error.message.includes("DelegateInactive")) {
