@@ -74,14 +74,7 @@ export default function SplineHero() {
       <Spline
         scene={SCENE_URL}
         onLoad={onLoad}
-        style={{
-          position: "absolute",
-          top: "50%",
-          left: "50%",
-          transform: "translate(-50%, -50%) scale(1.8)",
-          width: "100%",
-          height: "100%",
-        }}
+        style={{ width: "100%", height: "100%" }}
       />
     </div>
   );
