@@ -32,6 +32,9 @@
   "pnpm": {
     "patchedDependencies": {
       "@meteora-ag/dlmm@1.9.3": "patches/@meteora-ag__dlmm@1.9.3.patch"
+    },
+    "overrides": {
+      "jito-ts>@solana/web3.js": "$@solana/web3.js"
     }
   }
 }

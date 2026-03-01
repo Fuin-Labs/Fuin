@@ -1,135 +1,122 @@
-# Turborepo starter
+# Fuin
 
-This Turborepo starter is maintained by the Turborepo core team.
+Fuin is a programmable Identity Access Management (IAM) layer and restrictive wallet protocol on Solana. Guardians create on-chain vaults and issue scoped delegate keys — with bitmask permissions, spending caps, and policy constraints — to AI agents or human users. Delegates can transact within strict boundaries without ever gaining custody of the vault.
 
-## Using this example
+## How It Works
 
-Run the following command:
+1. **Guardian** deploys a vault (PDA) on Solana, deposits funds, and defines a policy set
+2. **Vault** issues delegate keys with granular permissions (`CAN_SWAP`, `CAN_TRANSFER`, `CAN_STAKE`, `CAN_LP`)
+3. **Delegate** (AI agent or human) signs off-chain intents to transact
+4. **Policy Engine** validates every constraint on-chain — permissions, spending caps, program allowlists, time windows, risk thresholds
+5. **Relayer** submits the verified meta-transaction; gas is auto-sponsored from the guardian's GasTank PDA
 
-```sh
-npx create-turbo@latest
-```
-
-## What's inside?
-
-This Turborepo includes the following packages/apps:
-
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
+## Architecture
 
 ```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+programs/fuin/          Anchor/Rust smart contract (Solana program)
+packages/sdk/           TypeScript SDK (@fuin/sdk)
+packages/mcp-server/    MCP server for AI agent integration
+packages/db/            Prisma + PostgreSQL database layer
+apps/vault/             Next.js landing page + dashboard (port 3000)
+apps/agent/             Node.js agent CLI
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+### On-Chain Program
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+**Program ID:** `E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy`
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+Two core accounts:
+- **Vault** — holds funds and policies. PDA seeds: `["vault", guardian, nonce]`
+- **Delegate** — scoped access key. PDA seeds: `["delegate", vault, nonce]`
 
-### Develop
+Instructions: `init_vault`, `issue_delegate`, `execute_transfer`, `execute_spl_transfer`, `execute_swap`, `freeze_vault`, `unfreeze_vault`, `delegate_control`, `update_vault`, `withdraw`
 
-To develop all apps and packages, run the following command:
+### SDK
 
-```
-cd my-turborepo
+The TypeScript SDK (`@fuin/sdk`) wraps all program instructions via the `FuinClient` class. It ships TypeScript source directly — consumers import `.ts` files via bundler resolution.
 
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
+### MCP Server
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
-```
+The MCP server exposes Fuin operations as tools for AI agents — get balances, list delegates, transfer SOL/SPL tokens, swap via Meteora, and request program allowlist changes.
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## Prerequisites
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+- **Node.js** >= 18
+- **pnpm** >= 9.0.0
+- **Rust** + **Anchor CLI** (for smart contract development)
+- **Solana CLI** (for deployment and local validator)
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+## Setup
 
-### Remote Caching
+```bash
+# Clone the repo
+git clone https://github.com/FuinLabs/fuin.git
+cd fuin
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+# Install dependencies
+pnpm install
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+# Build everything (SDK first, then apps)
+pnpm build
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+# Start all dev servers
+pnpm dev
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
+# Or start the vault app only (port 3000)
+pnpm dev:vault
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### Smart Contract
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+```bash
+# Build the Solana program
+cd programs/fuin
+anchor build
+
+# Run tests (starts local validator automatically)
+anchor test
+
+# Deploy to configured cluster
+anchor deploy
+
+# After contract changes, sync IDL to SDK:
+cp target/idl/fuin.json ../../packages/sdk/src/idl/fuin.json
+```
+
+### Environment Variables
+
+Create a `.env` file in the repo root for the MCP server and agent:
 
 ```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+SOLANA_RPC_URL=https://api.devnet.solana.com
+DELEGATE_PRIVATE_KEY=<base58-encoded-private-key>
+DATABASE_URL=<postgresql-connection-string>
 ```
 
-## Useful Links
+## Scripts
 
-Learn more about the power of Turborepo:
+| Command | Description |
+|---------|-------------|
+| `pnpm install` | Install all dependencies |
+| `pnpm build` | Build SDK + all apps via Turbo |
+| `pnpm dev` | Start all dev servers |
+| `pnpm dev:vault` | Vault app only (port 3000) |
+| `pnpm lint` | Lint everything |
+| `pnpm format` | Prettier format |
+| `pnpm check-types` | TypeScript type check |
+| `pnpm build:program` | Build the Anchor program |
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+## Tech Stack
+
+- **Solana** — L1 blockchain
+- **Anchor** — Solana program framework
+- **Pyth Network** — on-chain oracle for USD price feeds
+- **Next.js 16** — frontend framework
+- **Solana Wallet Adapter** — wallet connection
+- **Prisma** — database ORM
+- **Turborepo** — monorepo build orchestration
+- **MCP** — Model Context Protocol for AI agent tooling
+
+## License
+
+MIT

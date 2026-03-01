@@ -6,6 +6,7 @@ import { getBalance, getBalanceSchema } from "./tools/get-balance.js";
 import { getDelegateInfo, getDelegateInfoSchema } from "./tools/get-delegate-info.js";
 import { listDelegates } from "./tools/list-delegates.js";
 import { transferSol, transferSolSchema } from "./tools/transfer-sol.js";
+import { transferSpl, transferSplSchema } from "./tools/transfer-spl.js";
 import { requestProgram, requestProgramSchema } from "./tools/request-program.js";
 import { swap, swapSchema } from "./tools/swap.js";
 
@@ -49,6 +50,14 @@ function createServer(config: Config) {
     transferSolSchema,
     { destructiveHint: true, idempotentHint: false },
     async (args) => transferSol(config, args)
+  );
+
+  server.tool(
+    "transfer-spl",
+    "Execute an SPL token transfer from a Fuin vault using delegate permissions. Requires CAN_TRANSFER permission. Supports Pyth price feeds for USD valuation.",
+    transferSplSchema,
+    { destructiveHint: true, idempotentHint: false },
+    async (args) => transferSpl(config, args)
   );
 
   server.tool(
@@ -105,6 +114,14 @@ export function createSandboxServer() {
     "transfer-sol",
     "Execute a SOL transfer from a Fuin vault using delegate permissions. On-chain policy enforcement applies.",
     transferSolSchema,
+    { destructiveHint: true, idempotentHint: false },
+    async () => ({ content: [{ type: "text" as const, text: "sandbox" }] })
+  );
+
+  server.tool(
+    "transfer-spl",
+    "Execute an SPL token transfer from a Fuin vault using delegate permissions. Requires CAN_TRANSFER permission. Supports Pyth price feeds for USD valuation.",
+    transferSplSchema,
     { destructiveHint: true, idempotentHint: false },
     async () => ({ content: [{ type: "text" as const, text: "sandbox" }] })
   );

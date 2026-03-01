@@ -37,9 +37,8 @@ export default function Home() {
         <div className="sm:px-6 lg:px-8 max-w-7xl mr-auto ml-auto pr-4 pl-4">
           {/* Nav */}
           <nav className="flex mt-6 items-center justify-between">
-            <Link href="/" className="flex items-center gap-2">
-              <iconify-icon icon="solar:shield-keyhole-linear" class="text-2xl text-emerald-400"></iconify-icon>
-              <span className="text-xl font-semibold tracking-tight font-geist text-white">Fuin</span>
+            <Link href="/" className="flex items-center">
+              <img src="/logo.svg" alt="Fuin" className="h-11 w-11" />
             </Link>
 
             <div className="hidden md:flex md:gap-x-2 bg-white/5 border-white/10 border rounded-full pt-1 pr-1 pb-1 pl-1 backdrop-blur-lg gap-x-2 gap-y-1 items-center">
@@ -333,9 +332,8 @@ export default function Home() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <div className="grid gap-8 md:grid-cols-4">
             <div className="md:col-span-2">
-              <Link href="/" className="flex items-center gap-2 mb-4">
-                <iconify-icon icon="solar:shield-keyhole-linear" class="text-xl text-white/80"></iconify-icon>
-                <span className="text-lg font-semibold tracking-tight font-geist text-white">Fuin</span>
+              <Link href="/" className="flex items-center mb-4">
+                <img src="/logo.svg" alt="Fuin" className="h-14 w-14" />
               </Link>
               <p className="text-sm text-white/50 max-w-sm font-geist leading-relaxed">Fuin is a programmable Identity Access Management (IAM) layer and restrictive wallet protocol built natively for the Solana VM.</p>
               <div className="mt-6 flex items-center gap-3">

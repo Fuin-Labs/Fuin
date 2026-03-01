@@ -19,6 +19,7 @@ export interface PythFeedConfig {
  * Pyth price feed mapping. Feed IDs are universal across chains.
  * Price accounts are shard-0 PDAs from the Pyth Push Oracle program
  * (pythWSnswVUd12oZpeFP8e9CVaEqJg25g1Vtc2biRsT), same on mainnet and devnet.
+ * @deprecated Use PYTH_FEED_IDS with transferSplPull() for Pull Oracle flow.
  */
 export const PYTH_PRICE_FEEDS: Record<string, PythFeedConfig> = {
   "SOL/USD": {
@@ -57,6 +58,22 @@ export const PYTH_PRICE_FEEDS: Record<string, PythFeedConfig> = {
     feedId: "0x4ca4beeca86f0d164160323817a4e42b10010a724c2217c6ee41b54cd4cc61fc",
     priceAccount: new PublicKey("6B23K3tkb51vLZA14jcEQVCA1pfHptzEHFA93V5dYwbT"),
   },
+};
+
+/** Pyth Hermes REST endpoint for fetching price update VAAs. */
+export const HERMES_ENDPOINT = "https://hermes.pyth.network";
+
+/** Clean feed-ID-only map for the Pull Oracle flow (no stale price accounts). */
+export const PYTH_FEED_IDS: Record<string, string> = {
+  "SOL/USD":  "0xef0d8b6fda2ceba41da15d4095d1da392a0d2f8ed0c6c7bc0f4cfac8c280b56d",
+  "BTC/USD":  "0xe62df6c8b4a85fe1a67db44dc12de5db330f7ac66b72dc658afedf0f4a415b43",
+  "ETH/USD":  "0xff61491a931112ddf1bd8147cd1b641375f79f5825126d665480874634fd0ace",
+  "USDC/USD": "0xeaa020c61cc479712813461ce153894a96a6c00b21ed0cfc2798d1f9a9e9c94a",
+  "USDT/USD": "0x2b89b9dc8fdf9f34709a5b106b472f0f39bb6ca9ce04b0fd7f2e971688e2e53b",
+  "BONK/USD": "0x72b021217ca3fe68922a19aaf990109cb9d84e9ad004b4d2025ad6f529314419",
+  "JUP/USD":  "0x0a0408d619e9380abad35060f9192039ed5042fa6f82301d0e48bb52be830996",
+  "RAY/USD":  "0x91568baa8beb53db23eb3fb7f22c6e8bd303d103919e19733f2bb642d3e7987a",
+  "WIF/USD":  "0x4ca4beeca86f0d164160323817a4e42b10010a724c2217c6ee41b54cd4cc61fc",
 };
 
 export class FuinClient {
