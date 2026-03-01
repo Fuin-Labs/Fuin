@@ -2,7 +2,7 @@ import { z } from "zod";
 import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import BN from "bn.js";
 import { findVaultPda, findDelegatePda, CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin-labs/sdk";
-import { fetchDelegateByPda } from "../accounts.js";
+import { fetchDelegateByPda, fetchVaultByPda } from "../accounts.js";
 import type { Config } from "../config.js";
 
 export const getDelegateInfoSchema = {
@@ -51,7 +51,7 @@ export async function getDelegateInfo(
   const now = Math.floor(Date.now() / 1000);
   const expired = expiry > 0 && expiry < now;
 
-  const text = [
+  const lines = [
     `Delegate: ${delegatePda.toBase58()}`,
     `Vault: ${d.vault.toBase58()}`,
     `Authority: ${d.authority.toBase58()}`,
@@ -69,7 +69,31 @@ export async function getDelegateInfo(
     `Usage:`,
     `  Uses: ${d.uses}${d.maxUses > 0 ? ` / ${d.maxUses}` : " (unlimited)"}`,
     `  Expiry: ${expiry === 0 ? "None" : new Date(expiry * 1000).toISOString()}${expired ? " (EXPIRED)" : ""}`,
-  ].join("\n");
+  ];
+
+  // Fetch vault to show program policies
+  const vault = await fetchVaultByPda(
+    config.client.program,
+    config.connection,
+    d.vault
+  );
+  if (vault) {
+    const allowList = vault.account.policies.programs.allowList;
+    const denyList = vault.account.policies.programs.denyList;
+    if (allowList.length > 0 || denyList.length > 0) {
+      lines.push(``, `Vault Program Policy:`);
+      if (allowList.length > 0) {
+        lines.push(`  Allowed Programs (${allowList.length}):`);
+        for (const pk of allowList) lines.push(`    - ${pk.toBase58()}`);
+      }
+      if (denyList.length > 0) {
+        lines.push(`  Denied Programs (${denyList.length}):`);
+        for (const pk of denyList) lines.push(`    - ${pk.toBase58()}`);
+      }
+    }
+  }
+
+  const text = lines.join("\n");
 
   return { content: [{ type: "text" as const, text }] };
 }

@@ -1,3 +1,6 @@
+/* Prevent Spline from hijacking page scroll */
+body { overflow: auto !important; }
+
 /* Default: paused */
 .animate-on-scroll { animation-play-state: paused !important; }
 /* Activated by JS */

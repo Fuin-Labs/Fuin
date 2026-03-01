@@ -2,7 +2,7 @@ use anchor_lang::prelude::*;
 use anchor_spl::token_interface::{Mint, TokenAccount, TokenInterface, TransferChecked, transfer_checked};
 use pyth_solana_receiver_sdk::price_update::PriceUpdateV2;
 use crate::{error::ErrorCode, state::{Delegate, Vault, delegate::CAN_TRANSFER}, pricing::calculate_usd_value};
-use super::validate_and_update_limits;
+use super::{validate_and_update_limits, validate_program_policy};
 
 #[derive(Accounts)]
 #[instruction(nonce_vault:u64, nonce_delegate:u64)]
@@ -63,7 +63,11 @@ pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>, _nonce_vault: u64,
     // Permission check
     require!(ctx.accounts.delegate.has_permission(CAN_TRANSFER), ErrorCode::PermissionDenied);
 
-    let usd_spend_amount = calculate_usd_value(
+    // Program policy check
+    validate_program_policy(&ctx.accounts.vault, &ctx.accounts.token_program.key())?;
+
+    // USD value kept for future audit/logging use
+    let _usd_spend_amount = calculate_usd_value(
         &ctx.accounts.price_update,
         &feed_id,
         amount,
@@ -74,7 +78,7 @@ pub fn execute_spl_transfer(ctx: Context<ExecuteSplTransfer>, _nonce_vault: u64,
         &mut ctx.accounts.vault,
         &mut ctx.accounts.delegate,
         &clock,
-        usd_spend_amount
+        amount
     )?;
 
     let vault = &ctx.accounts.vault;

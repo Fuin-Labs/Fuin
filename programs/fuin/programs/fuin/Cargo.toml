@@ -24,6 +24,7 @@ custom-panic = []
 anchor-lang = "0.32.1"
 anchor-spl = "0.32.1"
 pyth-solana-receiver-sdk = "1.1.0"
+bytemuck = { version = "1.13.1", features = ["derive", "min_const_generics"] }
 
 [lints.rust]
 unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }

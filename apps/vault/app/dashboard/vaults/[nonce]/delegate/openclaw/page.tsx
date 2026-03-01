@@ -255,13 +255,41 @@ await client.transferSol(
 
       <GlassCard>
         <div style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
-          <Input
-            label="Agent Public Key"
-            value={agentKey}
-            onChange={setAgentKey}
-            placeholder="Solana public key (base58)"
-            hint="The agent wallet that will use this delegate key"
-          />
+          <div>
+            <Input
+              label="Agent Public Key"
+              value={agentKey}
+              onChange={setAgentKey}
+              placeholder="Solana public key (base58)"
+              hint="Paste the public key of your agent's keypair"
+            />
+            <div style={{
+              marginTop: "10px",
+              padding: "12px 14px",
+              borderRadius: "10px",
+              backgroundColor: "rgba(168, 85, 247, 0.06)",
+              border: "1px solid rgba(168, 85, 247, 0.15)",
+              fontSize: "0.8rem",
+              color: COLORS.textMuted,
+              lineHeight: 1.6,
+            }}>
+              Generate a new keypair from your terminal and paste the public key above:
+              <pre style={{
+                margin: "8px 0 4px",
+                padding: "8px 10px",
+                borderRadius: "6px",
+                backgroundColor: "rgba(0, 0, 0, 0.3)",
+                fontFamily: "var(--font-geist-mono), monospace",
+                fontSize: "0.75rem",
+                color: COLORS.textSecondary,
+                overflowX: "auto",
+                whiteSpace: "pre",
+              }}>solana-keygen new --outfile agent-key.json</pre>
+              <span style={{ fontSize: "0.75rem", color: COLORS.textDim }}>
+                Save the private key securely — your agent will need it to sign transactions.
+              </span>
+            </div>
+          </div>
 
           <div>
             <label style={{ fontSize: "0.85rem", fontWeight: 600, color: COLORS.textSecondary, display: "block", marginBottom: "10px" }}>

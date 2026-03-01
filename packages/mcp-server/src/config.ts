@@ -1,7 +1,20 @@
-import { Connection, Keypair } from "@solana/web3.js";
-import * as anchor from "@coral-xyz/anchor";
+import { Connection, Keypair, Transaction, VersionedTransaction } from "@solana/web3.js";
 import { FuinClient } from "@fuin-labs/sdk";
 import bs58 from "bs58";
+
+/** Minimal Wallet compatible with AnchorProvider (avoids broken anchor.Wallet ESM export) */
+class NodeWallet {
+  constructor(readonly payer: Keypair) {}
+  get publicKey() { return this.payer.publicKey; }
+  async signTransaction<T extends Transaction | VersionedTransaction>(tx: T): Promise<T> {
+    if (tx instanceof Transaction) { tx.partialSign(this.payer); }
+    return tx;
+  }
+  async signAllTransactions<T extends Transaction | VersionedTransaction>(txs: T[]): Promise<T[]> {
+    for (const tx of txs) { if (tx instanceof Transaction) tx.partialSign(this.payer); }
+    return txs;
+  }
+}
 
 export interface Config {
   keypair: Keypair;
@@ -31,8 +44,8 @@ export function loadConfig(): Config {
     process.env.SOLANA_RPC_URL || "https://api.devnet.solana.com";
   const connection = new Connection(rpcUrl, "confirmed");
 
-  const wallet = new anchor.Wallet(keypair);
-  const client = new FuinClient(connection, wallet);
+  const wallet = new NodeWallet(keypair);
+  const client = new FuinClient(connection, wallet as any);
 
   return { keypair, connection, client };
 }

@@ -42,7 +42,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
       defaultTitle = `New Delegate`;
       defaultSubtitle = `Vault #${nonce}`;
     } else if (parts[4] === "delegate" && parts[5] === "openclaw") {
-      defaultTitle = `OpenClaw Policy`;
+      defaultTitle = `AI Agent Policy`;
       defaultSubtitle = `Vault #${nonce}`;
     } else if (parts[4] === "delegate" && parts[5] === "kid") {
       defaultTitle = `Kid Policy`;

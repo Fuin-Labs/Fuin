@@ -55,12 +55,21 @@ export async function listDelegates(config: Config) {
     if (vault) {
       const vaultBalance = vault.balance / LAMPORTS_PER_SOL;
       const stateKey = Object.keys(vault.account.state)[0] ?? "unknown";
-      vaultInfo = [
+      const vaultLines = [
         `  Vault Balance: ${vaultBalance} SOL`,
         `  Vault State: ${stateKey === "active" ? "Active" : stateKey === "frozen" ? "Frozen" : stateKey}`,
         `  Guardian: ${vault.account.guardian.toBase58()}`,
         `  Vault Nonce: ${vault.account.nonce.toNumber()}`,
-      ].join("\n");
+      ];
+      const allowList = vault.account.policies.programs.allowList;
+      const denyList = vault.account.policies.programs.denyList;
+      if (allowList.length > 0) {
+        vaultLines.push(`  Allowed Programs: ${allowList.map((pk) => pk.toBase58()).join(", ")}`);
+      }
+      if (denyList.length > 0) {
+        vaultLines.push(`  Denied Programs: ${denyList.map((pk) => pk.toBase58()).join(", ")}`);
+      }
+      vaultInfo = vaultLines.join("\n");
     }
 
     lines.push(

@@ -5,14 +5,15 @@
     "build": "turbo run build",
     "dev": "turbo run dev",
     "dev:vault": "turbo run dev --filter=vault",
-    "dev:guardian": "turbo run dev --filter=guardian",
     "build:program": "cd programs/fuin && anchor build",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
     "check-types": "turbo run check-types"
   },
   "devDependencies": {
+    "@smithery/cli": "^4.4.0",
     "@types/bn.js": "^5.2.0",
+    "esbuild": "^0.27.3",
     "prettier": "^3.7.4",
     "turbo": "^2.8.8",
     "typescript": "5.9.2"
@@ -27,5 +28,10 @@
     "@solana/web3.js": "^1.98.4",
     "bn.js": "^5.2.2",
     "decimal.js": "^10.6.0"
+  },
+  "pnpm": {
+    "patchedDependencies": {
+      "@meteora-ag/dlmm@1.9.3": "patches/@meteora-ag__dlmm@1.9.3.patch"
+    }
   }
 }

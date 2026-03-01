@@ -50,4 +50,6 @@ pub enum ErrorCode{
     DelegateExpired,
     #[msg("Delegate is inactive")]
     DelegateInactive,
+    #[msg("Swap execution failed")]
+    SwapFailed,
 }

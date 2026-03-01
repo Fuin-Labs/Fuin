@@ -13,8 +13,9 @@ export const prisma =
 if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
 
 export { PrismaClient, Prisma } from "@prisma/client";
-export type { User, Vault, DelegateLabel, AuditLog } from "@prisma/client";
+export type { User, Vault, DelegateLabel, AuditLog, ProgramRequest } from "@prisma/client";
 export * from "./users";
 export * from "./vaults";
 export * from "./delegates";
 export * from "./audit";
+export * from "./program-requests";

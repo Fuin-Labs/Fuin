@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import "./landing.css";
 import { UsecaseFlow } from "./components/UsecaseFlow";
+import SplineHero from "./components/SplineHero";
 import Link from "next/link";
 
 export default function Home() {
@@ -28,13 +29,12 @@ export default function Home() {
 
   return (
     <div id="landing-view" className="w-full transition-opacity duration-500">
-      {/* Background Component */}
-      <div className="aura-background-component -z-10 w-full h-[1040px] absolute top-0">
-        <div data-us-project="vTTCp5g4cVl9nwjlT56Z" className="absolute w-full h-full left-0 top-0 -z-10"></div>
-      </div>
+      {/* Hero Section — Spline 3D background with left-aligned text */}
+      <header className="relative min-h-screen overflow-hidden">
+        {/* Spline 3D Background */}
+        <SplineHero />
 
-      <header className="relative">
-        <div className="sm:px-6 lg:px-8 max-w-7xl mr-auto ml-auto pr-4 pl-4">
+        <div className="relative z-10 sm:px-6 lg:px-8 max-w-7xl mr-auto ml-auto pr-4 pl-4">
           {/* Nav */}
           <nav className="flex mt-6 items-center justify-between">
             <Link href="/" className="flex items-center gap-2">
@@ -73,23 +73,25 @@ export default function Home() {
             </div>
           )}
 
-          {/* Hero */}
-          <section className="z-10 sm:pt-20 md:pt-48 md:pb-32 text-center max-w-5xl mr-auto ml-auto pt-20 pb-32 relative">
+          {/* Hero — left-aligned like the inspiration */}
+          <section className="relative z-10 pt-24 sm:pt-32 md:pt-44 pb-32 md:pb-40 max-w-3xl">
 
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 [animation:fadeSlideIn_1s_ease-out_0.1s_both]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 mb-8 rounded-full bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 [animation:fadeSlideIn_1s_ease-out_0.1s_both]">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="text-xs font-medium font-geist">Solana IAM Protocol</span>
+              <span className="text-xs font-medium font-geist tracking-wide">Solana IAM Protocol</span>
             </div>
 
-            <h1 className="text-6xl sm:text-8xl md:text-[120px] font-bold [animation:fadeSlideIn_1s_ease-out_0.2s_forwards] tracking-tighter font-geist opacity-0 max-w-5xl mr-auto ml-auto text-white">
-              Fuin
+            <h1 className="text-5xl sm:text-7xl md:text-8xl lg:text-[96px] font-bold [animation:fadeSlideIn_1s_ease-out_0.2s_forwards] tracking-tighter font-geist opacity-0 text-white leading-[0.95]">
+              Programmable<br />
+              Security for<br />
+              <span className="text-emerald-400">AI Agents</span>
             </h1>
 
-            <p className="sm:text-lg [animation:fadeSlideIn_1s_ease-out_0.3s_both] text-base font-normal text-white/70 font-geist max-w-2xl mt-6 mr-auto ml-auto">
-              A programmable Identity Access Management layer and restrictive wallet protocol. Cryptographic seals for AI agents and new users, operating in a secure sandbox without sacrificing custody.
+            <p className="sm:text-lg [animation:fadeSlideIn_1s_ease-out_0.3s_both] text-base font-normal text-white/60 font-geist max-w-xl mt-8 leading-relaxed">
+              A programmable IAM layer and restrictive wallet protocol. Cryptographic seals for AI agents and new users, operating in a secure sandbox without sacrificing custody.
             </p>
 
-            <div className="flex flex-col sm:flex-row [animation:fadeSlideIn_1s_ease-out_0.4s_both] mt-10 gap-x-4 gap-y-3 items-center justify-center">
+            <div className="flex flex-col sm:flex-row [animation:fadeSlideIn_1s_ease-out_0.4s_both] mt-10 gap-x-4 gap-y-3 items-start">
               <Link href="/dashboard/vaults" className="group relative inline-flex min-w-[160px] cursor-pointer transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] hover:-translate-y-[3px] hover:text-white shadow-[0_2.8px_2.2px_rgba(0,0,0,0.3),_0_6.7px_5.3px_rgba(0,0,0,0.35),_0_12.5px_10px_rgba(0,0,0,0.4)] overflow-hidden font-medium text-black tracking-tight bg-emerald-400 rounded-full pt-[14px] pr-[24px] pb-[14px] pl-[24px] items-center justify-center no-underline">
                 <span className="relative z-10 font-medium rounded-full font-geist">Launch App</span>
                 <span aria-hidden="true" className="absolute bottom-0 left-1/2 h-[1px] w-[70%] -translate-x-1/2 transition-all duration-[1000ms] ease-[cubic-bezier(0.15,0.83,0.66,1)] group-hover:opacity-80 bg-gradient-to-r from-transparent via-white to-transparent rounded-full blur-[2px]"></span>
@@ -101,6 +103,9 @@ export default function Home() {
             </div>
           </section>
         </div>
+
+        {/* Bottom fade into black */}
+        <div className="absolute bottom-0 left-0 right-0 h-32 bg-gradient-to-t from-black to-transparent z-10 pointer-events-none"></div>
       </header>
 
       {/* Integrations */}

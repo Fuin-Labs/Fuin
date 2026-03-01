@@ -2,6 +2,8 @@ use anchor_lang::prelude::*;
 
 declare_id!("E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy");
 
+declare_program!(dlmm);
+
 pub mod state;
 pub mod handlers;
 pub mod error;
@@ -38,8 +40,8 @@ pub mod fuin {
         handlers::execute_spl_transfer(ctx, nonce_vault, nonce_delegate, amount, feed_id)
     }
 
-    pub fn update_vault(ctx: Context<UpdateVault>, nonce: u64, new_daily_cap: Option<u64>, new_per_tx_cap: Option<u64>)->Result<()>{
-        handlers::update_vault(ctx, nonce, new_daily_cap, new_per_tx_cap)
+    pub fn update_vault(ctx: Context<UpdateVault>, nonce: u64, new_daily_cap: Option<u64>, new_per_tx_cap: Option<u64>, new_allow_list: Option<Vec<Pubkey>>, new_deny_list: Option<Vec<Pubkey>>)->Result<()>{
+        handlers::update_vault(ctx, nonce, new_daily_cap, new_per_tx_cap, new_allow_list, new_deny_list)
     }
 
     pub fn delegate_control(ctx: Context<DelegateControl>, nonce_vault: u64, nonce_delegate: u64, status: u8)->Result<()>{
@@ -56,5 +58,16 @@ pub mod fuin {
 
     pub fn unfreeze_vault(ctx: Context<FreezeVault>, nonce: u64) -> Result<()> {
         handlers::unfreeze_vault(ctx, nonce)
+    }
+
+    pub fn execute_swap<'info>(
+        ctx: Context<'_, '_, '_, 'info, ExecuteSwap<'info>>,
+        nonce_vault: u64,
+        nonce_delegate: u64,
+        amount_in: u64,
+        min_amount_out: u64,
+        feed_id: String,
+    ) -> Result<()> {
+        handlers::execute_swap(ctx, nonce_vault, nonce_delegate, amount_in, min_amount_out, feed_id)
     }
 }

@@ -4,6 +4,7 @@
   "description": "MCP server for Fuin delegate key operations on Solana — manage vaults, check balances, and transfer SOL via AI agents",
   "type": "module",
   "main": "./src/index.ts",
+  "module": "./src/index.ts",
   "bin": {
     "fuin-mcp": "./src/index.ts"
   },

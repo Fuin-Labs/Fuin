@@ -52,6 +52,22 @@ model DelegateLabel {
   @@index([guardian])
 }
 
+/// Agent requests to add a program to vault allow-list
+model ProgramRequest {
+  id             String   @id @default(cuid())
+  vaultPda       String   /// Vault PDA (base58)
+  delegatePda    String   /// Delegate PDA that made the request
+  guardian       String   /// Guardian wallet (base58)
+  programAddress String   /// Solana program address to allow (base58)
+  reason         String   /// Why the agent wants this program
+  status         String   @default("pending") /// "pending" | "approved" | "rejected"
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([vaultPda, status])
+  @@index([guardian, status])
+}
+
 /// Audit log for delegate control actions (pause/resume/revoke)
 model AuditLog {
   id          String   @id @default(cuid())

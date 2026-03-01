@@ -3,8 +3,9 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { PublicKey } from "@solana/web3.js";
 import { useFuinClient } from "../../_hooks/useFuinClient";
 import { useAutoNonce } from "../../_hooks/useAutoNonce";
 import { GlassCard } from "../../_components/ui/GlassCard";
@@ -12,6 +13,7 @@ import { Input } from "../../_components/ui/Input";
 import { TransactionButton } from "../../_components/TransactionButton";
 import { COLORS } from "../../_lib/constants";
 import { useIsMobile } from "../../_hooks/useMediaQuery";
+import { useToast } from "../../_hooks/useToast";
 import { saveVault } from "../../_actions/vaults";
 
 export default function CreateVaultPage() {
@@ -20,9 +22,13 @@ export default function CreateVaultPage() {
   const { nextNonce } = useAutoNonce();
   const isMobile = useIsMobile();
 
+  const { addToast } = useToast();
   const [nonce, setNonce] = useState("");
   const [dailyCap, setDailyCap] = useState("10");
   const [perTxCap, setPerTxCap] = useState("1");
+  const [allowedPrograms, setAllowedPrograms] = useState<string[]>([]);
+  const [programInput, setProgramInput] = useState("");
+  const [programsExpanded, setProgramsExpanded] = useState(false);
 
   // Use auto-discovered nonce as default
   const effectiveNonce = nonce === "" ? String(nextNonce) : nonce;
@@ -35,13 +41,39 @@ export default function CreateVaultPage() {
     );
   }
 
+  const handleAddProgram = () => {
+    const addr = programInput.trim();
+    if (!addr) return;
+    try {
+      new PublicKey(addr);
+    } catch {
+      addToast("Invalid Solana address", "error");
+      return;
+    }
+    if (allowedPrograms.includes(addr)) {
+      addToast("Program already added", "error");
+      return;
+    }
+    if (allowedPrograms.length >= 16) {
+      addToast("Maximum 16 programs allowed", "error");
+      return;
+    }
+    setAllowedPrograms((prev) => [...prev, addr]);
+    setProgramInput("");
+  };
+
+  const handleRemoveProgram = (addr: string) => {
+    setAllowedPrograms((prev) => prev.filter((p) => p !== addr));
+  };
+
   const handleCreate = async () => {
     if (!client || !publicKey) throw new Error("Client not ready");
+    const programKeys = allowedPrograms.map((a) => new PublicKey(a));
     const result = await client.createVault(
       Number(effectiveNonce),
       Number(dailyCap),
       Number(perTxCap),
-      []
+      programKeys
     );
 
     // Persist vault to DB (fire-and-forget)
@@ -94,6 +126,109 @@ export default function CreateVaultPage() {
               type="number"
               hint="Maximum SOL per single transaction"
             />
+          </div>
+
+          {/* Allowed Programs (collapsible) */}
+          <div>
+            <button
+              type="button"
+              onClick={() => setProgramsExpanded(!programsExpanded)}
+              style={{
+                background: "none",
+                border: "none",
+                color: COLORS.textSecondary,
+                fontSize: "0.85rem",
+                fontWeight: 600,
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: "6px",
+                padding: 0,
+                fontFamily: "inherit",
+              }}
+            >
+              {programsExpanded ? <ChevronDown size={14} /> : <ChevronRight size={14} />}
+              Allowed Programs (Optional)
+              {allowedPrograms.length > 0 && (
+                <span style={{ color: COLORS.emerald, fontSize: "0.75rem" }}>
+                  {allowedPrograms.length}
+                </span>
+              )}
+            </button>
+
+            {programsExpanded && (
+              <div style={{ marginTop: "12px", display: "flex", flexDirection: "column", gap: "12px" }}>
+                <div style={{ display: "flex", gap: "8px" }}>
+                  <div style={{ flex: 1 }}>
+                    <Input
+                      value={programInput}
+                      onChange={setProgramInput}
+                      placeholder="Program address (base58)"
+                      hint="Restrict vault to only interact with these programs"
+                    />
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddProgram}
+                    style={{
+                      background: COLORS.emerald,
+                      border: "none",
+                      borderRadius: "10px",
+                      padding: "12px 16px",
+                      cursor: "pointer",
+                      display: "flex",
+                      alignItems: "center",
+                      alignSelf: "flex-start",
+                      marginTop: "24px",
+                    }}
+                  >
+                    <Plus size={16} color="#000" />
+                  </button>
+                </div>
+
+                {allowedPrograms.length > 0 && (
+                  <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
+                    {allowedPrograms.map((addr) => (
+                      <div
+                        key={addr}
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "space-between",
+                          backgroundColor: "rgba(255,255,255,0.03)",
+                          borderRadius: "8px",
+                          padding: "8px 12px",
+                          fontSize: "0.8rem",
+                          fontFamily: "var(--font-geist-mono), monospace",
+                          color: COLORS.textSecondary,
+                        }}
+                      >
+                        <span style={{ overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                          {addr}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveProgram(addr)}
+                          style={{
+                            background: "none",
+                            border: "none",
+                            cursor: "pointer",
+                            padding: "2px",
+                            flexShrink: 0,
+                            marginLeft: "8px",
+                          }}
+                        >
+                          <Trash2 size={14} color={COLORS.red} />
+                        </button>
+                      </div>
+                    ))}
+                    <span style={{ fontSize: "0.7rem", color: COLORS.textDim }}>
+                      {allowedPrograms.length}/16 programs
+                    </span>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
 
           <TransactionButton

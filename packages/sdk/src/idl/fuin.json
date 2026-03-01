@@ -217,6 +217,177 @@
       ]
     },
     {
+      "name": "execute_swap",
+      "discriminator": [
+        56,
+        182,
+        124,
+        215,
+        155,
+        140,
+        157,
+        102
+      ],
+      "accounts": [
+        {
+          "name": "relayer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "delegate_key",
+          "signer": true
+        },
+        {
+          "name": "guardian"
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "delegate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_delegate"
+              }
+            ]
+          }
+        },
+        {
+          "name": "price_update"
+        },
+        {
+          "name": "lb_pair",
+          "writable": true
+        },
+        {
+          "name": "bin_array_bitmap_extension",
+          "optional": true
+        },
+        {
+          "name": "reserve_x",
+          "writable": true
+        },
+        {
+          "name": "reserve_y",
+          "writable": true
+        },
+        {
+          "name": "user_token_in",
+          "docs": [
+            "Vault's token account for the input token"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_token_out",
+          "docs": [
+            "Vault's token account for the output token"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_x_mint"
+        },
+        {
+          "name": "token_y_mint"
+        },
+        {
+          "name": "oracle",
+          "writable": true
+        },
+        {
+          "name": "host_fee_in",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "token_in_mint",
+          "docs": [
+            "Mint of the input token (for decimals in USD conversion)"
+          ]
+        },
+        {
+          "name": "token_x_program"
+        },
+        {
+          "name": "token_y_program"
+        },
+        {
+          "name": "event_authority"
+        },
+        {
+          "name": "dlmm_program",
+          "address": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce_vault",
+          "type": "u64"
+        },
+        {
+          "name": "nonce_delegate",
+          "type": "u64"
+        },
+        {
+          "name": "amount_in",
+          "type": "u64"
+        },
+        {
+          "name": "min_amount_out",
+          "type": "u64"
+        },
+        {
+          "name": "feed_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
       "name": "execute_transfer",
       "discriminator": [
         233,
@@ -674,6 +845,22 @@
           "type": {
             "option": "u64"
           }
+        },
+        {
+          "name": "new_allow_list",
+          "type": {
+            "option": {
+              "vec": "pubkey"
+            }
+          }
+        },
+        {
+          "name": "new_deny_list",
+          "type": {
+            "option": {
+              "vec": "pubkey"
+            }
+          }
         }
       ]
     },
@@ -785,123 +972,267 @@
   "errors": [
     {
       "code": 6000,
-      "name": "SessionInactive",
-      "msg": "Session is inactive or revoked."
+      "name": "InvalidStartBinIndex"
     },
     {
       "code": 6001,
-      "name": "InvalidSession",
-      "msg": "Session does not belong to this vault."
+      "name": "InvalidBinId"
     },
     {
       "code": 6002,
-      "name": "SessionExpired",
-      "msg": "Session has expired."
+      "name": "InvalidInput"
     },
     {
       "code": 6003,
-      "name": "AddressNotWhitelisted",
-      "msg": "Destination address is not in the whitelist."
+      "name": "ExceededAmountSlippageTolerance"
     },
     {
       "code": 6004,
-      "name": "DailyLimitExceeded",
-      "msg": "Daily spending limit exceeded."
+      "name": "ExceededBinSlippageTolerance"
     },
     {
       "code": 6005,
-      "name": "SessionLimitExceeded",
-      "msg": "Session Spending limit exceeded."
+      "name": "CompositionFactorFlawed"
     },
     {
       "code": 6006,
-      "name": "TxLimitExceeded",
-      "msg": "Transaction limit exceeded."
+      "name": "NonPresetBinStep"
     },
     {
       "code": 6007,
-      "name": "Overflow",
-      "msg": "Math Overflow."
+      "name": "ZeroLiquidity"
     },
     {
       "code": 6008,
-      "name": "WhitelistAccountsAreNotProvided",
-      "msg": "Whitelist Account are not provided"
+      "name": "InvalidPosition"
     },
     {
       "code": 6009,
-      "name": "MintMismatch",
-      "msg": "MintMismatch"
+      "name": "BinArrayNotFound"
     },
     {
       "code": 6010,
-      "name": "VaultOwnerMismatch",
-      "msg": "Vault Owner Mismatch"
+      "name": "InvalidTokenMint"
     },
     {
       "code": 6011,
-      "name": "InvalidPrice",
-      "msg": "Oracle price is invalid or negative."
+      "name": "InvalidAccountForSingleDeposit"
     },
     {
       "code": 6012,
-      "name": "PricingOverflow",
-      "msg": "Math overflow during pricing."
+      "name": "PairInsufficientLiquidity"
     },
     {
       "code": 6013,
-      "name": "WhitelistFull",
-      "msg": "Max length reached"
+      "name": "InvalidFeeOwner"
     },
     {
       "code": 6014,
-      "name": "InvalidAction",
-      "msg": "Invalid Action for Session Control"
+      "name": "InvalidFeeWithdrawAmount"
     },
     {
       "code": 6015,
-      "name": "VaultFrozen",
-      "msg": "Vault is frozen, no operations allowed"
+      "name": "InvalidAdmin"
     },
     {
       "code": 6016,
-      "name": "PerTxLimitExceeded",
-      "msg": "Per-transaction limit exceeded"
+      "name": "IdenticalFeeOwner"
     },
     {
       "code": 6017,
-      "name": "ProgramNotAllowed",
-      "msg": "Program is not allowed by policy"
+      "name": "InvalidBps"
     },
     {
       "code": 6018,
-      "name": "OutsideAllowedTime",
-      "msg": "Operation is outside allowed time window"
+      "name": "MathOverflow"
     },
     {
       "code": 6019,
-      "name": "RequiresGuardianCosign",
-      "msg": "Transaction requires guardian co-signature"
+      "name": "TypeCastFailed"
     },
     {
       "code": 6020,
-      "name": "PermissionDenied",
-      "msg": "Permission denied"
+      "name": "InvalidRewardIndex"
     },
     {
       "code": 6021,
-      "name": "MaxUsesExceeded",
-      "msg": "Maximum uses exceeded"
+      "name": "InvalidRewardDuration"
     },
     {
       "code": 6022,
-      "name": "DelegateExpired",
-      "msg": "Delegate has expired"
+      "name": "RewardInitialized"
     },
     {
       "code": 6023,
-      "name": "DelegateInactive",
-      "msg": "Delegate is inactive"
+      "name": "RewardUninitialized"
+    },
+    {
+      "code": 6024,
+      "name": "IdenticalFunder"
+    },
+    {
+      "code": 6025,
+      "name": "RewardCampaignInProgress"
+    },
+    {
+      "code": 6026,
+      "name": "IdenticalRewardDuration"
+    },
+    {
+      "code": 6027,
+      "name": "InvalidBinArray"
+    },
+    {
+      "code": 6028,
+      "name": "NonContinuousBinArrays"
+    },
+    {
+      "code": 6029,
+      "name": "InvalidRewardVault"
+    },
+    {
+      "code": 6030,
+      "name": "NonEmptyPosition"
+    },
+    {
+      "code": 6031,
+      "name": "UnauthorizedAccess"
+    },
+    {
+      "code": 6032,
+      "name": "InvalidFeeParameter"
+    },
+    {
+      "code": 6033,
+      "name": "MissingOracle"
+    },
+    {
+      "code": 6034,
+      "name": "InsufficientSample"
+    },
+    {
+      "code": 6035,
+      "name": "InvalidLookupTimestamp"
+    },
+    {
+      "code": 6036,
+      "name": "BitmapExtensionAccountIsNotProvided"
+    },
+    {
+      "code": 6037,
+      "name": "CannotFindNonZeroLiquidityBinArrayId"
+    },
+    {
+      "code": 6038,
+      "name": "BinIdOutOfBound"
+    },
+    {
+      "code": 6039,
+      "name": "InsufficientOutAmount"
+    },
+    {
+      "code": 6040,
+      "name": "InvalidPositionWidth"
+    },
+    {
+      "code": 6041,
+      "name": "ExcessiveFeeUpdate"
+    },
+    {
+      "code": 6042,
+      "name": "PoolDisabled"
+    },
+    {
+      "code": 6043,
+      "name": "InvalidPoolType"
+    },
+    {
+      "code": 6044,
+      "name": "ExceedMaxWhitelist"
+    },
+    {
+      "code": 6045,
+      "name": "InvalidIndex"
+    },
+    {
+      "code": 6046,
+      "name": "RewardNotEnded"
+    },
+    {
+      "code": 6047,
+      "name": "MustWithdrawnIneligibleReward"
+    },
+    {
+      "code": 6048,
+      "name": "UnauthorizedAddress"
+    },
+    {
+      "code": 6049,
+      "name": "OperatorsAreTheSame"
+    },
+    {
+      "code": 6050,
+      "name": "WithdrawToWrongTokenAccount"
+    },
+    {
+      "code": 6051,
+      "name": "WrongRentReceiver"
+    },
+    {
+      "code": 6052,
+      "name": "AlreadyPassActivationPoint"
+    },
+    {
+      "code": 6053,
+      "name": "ExceedMaxSwappedAmount"
+    },
+    {
+      "code": 6054,
+      "name": "InvalidStrategyParameters"
+    },
+    {
+      "code": 6055,
+      "name": "LiquidityLocked"
+    },
+    {
+      "code": 6056,
+      "name": "BinRangeIsNotEmpty"
+    },
+    {
+      "code": 6057,
+      "name": "NotExactAmountOut"
+    },
+    {
+      "code": 6058,
+      "name": "InvalidActivationType"
+    },
+    {
+      "code": 6059,
+      "name": "InvalidActivationDuration"
+    },
+    {
+      "code": 6060,
+      "name": "MissingTokenAmountAsTokenLaunchProof"
+    },
+    {
+      "code": 6061,
+      "name": "InvalidQuoteToken"
+    },
+    {
+      "code": 6062,
+      "name": "InvalidBinStep"
+    },
+    {
+      "code": 6063,
+      "name": "InvalidBaseFee"
+    },
+    {
+      "code": 6064,
+      "name": "InvalidPreActivationDuration"
+    },
+    {
+      "code": 6065,
+      "name": "AlreadyPassPreActivationSwapPoint"
     }
   ],
   "types": [

@@ -14,6 +14,7 @@ import { WithdrawSection } from "./_components/WithdrawSection";
 import { FreezeToggle } from "./_components/FreezeToggle";
 import { UpdatePoliciesForm } from "./_components/UpdatePoliciesForm";
 import { DelegateList } from "./_components/DelegateList";
+import { ProgramRequests } from "./_components/ProgramRequests";
 import { getVaultState } from "../../_lib/format";
 import { COLORS } from "../../_lib/constants";
 import { useIsMobile } from "../../_hooks/useMediaQuery";
@@ -168,11 +169,19 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
           nonce={nonce}
           currentDailyCap={vault.account.policies.spending.dailyCap.toNumber()}
           currentPerTxCap={vault.account.policies.spending.perTxCap.toNumber()}
+          currentAllowList={(vault.account.policies?.programs?.allowList ?? []).map((pk: { toBase58(): string }) => pk.toBase58())}
+          currentDenyList={(vault.account.policies?.programs?.denyList ?? []).map((pk: { toBase58(): string }) => pk.toBase58())}
           onSuccess={refetch}
         />
 
         <DelegateList vaultPda={vault.publicKey} vaultNonce={nonce} />
 
+        <ProgramRequests
+          vaultPda={vault.publicKey.toBase58()}
+          nonce={nonce}
+          currentAllowList={(vault.account.policies?.programs?.allowList ?? []).map((pk: { toBase58(): string }) => pk.toBase58())}
+          onSuccess={refetch}
+        />
       </div>
     </motion.div>
   );

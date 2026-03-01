@@ -24,3 +24,6 @@ pub use withdraw::*;
 
 pub mod freeze_vault;
 pub use freeze_vault::*;
+
+pub mod execute_swap;
+pub use execute_swap::*;

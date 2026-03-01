@@ -32,36 +32,7 @@ export default function CreateDelegatePage({ params }: { params: Promise<{ nonce
       </p>
 
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "16px" }}>
-        <Link href={`/dashboard/vaults/${vaultNonce}/delegate/kid`} style={{ textDecoration: "none" }}>
-          <GlassCard hover accent={COLORS.emeraldBorder} style={{ height: "100%" }}>
-            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "16px 0" }}>
-              <div
-                style={{
-                  width: "56px",
-                  height: "56px",
-                  borderRadius: "16px",
-                  backgroundColor: COLORS.emeraldSubtle,
-                  border: `1px solid ${COLORS.emeraldBorder}`,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                <UserRound size={28} color={COLORS.emerald} />
-              </div>
-              <div>
-                <h3 style={{ color: COLORS.text, fontSize: "1.15rem", fontWeight: 700, margin: "0 0 6px" }}>
-                  Kid Allowance
-                </h3>
-                <p style={{ color: COLORS.textMuted, fontSize: "0.85rem", margin: 0, lineHeight: 1.5 }}>
-                  Set up a simple spending allowance for your teenager with transfer-only access.
-                </p>
-              </div>
-            </div>
-          </GlassCard>
-        </Link>
-
-        <Link href={`/dashboard/vaults/${vaultNonce}/delegate/openclaw`} style={{ textDecoration: "none" }}>
+        <Link href={`/dashboard/vaults/${vaultNonce}/delegate/openclaw`} style={{ textDecoration: "none", cursor: "pointer" }}>
           <GlassCard hover accent="rgba(168, 85, 247, 0.2)" style={{ height: "100%" }}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "16px 0" }}>
               <div
@@ -89,6 +60,50 @@ export default function CreateDelegatePage({ params }: { params: Promise<{ nonce
             </div>
           </GlassCard>
         </Link>
+
+        <div style={{ position: "relative", opacity: 0.55, cursor: "not-allowed" }}>
+          <div style={{
+            position: "absolute",
+            top: "12px",
+            right: "12px",
+            backgroundColor: COLORS.emerald,
+            color: "#000",
+            fontSize: "0.7rem",
+            fontWeight: 700,
+            padding: "3px 8px",
+            borderRadius: "6px",
+            zIndex: 1,
+            letterSpacing: "0.03em",
+          }}>
+            COMING SOON
+          </div>
+          <GlassCard accent={COLORS.emeraldBorder} style={{ height: "100%" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "16px 0" }}>
+              <div
+                style={{
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "16px",
+                  backgroundColor: COLORS.emeraldSubtle,
+                  border: `1px solid ${COLORS.emeraldBorder}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <UserRound size={28} color={COLORS.emerald} />
+              </div>
+              <div>
+                <h3 style={{ color: COLORS.text, fontSize: "1.15rem", fontWeight: 700, margin: "0 0 6px" }}>
+                  Kid Allowance
+                </h3>
+                <p style={{ color: COLORS.textMuted, fontSize: "0.85rem", margin: 0, lineHeight: 1.5 }}>
+                  Set up a simple spending allowance for your teenager with transfer-only access.
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+        </div>
       </div>
     </motion.div>
   );

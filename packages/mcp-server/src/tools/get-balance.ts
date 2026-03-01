@@ -47,7 +47,10 @@ export async function getBalance(
   const perTxCap = vault.account.policies.spending.perTxCap.toNumber() / LAMPORTS_PER_SOL;
   const dailySpent = vault.account.policies.spending.dailySpent.toNumber() / LAMPORTS_PER_SOL;
 
-  const text = [
+  const allowList = vault.account.policies.programs.allowList;
+  const denyList = vault.account.policies.programs.denyList;
+
+  const lines = [
     `Vault: ${vaultPda.toBase58()}`,
     `Guardian: ${vault.account.guardian.toBase58()}`,
     `State: ${formatState(vault.account.state)}`,
@@ -61,7 +64,21 @@ export async function getBalance(
     `  Spent This Epoch: ${dailySpent} SOL`,
     `  Remaining This Epoch: ${Math.max(0, dailyCap - dailySpent)} SOL`,
     `  Last Reset Epoch: ${vault.account.policies.spending.lastResetEpoch.toNumber()}`,
-  ].join("\n");
+  ];
+
+  if (allowList.length > 0 || denyList.length > 0) {
+    lines.push(``, `Program Policy:`);
+    if (allowList.length > 0) {
+      lines.push(`  Allowed Programs (${allowList.length}):`);
+      for (const pk of allowList) lines.push(`    - ${pk.toBase58()}`);
+    }
+    if (denyList.length > 0) {
+      lines.push(`  Denied Programs (${denyList.length}):`);
+      for (const pk of denyList) lines.push(`    - ${pk.toBase58()}`);
+    }
+  }
+
+  const text = lines.join("\n");
 
   return { content: [{ type: "text" as const, text }] };
 }
