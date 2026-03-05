@@ -1,7 +1,7 @@
 use anchor_lang::prelude::*;
 
 use crate::{error::ErrorCode, state::{Delegate, Vault, delegate::CAN_TRANSFER}};
-use super::{validate_and_update_limits, validate_program_policy};
+use super::validate_and_update_limits;
 
 #[derive(Accounts)]
 #[instruction(nonce_vault:u64, nonce_delegate:u64)]
@@ -53,8 +53,10 @@ pub fn execute_transfer<'info>(ctx: Context<ExecuteTransfer>, _nonce_vault: u64,
     // Permission check
     require!(ctx.accounts.delegate.has_permission(CAN_TRANSFER), ErrorCode::PermissionDenied);
 
-    // Validate system program against program policy
-    validate_program_policy(&ctx.accounts.vault, &ctx.accounts.system_program.key())?;
+    // NOTE: No program policy check here. SOL transfers use direct lamport
+    // manipulation (no CPI), so the program allow/deny list doesn't apply.
+    // Program policy is enforced in execute_spl_transfer and execute_swap
+    // where actual CPI calls target external programs.
 
     validate_and_update_limits(
         &mut ctx.accounts.vault,

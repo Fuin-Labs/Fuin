@@ -18,7 +18,7 @@ import {
 } from "@solana/web3.js";
 import type { Signer } from "@solana/web3.js";
 import { BN } from "bn.js";
-import { getAssociatedTokenAddressSync, createAssociatedTokenAccountIdempotentInstruction, TOKEN_PROGRAM_ID } from "@solana/spl-token";
+import { getAssociatedTokenAddressSync, createAssociatedTokenAccountIdempotentInstruction, TOKEN_PROGRAM_ID, TOKEN_2022_PROGRAM_ID } from "@solana/spl-token";
 import { FuinClient, HERMES_ENDPOINT, PYTH_SOL_FEED_ID } from "./client";
 import { findVaultPda, findDelegatePda } from "./pda";
 
@@ -76,7 +76,8 @@ export async function transferSplPull(
     await pythSolanaReceiver.buildPostPriceUpdateInstructions(priceUpdateData);
 
   // Resolve the ephemeral price account for this feed
-  const normalizedFeedId = feedId.startsWith("0x") ? feedId.slice(2) : feedId;
+  // PythSolanaReceiver stores keys with "0x" prefix
+  const normalizedFeedId = feedId.startsWith("0x") ? feedId : `0x${feedId}`;
   const priceAccountPubkey = priceFeedIdToPriceUpdateAccount[normalizedFeedId];
   if (!priceAccountPubkey) {
     throw new Error(`No price update account returned for feed ${feedId}`);
@@ -87,14 +88,25 @@ export async function transferSplPull(
   const bnDelegateNonce = new BN(delegateNonce);
   const [vaultPda] = findVaultPda(guardian, bnVaultNonce, client.program.programId);
   const [delegatePda] = findDelegatePda(vaultPda, bnDelegateNonce, client.program.programId);
-  const vaultAta = getAssociatedTokenAddressSync(mint, vaultPda, true);
-  const destAta = getAssociatedTokenAddressSync(mint, destination, true);
+
+  // Detect whether the mint belongs to Token-2022 or standard SPL Token
+  const mintAccountInfo = await client.connection.getAccountInfo(mint);
+  if (!mintAccountInfo) {
+    throw new Error(`Mint account ${mint.toBase58()} not found`);
+  }
+  const tokenProgramId = mintAccountInfo.owner.equals(TOKEN_2022_PROGRAM_ID)
+    ? TOKEN_2022_PROGRAM_ID
+    : TOKEN_PROGRAM_ID;
+
+  const vaultAta = getAssociatedTokenAddressSync(mint, vaultPda, true, tokenProgramId);
+  const destAta = getAssociatedTokenAddressSync(mint, destination, true, tokenProgramId);
 
   const createDestAtaIx = createAssociatedTokenAccountIdempotentInstruction(
     signer.publicKey,
     destAta,
     destination,
     mint,
+    tokenProgramId,
   );
 
   const splTransferIx = await client.program.methods
@@ -108,7 +120,7 @@ export async function transferSplPull(
       vaultTokenAccount: vaultAta,
       destinationTokenAccount: destAta,
       mint: mint,
-      tokenProgram: TOKEN_PROGRAM_ID,
+      tokenProgram: tokenProgramId,
       priceUpdate: priceAccountPubkey,
     })
     .instruction();

@@ -34,7 +34,7 @@ const AnimatedOpenClaw = () => (
                 fill="url(#lobster-gradient)"
                 animate={{ rotate: [0, -15, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
-                style={{ originX: "25px", originY: "55px" }} // Hinge point
+                style={{ originX: "25px", originY: "55px" }}
             />
 
             {/* Right Claw - Clamping */}
@@ -43,7 +43,7 @@ const AnimatedOpenClaw = () => (
                 fill="url(#lobster-gradient)"
                 animate={{ rotate: [0, 15, 0] }}
                 transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", repeatType: "reverse", delay: 0.2 }}
-                style={{ originX: "95px", originY: "55px" }} // Hinge point
+                style={{ originX: "95px", originY: "55px" }}
             />
 
             {/* Antenna */}
@@ -79,17 +79,16 @@ const FlowStepCard = ({ step, title, desc, icon, delay, accentColor }: any) => {
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.6, delay }}
-            className="flex gap-5 p-6 bg-white/[0.02] border border-white/[0.05] rounded-[20px] relative overflow-hidden group hover:bg-white/[0.04] transition-colors"
+            className="flex gap-5 p-6 bg-[#0f0f0f] border border-[rgba(255,255,255,0.1)] rounded-2xl relative overflow-hidden group hover:border-[rgba(255,255,255,0.15)] transition-colors"
         >
-            {/* Ambient accent glow behind the card */}
+            {/* Accent left bar */}
             <div style={{
                 position: "absolute",
                 top: 0,
                 left: 0,
-                width: "4px",
+                width: "3px",
                 height: "100%",
                 backgroundColor: accentColor,
-                boxShadow: `0 0 15px ${accentColor}`
             }} />
 
             <div style={{
@@ -103,7 +102,7 @@ const FlowStepCard = ({ step, title, desc, icon, delay, accentColor }: any) => {
             </div>
 
             <div className="font-geist">
-                <div style={{ color: accentColor }} className="text-xs font-bold tracking-[0.1em] uppercase mb-1">
+                <div style={{ color: accentColor }} className="text-xs font-pixel tracking-[0.1em] uppercase mb-1">
                     Phase 0{step}
                 </div>
                 <h4 className="text-white text-xl font-bold m-0 mb-2 font-geist">
@@ -122,27 +121,28 @@ export const UsecaseFlow = () => {
     const [activeTab, setActiveTab] = useState<"agent" | "junior">("agent");
 
     return (
-        <section id="usecase-flow" className="relative z-10 w-full py-24 md:py-32 px-6 flex flex-col items-center font-geist overflow-hidden border-t border-white/5 bg-white/[0.01]">
+        <section id="usecase-flow" className="relative z-10 w-full py-28 md:py-32 px-6 flex flex-col items-center font-geist overflow-hidden">
+            <div className="section-divider w-full absolute top-0 left-0"></div>
 
             {/* Header / Toggle Section */}
             <div className="max-w-4xl w-full z-10 text-center mb-16">
-                <span className="inline-flex items-center rounded-full border border-white/10 bg-white/5 px-3 py-1 text-[11px] font-medium text-white/70 font-geist uppercase tracking-widest mb-6">Usecases</span>
-                <h2 className="text-4xl md:text-5xl font-bold tracking-tight text-white font-geist mb-8">
+                <span className="font-pixel text-[11px] text-white/50 tracking-widest uppercase mb-6 block">Usecases</span>
+                <h2 className="text-section font-geist text-white mb-8">
                     Web3 For <span className={activeTab === "agent" ? "text-rose-400" : "text-emerald-400"} style={{ transition: "color 0.4s ease" }}>Everyone</span>
                 </h2>
 
-                {/* Glassmorphism Toggle Switch */}
-                <div className="inline-flex bg-white/5 backdrop-blur-md border border-white/10 rounded-full p-1.5 relative">
+                {/* Toggle Switch */}
+                <div className="inline-flex bg-[#0f0f0f] border border-[rgba(255,255,255,0.1)] rounded-full p-1.5 relative">
                     <button
                         onClick={() => setActiveTab("agent")}
-                        className={`px-8 py-3 rounded-full border-none text-base font-semibold cursor-pointer transition-all duration-300 flex items-center gap-2 ${activeTab === "agent" ? 'bg-rose-500/15 text-rose-400' : 'bg-transparent text-white/60'}`}
+                        className={`px-4 py-2.5 sm:px-8 sm:py-3 rounded-full border-none text-base font-semibold cursor-pointer transition-colors duration-200 flex items-center gap-2 ${activeTab === "agent" ? 'bg-rose-500/15 text-rose-400' : 'bg-transparent text-white/60'}`}
                     >
                         <Bot size={18} />
                         Autonomous Agents
                     </button>
                     <button
                         onClick={() => setActiveTab("junior")}
-                        className={`px-8 py-3 rounded-full border-none text-base font-semibold cursor-pointer transition-all duration-300 flex items-center gap-2 ${activeTab === "junior" ? 'bg-emerald-400/15 text-emerald-400' : 'bg-transparent text-white/60'}`}
+                        className={`px-4 py-2.5 sm:px-8 sm:py-3 rounded-full border-none text-base font-semibold cursor-pointer transition-colors duration-200 flex items-center gap-2 ${activeTab === "junior" ? 'bg-emerald-400/15 text-emerald-400' : 'bg-transparent text-white/60'}`}
                     >
                         <Shield size={18} />
                         Junior Vaults
@@ -151,7 +151,7 @@ export const UsecaseFlow = () => {
             </div>
 
             {/* Dynamic Content Container */}
-            <div style={{ maxWidth: "1200px", width: "100%", minHeight: "500px", position: "relative" }}>
+            <div className="max-w-[1200px] w-full min-h-[500px] relative">
                 <AnimatePresence mode="wait">
 
                     {/* --- OPENCLAW AGENT FLOW --- */}
@@ -162,38 +162,15 @@ export const UsecaseFlow = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.5 }}
-                            style={{
-                                display: "grid",
-                                gridTemplateColumns: "1fr 1fr",
-                                gap: "60px",
-                                alignItems: "center"
-                            }}
+                            className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-[60px] items-center"
                         >
-                            {/* Left: Graphic Visualization */}
-                            <div style={{
-                                position: "relative",
-                                height: "400px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                background: "radial-gradient(circle at center, rgba(255, 77, 77, 0.1) 0%, transparent 60%)"
-                            }}>
+                            {/* Left: Graphic Visualization — hidden on mobile, shown second on md+ */}
+                            <div className="hidden md:flex relative h-[400px] items-center justify-center">
                                 <AnimatedOpenClaw />
-                                {/* Data rings revolving around the agent */}
-                                <motion.div
-                                    style={{ position: "absolute", width: "350px", height: "350px", border: "1px dashed rgba(255,77,77,0.3)", borderRadius: "50%" }}
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
-                                />
-                                <motion.div
-                                    style={{ position: "absolute", width: "250px", height: "250px", border: "1px solid rgba(52,211,153,0.2)", borderRadius: "50%" }}
-                                    animate={{ rotate: -360 }}
-                                    transition={{ duration: 15, repeat: Infinity, ease: "linear" }}
-                                />
                             </div>
 
                             {/* Right: Flow Steps */}
-                            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                            <div className="flex flex-col gap-5">
                                 <FlowStepCard
                                     step={1}
                                     title="Awaken via Webhook"
@@ -230,22 +207,10 @@ export const UsecaseFlow = () => {
                             animate={{ opacity: 1, y: 0 }}
                             exit={{ opacity: 0, y: -20 }}
                             transition={{ duration: 0.5 }}
-                            style={{
-                                display: "grid",
-                                gridTemplateColumns: "1fr 1fr",
-                                gap: "60px",
-                                alignItems: "center"
-                            }}
+                            className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-[60px] items-center"
                         >
-                            {/* Left: Graphic Visualization */}
-                            <div style={{
-                                position: "relative",
-                                height: "400px",
-                                display: "flex",
-                                alignItems: "center",
-                                justifyContent: "center",
-                                background: "radial-gradient(circle at center, rgba(52, 211, 153, 0.1) 0%, transparent 60%)"
-                            }}>
+                            {/* Left: Graphic Visualization — hidden on mobile */}
+                            <div className="hidden md:flex relative h-[400px] items-center justify-center">
                                 {/* Holographic Shield Animation */}
                                 <motion.div
                                     animate={{ y: [-15, 15, -15], scale: [1, 1.05, 1] }}
@@ -254,21 +219,10 @@ export const UsecaseFlow = () => {
                                     <Shield size={180} color="#34d399" strokeWidth={1} style={{ filter: "drop-shadow(0 0 30px rgba(52,211,153,0.5))" }} />
                                     <Sparkles size={40} color="#FACC15" style={{ position: "absolute", top: -10, right: -10 }} />
                                 </motion.div>
-                                {/* Defense rings revolving around the shield */}
-                                <motion.div
-                                    style={{ position: "absolute", width: "350px", height: "350px", border: "1px dashed rgba(52,211,153,0.3)", borderRadius: "50%" }}
-                                    animate={{ rotate: 360 }}
-                                    transition={{ duration: 25, repeat: Infinity, ease: "linear" }}
-                                />
-                                <motion.div
-                                    style={{ position: "absolute", width: "250px", height: "250px", border: "1px solid rgba(250,204,21,0.2)", borderRadius: "50%" }}
-                                    animate={{ rotate: -360 }}
-                                    transition={{ duration: 18, repeat: Infinity, ease: "linear" }}
-                                />
                             </div>
 
                             {/* Right: Flow Steps */}
-                            <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
+                            <div className="flex flex-col gap-5">
                                 <FlowStepCard
                                     step={1}
                                     title="Parental Vault Setup"

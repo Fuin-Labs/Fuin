@@ -40,12 +40,14 @@ pub struct ExecuteSplTransfer<'info>{
     pub delegate: Account<'info, Delegate>,
 
     #[account(
+        mut,
         constraint = vault_token_account.mint == mint.key() @ErrorCode::MintMismatch,
         constraint = vault_token_account.owner == vault.key() @ErrorCode::VaultOwnerMismatch,
     )]
     pub vault_token_account: InterfaceAccount<'info, TokenAccount>,
 
     #[account(
+        mut,
         constraint = destination_token_account.mint == mint.key() @ErrorCode::MintMismatch,
     )]
     pub destination_token_account: InterfaceAccount<'info, TokenAccount>,

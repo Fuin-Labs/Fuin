@@ -48,5 +48,6 @@ architecture.md
 agent-1.json
 TASKS.md
 test_guide.md
+CLAUDE.md
 .claude
 .smithery/*

@@ -182,10 +182,12 @@
           }
         },
         {
-          "name": "vault_token_account"
+          "name": "vault_token_account",
+          "writable": true
         },
         {
-          "name": "destination_token_account"
+          "name": "destination_token_account",
+          "writable": true
         },
         {
           "name": "mint"
@@ -972,267 +974,128 @@
   "errors": [
     {
       "code": 6000,
-      "name": "InvalidStartBinIndex"
+      "name": "SessionInactive",
+      "msg": "Session is inactive or revoked."
     },
     {
       "code": 6001,
-      "name": "InvalidBinId"
+      "name": "InvalidSession",
+      "msg": "Session does not belong to this vault."
     },
     {
       "code": 6002,
-      "name": "InvalidInput"
+      "name": "SessionExpired",
+      "msg": "Session has expired."
     },
     {
       "code": 6003,
-      "name": "ExceededAmountSlippageTolerance"
+      "name": "AddressNotWhitelisted",
+      "msg": "Destination address is not in the whitelist."
     },
     {
       "code": 6004,
-      "name": "ExceededBinSlippageTolerance"
+      "name": "DailyLimitExceeded",
+      "msg": "Daily spending limit exceeded."
     },
     {
       "code": 6005,
-      "name": "CompositionFactorFlawed"
+      "name": "SessionLimitExceeded",
+      "msg": "Session Spending limit exceeded."
     },
     {
       "code": 6006,
-      "name": "NonPresetBinStep"
+      "name": "TxLimitExceeded",
+      "msg": "Transaction limit exceeded."
     },
     {
       "code": 6007,
-      "name": "ZeroLiquidity"
+      "name": "Overflow",
+      "msg": "Math Overflow."
     },
     {
       "code": 6008,
-      "name": "InvalidPosition"
+      "name": "WhitelistAccountsAreNotProvided",
+      "msg": "Whitelist Account are not provided"
     },
     {
       "code": 6009,
-      "name": "BinArrayNotFound"
+      "name": "MintMismatch",
+      "msg": "MintMismatch"
     },
     {
       "code": 6010,
-      "name": "InvalidTokenMint"
+      "name": "VaultOwnerMismatch",
+      "msg": "Vault Owner Mismatch"
     },
     {
       "code": 6011,
-      "name": "InvalidAccountForSingleDeposit"
+      "name": "InvalidPrice",
+      "msg": "Oracle price is invalid or negative."
     },
     {
       "code": 6012,
-      "name": "PairInsufficientLiquidity"
+      "name": "PricingOverflow",
+      "msg": "Math overflow during pricing."
     },
     {
       "code": 6013,
-      "name": "InvalidFeeOwner"
+      "name": "WhitelistFull",
+      "msg": "Max length reached"
     },
     {
       "code": 6014,
-      "name": "InvalidFeeWithdrawAmount"
+      "name": "InvalidAction",
+      "msg": "Invalid Action for Session Control"
     },
     {
       "code": 6015,
-      "name": "InvalidAdmin"
+      "name": "VaultFrozen",
+      "msg": "Vault is frozen, no operations allowed"
     },
     {
       "code": 6016,
-      "name": "IdenticalFeeOwner"
+      "name": "PerTxLimitExceeded",
+      "msg": "Per-transaction limit exceeded"
     },
     {
       "code": 6017,
-      "name": "InvalidBps"
+      "name": "ProgramNotAllowed",
+      "msg": "Program is not allowed by policy"
     },
     {
       "code": 6018,
-      "name": "MathOverflow"
+      "name": "OutsideAllowedTime",
+      "msg": "Operation is outside allowed time window"
     },
     {
       "code": 6019,
-      "name": "TypeCastFailed"
+      "name": "RequiresGuardianCosign",
+      "msg": "Transaction requires guardian co-signature"
     },
     {
       "code": 6020,
-      "name": "InvalidRewardIndex"
+      "name": "PermissionDenied",
+      "msg": "Permission denied"
     },
     {
       "code": 6021,
-      "name": "InvalidRewardDuration"
+      "name": "MaxUsesExceeded",
+      "msg": "Maximum uses exceeded"
     },
     {
       "code": 6022,
-      "name": "RewardInitialized"
+      "name": "DelegateExpired",
+      "msg": "Delegate has expired"
     },
     {
       "code": 6023,
-      "name": "RewardUninitialized"
+      "name": "DelegateInactive",
+      "msg": "Delegate is inactive"
     },
     {
       "code": 6024,
-      "name": "IdenticalFunder"
-    },
-    {
-      "code": 6025,
-      "name": "RewardCampaignInProgress"
-    },
-    {
-      "code": 6026,
-      "name": "IdenticalRewardDuration"
-    },
-    {
-      "code": 6027,
-      "name": "InvalidBinArray"
-    },
-    {
-      "code": 6028,
-      "name": "NonContinuousBinArrays"
-    },
-    {
-      "code": 6029,
-      "name": "InvalidRewardVault"
-    },
-    {
-      "code": 6030,
-      "name": "NonEmptyPosition"
-    },
-    {
-      "code": 6031,
-      "name": "UnauthorizedAccess"
-    },
-    {
-      "code": 6032,
-      "name": "InvalidFeeParameter"
-    },
-    {
-      "code": 6033,
-      "name": "MissingOracle"
-    },
-    {
-      "code": 6034,
-      "name": "InsufficientSample"
-    },
-    {
-      "code": 6035,
-      "name": "InvalidLookupTimestamp"
-    },
-    {
-      "code": 6036,
-      "name": "BitmapExtensionAccountIsNotProvided"
-    },
-    {
-      "code": 6037,
-      "name": "CannotFindNonZeroLiquidityBinArrayId"
-    },
-    {
-      "code": 6038,
-      "name": "BinIdOutOfBound"
-    },
-    {
-      "code": 6039,
-      "name": "InsufficientOutAmount"
-    },
-    {
-      "code": 6040,
-      "name": "InvalidPositionWidth"
-    },
-    {
-      "code": 6041,
-      "name": "ExcessiveFeeUpdate"
-    },
-    {
-      "code": 6042,
-      "name": "PoolDisabled"
-    },
-    {
-      "code": 6043,
-      "name": "InvalidPoolType"
-    },
-    {
-      "code": 6044,
-      "name": "ExceedMaxWhitelist"
-    },
-    {
-      "code": 6045,
-      "name": "InvalidIndex"
-    },
-    {
-      "code": 6046,
-      "name": "RewardNotEnded"
-    },
-    {
-      "code": 6047,
-      "name": "MustWithdrawnIneligibleReward"
-    },
-    {
-      "code": 6048,
-      "name": "UnauthorizedAddress"
-    },
-    {
-      "code": 6049,
-      "name": "OperatorsAreTheSame"
-    },
-    {
-      "code": 6050,
-      "name": "WithdrawToWrongTokenAccount"
-    },
-    {
-      "code": 6051,
-      "name": "WrongRentReceiver"
-    },
-    {
-      "code": 6052,
-      "name": "AlreadyPassActivationPoint"
-    },
-    {
-      "code": 6053,
-      "name": "ExceedMaxSwappedAmount"
-    },
-    {
-      "code": 6054,
-      "name": "InvalidStrategyParameters"
-    },
-    {
-      "code": 6055,
-      "name": "LiquidityLocked"
-    },
-    {
-      "code": 6056,
-      "name": "BinRangeIsNotEmpty"
-    },
-    {
-      "code": 6057,
-      "name": "NotExactAmountOut"
-    },
-    {
-      "code": 6058,
-      "name": "InvalidActivationType"
-    },
-    {
-      "code": 6059,
-      "name": "InvalidActivationDuration"
-    },
-    {
-      "code": 6060,
-      "name": "MissingTokenAmountAsTokenLaunchProof"
-    },
-    {
-      "code": 6061,
-      "name": "InvalidQuoteToken"
-    },
-    {
-      "code": 6062,
-      "name": "InvalidBinStep"
-    },
-    {
-      "code": 6063,
-      "name": "InvalidBaseFee"
-    },
-    {
-      "code": 6064,
-      "name": "InvalidPreActivationDuration"
-    },
-    {
-      "code": 6065,
-      "name": "AlreadyPassPreActivationSwapPoint"
+      "name": "SwapFailed",
+      "msg": "Swap execution failed"
     }
   ],
   "types": [

@@ -8,13 +8,42 @@ iconify-icon { stroke-width: 1.5; }
 @keyframes fadeSlideIn {
   0% {
     opacity: 0;
-    transform: translateY(30px);
-    filter: blur(8px);
+    transform: translateY(24px);
   }
   100% {
     opacity: 1;
     transform: translateY(0);
-    filter: blur(0px);
   }
 }
-.font-geist { font-family: 'Geist', sans-serif !important; }
+
+@keyframes slideInBlur {
+  0% {
+    opacity: 0;
+    filter: blur(8px);
+    transform: translateY(12px);
+  }
+  100% {
+    opacity: 1;
+    filter: blur(0);
+    transform: translateY(0);
+  }
+}
+
+.font-geist { font-family: var(--font-geist-sans), sans-serif !important; }
+.font-pixel { font-family: var(--font-geist-pixel-square), monospace !important; }
+.font-mono  { font-family: var(--font-geist-mono), monospace !important; }
+
+/* Horizontal scrolling marquee for logos */
+@keyframes marquee {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+  animation: marquee 30s linear infinite;
+}
+
+/* Subtle line divider */
+.section-divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,0.06) 50%, transparent);
+}
