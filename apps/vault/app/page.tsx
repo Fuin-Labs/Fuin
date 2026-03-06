@@ -59,7 +59,7 @@ export default function Home(): React.JSX.Element {
           {/* Nav */}
           <nav className="flex mt-6 items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
-              <img src="/logo.svg" alt="Fuin" className="h-16 w-16" />
+              <img src="/logo.svg" alt="Fuin" className="h-24 w-24" />
               <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/20 text-[10px] font-pixel text-emerald-400 tracking-wider uppercase">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Devnet
@@ -94,38 +94,38 @@ export default function Home(): React.JSX.Element {
           )}
 
           {/* Hero */}
-          <section className="z-10 sm:pt-20 md:pt-48 md:pb-32 text-center max-w-5xl mr-auto ml-auto pt-20 pb-32 relative">
+          <section className="z-10 pt-12 pb-16 sm:pt-20 sm:pb-24 md:pt-48 md:pb-32 text-center max-w-5xl mx-auto px-4 relative">
 
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-6 rounded-full bg-white/5 border border-white/10 text-white/70 [animation:fadeSlideIn_1s_ease-out_0.1s_both]">
+            <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 sm:mb-6 rounded-full bg-white/5 border border-white/10 text-white/70 [animation:fadeSlideIn_1s_ease-out_0.1s_both]">
               <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
               <span className="text-xs font-medium font-pixel">Solana IAM Protocol</span>
             </div>
 
-            <h1 className="text-hero [animation:fadeSlideIn_1s_ease-out_0.2s_forwards] font-geist opacity-0 max-w-5xl mr-auto ml-auto text-white">
+            <h1 className="text-hero [animation:fadeSlideIn_1s_ease-out_0.2s_forwards] font-geist opacity-0 max-w-5xl mx-auto text-white">
               Fuin
             </h1>
 
-            <p className="sm:text-lg [animation:fadeSlideIn_1s_ease-out_0.3s_both] text-base font-normal text-white/70 font-geist max-w-xl mt-6 mr-auto ml-auto">
+            <p className="text-sm sm:text-base md:text-lg [animation:fadeSlideIn_1s_ease-out_0.3s_both] font-normal text-white/70 font-geist max-w-md sm:max-w-xl mt-4 sm:mt-6 mx-auto leading-relaxed">
               Programmable authorization for Solana. Issue scoped keys to AI agents and delegates - custody stays with you.
             </p>
 
-            <div className="flex flex-col sm:flex-row [animation:fadeSlideIn_1s_ease-out_0.4s_both] mt-10 gap-x-4 gap-y-3 items-center justify-center">
-              <Link href="/dashboard/vaults" className="inline-flex min-w-[160px] font-medium text-black tracking-tight bg-white rounded-full pt-[14px] pr-[24px] pb-[14px] pl-[24px] items-center justify-center no-underline transition-opacity hover:opacity-90 font-geist">
+            <div className="flex flex-col sm:flex-row [animation:fadeSlideIn_1s_ease-out_0.4s_both] mt-8 sm:mt-10 gap-3 sm:gap-x-4 items-center justify-center">
+              <Link href="/dashboard/vaults" className="inline-flex w-full sm:w-auto min-w-[160px] font-medium text-black tracking-tight bg-white rounded-full px-6 py-3.5 items-center justify-center no-underline transition-opacity hover:opacity-90 font-geist">
                 Launch App
               </Link>
-              <Link href="https://github.com/Fuin-Labs/Fuin" target="_blank" className="inline-flex items-center gap-2 text-base font-medium text-white border border-white/20 rounded-full pt-[14px] pr-[24px] pb-[14px] pl-[24px] font-geist transition-colors hover:border-white/40 cursor-pointer">
+              <Link href="https://github.com/Fuin-Labs/Fuin" target="_blank" className="inline-flex w-full sm:w-auto items-center gap-2 text-base font-medium text-white border border-white/20 rounded-full px-6 py-3.5 font-geist transition-colors hover:border-white/40 cursor-pointer justify-center">
                 <iconify-icon icon="solar:code-circle-linear" class="text-lg"></iconify-icon>
                 View GitHub
               </Link>
             </div>
 
             {/* Powered By — merged into hero */}
-            <div className="mt-20 [animation:fadeSlideIn_1s_ease-out_0.5s_both]">
+            <div className="mt-12 sm:mt-20 [animation:fadeSlideIn_1s_ease-out_0.5s_both]">
               <p className="text-[10px] font-pixel text-white/50 tracking-widest uppercase mb-4">Powered By</p>
-              <div className="flex flex-wrap gap-x-12 gap-y-6 items-center justify-center opacity-60 grayscale">
-                <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:cpu-bold-duotone"></iconify-icon> Solana</span>
-                <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:chart-bold-duotone"></iconify-icon> Pyth Network</span>
-                <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:bolt-circle-bold-duotone"></iconify-icon> Helius</span>
+              <div className="flex flex-wrap gap-x-6 sm:gap-x-12 gap-y-4 items-center justify-center opacity-60 grayscale">
+                <span className="text-base sm:text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:cpu-bold-duotone"></iconify-icon> Solana</span>
+                <span className="text-base sm:text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:chart-bold-duotone"></iconify-icon> Pyth Network</span>
+                <span className="text-base sm:text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:bolt-circle-bold-duotone"></iconify-icon> Helius</span>
               </div>
             </div>
           </section>
@@ -345,7 +345,7 @@ export default function Home(): React.JSX.Element {
           <div className="grid gap-8 md:grid-cols-4">
             <div className="md:col-span-2">
               <Link href="/" className="flex items-center mb-4">
-                <img src="/logo.svg" alt="Fuin" className="h-16 w-16" />
+                <img src="/logo.svg" alt="Fuin" className="h-24 w-24" />
               </Link>
               <p className="text-sm text-white/50 max-w-sm font-geist leading-relaxed">Fuin is a programmable Identity Access Management (IAM) layer and restrictive wallet protocol built natively for the Solana VM.</p>
               <div className="mt-6 flex items-center gap-3">

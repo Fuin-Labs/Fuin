@@ -65,12 +65,13 @@ void main() {
 
   float t = u_time * 0.06;
 
-  // Orb geometry
-  vec2 orbCenter = vec2(0.0, -0.05);
+  // Adapt orb for portrait (mobile) vs landscape
+  bool portrait = aspect < 0.85;
+  vec2 orbCenter = portrait ? vec2(0.0, 0.05) : vec2(0.0, -0.05);
+  float orbRadius = portrait ? 0.22 : 0.32;
   vec2 p = uv - orbCenter;
   float dist = length(p);
   float angle = atan(p.y, p.x);
-  float orbRadius = 0.32;
   float surfaceDist = max(dist - orbRadius, 0.0);
 
   // === Domain warping (Inigo Quilez technique) ===
@@ -131,8 +132,10 @@ void main() {
 
   vec3 finalColor = color * intensity * 0.22;
 
-  // Vignette — wide enough to let aurora span the section
-  float vig = 1.0 - smoothstep(0.35, 0.85, length(v_uv - 0.5));
+  // Vignette — wider on portrait/mobile so aurora isn't clipped
+  float vigStart = portrait ? 0.25 : 0.35;
+  float vigEnd = portrait ? 0.95 : 0.85;
+  float vig = 1.0 - smoothstep(vigStart, vigEnd, length(v_uv - 0.5));
   finalColor *= vig;
 
   // Slight gamma lift
@@ -186,7 +189,8 @@ export function AuroraShader() {
     const uRes = gl.getUniformLocation(prog, "u_resolution");
 
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio, 1.5);
+      const isMobile = canvas!.clientWidth < 768;
+      const dpr = Math.min(window.devicePixelRatio, isMobile ? 1 : 1.5);
       canvas!.width = canvas!.clientWidth * dpr;
       canvas!.height = canvas!.clientHeight * dpr;
       gl!.viewport(0, 0, canvas!.width, canvas!.height);
