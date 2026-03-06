@@ -50,10 +50,13 @@ npx @smithery/cli install @fuin-labs/mcp-server
 
 | Tool | Description | Hints |
 |------|-------------|-------|
-| `get-balance` | Get vault SOL balance, state, and spending policy caps | Read-only |
-| `get-delegate-info` | Get delegate permissions, spending limits, usage count, expiry, and status | Read-only |
-| `list-delegates` | List all delegates issued to this agent's keypair, with vault info | Read-only |
+| `get-balance` | Get vault SOL balance, state, spending policy caps, and program allow/deny lists | Read-only |
+| `get-delegate-info` | Get delegate permissions, spending limits, usage count, expiry, status, and vault program policies | Read-only |
+| `list-delegates` | List all delegates issued to this agent's keypair, with vault info and program policies | Read-only |
 | `transfer-sol` | Execute a SOL transfer from a Fuin vault using delegate permissions. On-chain policy enforcement applies. | Destructive |
+| `transfer-spl` | Execute an SPL token transfer from a Fuin vault. Requires CAN_TRANSFER permission. Supports Pyth price feeds for USD valuation. | Destructive |
+| `swap` | Execute a token swap on Meteora DLMM from a Fuin vault. Requires CAN_SWAP permission and DLMM program in vault allow-list. | Destructive |
+| `request-program` | Request the guardian to add a program to the vault's allow-list. Creates a pending request for guardian review. | — |
 
 ## Environment Variables
 

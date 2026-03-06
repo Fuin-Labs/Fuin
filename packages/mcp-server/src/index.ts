@@ -13,7 +13,7 @@ import { swap, swapSchema } from "./tools/swap.js";
 function createServer(config: Config) {
   const server = new McpServer({
     name: "fuin",
-    version: "1.0.1",
+    version: "1.1.0",
   });
 
   // --- Read-only tools ---
@@ -83,7 +83,7 @@ function createServer(config: Config) {
 export function createSandboxServer() {
   const server = new McpServer({
     name: "fuin",
-    version: "1.0.1",
+    version: "1.1.0",
   });
 
   server.tool(

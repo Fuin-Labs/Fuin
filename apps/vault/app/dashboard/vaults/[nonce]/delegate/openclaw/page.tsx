@@ -153,63 +153,13 @@ export default function OpenClawDelegatePage({ params }: { params: Promise<{ non
           </div>
 
           {/* Quick Start */}
-          <div style={{ marginTop: "24px" }}>
-            <h4 style={{ color: COLORS.text, fontSize: "0.95rem", fontWeight: 700, margin: "0 0 12px" }}>
-              Quick Start
-            </h4>
-            <CodeBlock>{`npm install @fuin-labs/sdk`}</CodeBlock>
-            <CodeBlock>{`import { FuinClient } from "@fuin-labs/sdk";
-
-const client = new FuinClient(connection, agentWallet);
-await client.transferSol(
-  "${formatAddress(guardianStr)}",  // guardian
-  ${created.vaultNonce},              // vault nonce
-  ${created.delegateNonce},              // delegate nonce
-  destination,
-  amount,
-  agentKeypair
-);`}</CodeBlock>
-          </div>
-
-          {/* Full Instructions (collapsible) */}
-          <button
-            type="button"
-            onClick={() => setShowFull(!showFull)}
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "6px",
-              marginTop: "16px",
-              background: "none",
-              border: "none",
-              color: COLORS.purple,
-              fontSize: "0.85rem",
-              fontWeight: 600,
-              cursor: "pointer",
-              padding: 0,
-              fontFamily: "inherit",
-            }}
-          >
-            {showFull ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
-            {showFull ? "Hide" : "Full"} Instructions
-          </button>
-
-          {showFull && (
-            <ol style={{ color: COLORS.textMuted, fontSize: "0.85rem", lineHeight: 1.8, margin: "12px 0 0", paddingLeft: "20px" }}>
-              <li>Install the SDK: <code style={{ color: COLORS.purple }}>npm install @fuin-labs/sdk @solana/web3.js @coral-xyz/anchor bn.js</code></li>
-              <li>Set up connection to Solana (devnet/mainnet)</li>
-              <li>Load your agent keypair (the public key you registered above)</li>
-              <li>Initialize FuinClient with connection + wallet</li>
-              <li>Available methods based on permissions:
-                <ul style={{ marginTop: "4px", paddingLeft: "16px" }}>
-                  <li><code style={{ color: COLORS.textSecondary }}>transferSol(guardian, vaultNonce, delegateNonce, destination, amountSol, agentKeypair)</code></li>
-                  <li><code style={{ color: COLORS.textSecondary }}>transferSpl(guardian, vaultNonce, delegateNonce, mint, destination, amount, agentKeypair)</code></li>
-                </ul>
-              </li>
-              <li>Error handling: catch <code style={{ color: COLORS.textSecondary }}>DailyLimitExceeded</code>, <code style={{ color: COLORS.textSecondary }}>PermissionDenied</code>, <code style={{ color: COLORS.textSecondary }}>DelegateInactive</code></li>
-              <li>Spending resets each Solana epoch (~2-3 days), not daily</li>
-            </ol>
-          )}
+          <QuickStartTabs
+            guardianStr={guardianStr}
+            vaultNonce={created.vaultNonce}
+            delegateNonce={created.delegateNonce}
+            showFull={showFull}
+            onToggleFull={() => setShowFull(!showFull)}
+          />
 
           <div style={{ marginTop: "24px" }}>
             <button
@@ -347,6 +297,148 @@ function DetailRow({ label, value, mono, onCopy }: { label: string; value: strin
           <Copy size={12} color={COLORS.textDim} style={{ cursor: "pointer" }} onClick={onCopy} />
         )}
       </div>
+    </div>
+  );
+}
+
+function QuickStartTabs({
+  guardianStr,
+  vaultNonce,
+  delegateNonce,
+  showFull,
+  onToggleFull,
+}: {
+  guardianStr: string;
+  vaultNonce: number;
+  delegateNonce: number;
+  showFull: boolean;
+  onToggleFull: () => void;
+}) {
+  const [tab, setTab] = useState<"mcp" | "sdk">("mcp");
+
+  const tabStyle = (active: boolean): React.CSSProperties => ({
+    flex: 1,
+    padding: "8px 0",
+    fontSize: "0.8rem",
+    fontWeight: 600,
+    fontFamily: "inherit",
+    cursor: "pointer",
+    border: "none",
+    borderBottom: active ? `2px solid ${COLORS.purple}` : "2px solid transparent",
+    background: "none",
+    color: active ? COLORS.text : COLORS.textDim,
+    transition: "all 0.15s",
+  });
+
+  return (
+    <div style={{ marginTop: "24px" }}>
+      <h4 style={{ color: COLORS.text, fontSize: "0.95rem", fontWeight: 700, margin: "0 0 12px" }}>
+        Quick Start
+      </h4>
+
+      {/* Tab bar */}
+      <div style={{ display: "flex", borderBottom: `1px solid ${COLORS.border}`, marginBottom: "12px" }}>
+        <button type="button" style={tabStyle(tab === "mcp")} onClick={() => setTab("mcp")}>
+          MCP Server (AI Agents)
+        </button>
+        <button type="button" style={tabStyle(tab === "sdk")} onClick={() => setTab("sdk")}>
+          SDK (Custom Code)
+        </button>
+      </div>
+
+      {tab === "mcp" ? (
+        <>
+          <p style={{ color: COLORS.textMuted, fontSize: "0.8rem", margin: "0 0 10px", lineHeight: 1.5 }}>
+            Add this to your AI client config (Claude Code, Cursor, etc.):
+          </p>
+          <CodeBlock>{`{
+  "mcpServers": {
+    "fuin": {
+      "command": "npx",
+      "args": ["-y", "@fuin-labs/mcp-server"],
+      "env": {
+        "DELEGATE_PRIVATE_KEY": "<agent-base58-secret-key>",
+        "SOLANA_RPC_URL": "https://api.devnet.solana.com"
+      }
+    }
+  }
+}`}</CodeBlock>
+          <p style={{ color: COLORS.textDim, fontSize: "0.75rem", margin: "8px 0 0", lineHeight: 1.5 }}>
+            Replace <code style={{ color: COLORS.purple }}>&lt;agent-base58-secret-key&gt;</code> with
+            the base58-encoded private key of the agent keypair registered above.
+            The agent can then transfer SOL, SPL tokens, and swap via natural language.
+          </p>
+
+          {/* Collapsible: where to put config */}
+          <button
+            type="button"
+            onClick={onToggleFull}
+            style={{
+              display: "flex", alignItems: "center", gap: "6px", marginTop: "16px",
+              background: "none", border: "none", color: COLORS.purple,
+              fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", padding: 0, fontFamily: "inherit",
+            }}
+          >
+            {showFull ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {showFull ? "Hide" : "Where"} to put this config
+          </button>
+
+          {showFull && (
+            <ol style={{ color: COLORS.textMuted, fontSize: "0.85rem", lineHeight: 1.8, margin: "12px 0 0", paddingLeft: "20px" }}>
+              <li><strong>Claude Code</strong> — add to <code style={{ color: COLORS.textSecondary }}>.claude/settings.json</code> in your project root</li>
+              <li><strong>Claude Desktop</strong> — add to <code style={{ color: COLORS.textSecondary }}>~/Library/Application Support/Claude/claude_desktop_config.json</code></li>
+              <li><strong>Cursor / VS Code</strong> — add to <code style={{ color: COLORS.textSecondary }}>.cursor/mcp.json</code> or <code style={{ color: COLORS.textSecondary }}>.vscode/mcp.json</code></li>
+              <li>Restart the AI client after adding the config</li>
+              <li>The agent can now use tools: <code style={{ color: COLORS.textSecondary }}>get-balance</code>, <code style={{ color: COLORS.textSecondary }}>transfer-sol</code>, <code style={{ color: COLORS.textSecondary }}>transfer-spl</code>, <code style={{ color: COLORS.textSecondary }}>swap</code></li>
+            </ol>
+          )}
+        </>
+      ) : (
+        <>
+          <CodeBlock>{`npm install @fuin-labs/sdk`}</CodeBlock>
+          <CodeBlock>{`import { FuinClient } from "@fuin-labs/sdk";
+
+const client = new FuinClient(connection, agentWallet);
+await client.transferSol(
+  "${formatAddress(guardianStr)}",  // guardian
+  ${vaultNonce},              // vault nonce
+  ${delegateNonce},              // delegate nonce
+  destination,
+  amount,
+  agentKeypair
+);`}</CodeBlock>
+
+          <button
+            type="button"
+            onClick={onToggleFull}
+            style={{
+              display: "flex", alignItems: "center", gap: "6px", marginTop: "16px",
+              background: "none", border: "none", color: COLORS.purple,
+              fontSize: "0.85rem", fontWeight: 600, cursor: "pointer", padding: 0, fontFamily: "inherit",
+            }}
+          >
+            {showFull ? <ChevronUp size={14} /> : <ChevronDown size={14} />}
+            {showFull ? "Hide" : "Full"} Instructions
+          </button>
+
+          {showFull && (
+            <ol style={{ color: COLORS.textMuted, fontSize: "0.85rem", lineHeight: 1.8, margin: "12px 0 0", paddingLeft: "20px" }}>
+              <li>Install the SDK: <code style={{ color: COLORS.purple }}>npm install @fuin-labs/sdk @solana/web3.js @coral-xyz/anchor bn.js</code></li>
+              <li>Set up connection to Solana (devnet/mainnet)</li>
+              <li>Load your agent keypair (the public key you registered above)</li>
+              <li>Initialize FuinClient with connection + wallet</li>
+              <li>Available methods based on permissions:
+                <ul style={{ marginTop: "4px", paddingLeft: "16px" }}>
+                  <li><code style={{ color: COLORS.textSecondary }}>transferSol(guardian, vaultNonce, delegateNonce, destination, amountSol, agentKeypair)</code></li>
+                  <li><code style={{ color: COLORS.textSecondary }}>transferSpl(guardian, vaultNonce, delegateNonce, mint, destination, amount, agentKeypair)</code></li>
+                </ul>
+              </li>
+              <li>Error handling: catch <code style={{ color: COLORS.textSecondary }}>DailyLimitExceeded</code>, <code style={{ color: COLORS.textSecondary }}>PermissionDenied</code>, <code style={{ color: COLORS.textSecondary }}>DelegateInactive</code></li>
+              <li>Spending resets each Solana epoch (~2-3 days), not daily</li>
+            </ol>
+          )}
+        </>
+      )}
     </div>
   );
 }

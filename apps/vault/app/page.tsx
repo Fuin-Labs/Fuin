@@ -23,6 +23,10 @@ const UsecaseFlow = dynamic(() => import("./components/UsecaseFlow").then(m => m
   loading: () => <div style={{ minHeight: 500 }} />,
 });
 
+const AuroraShader = dynamic(() => import("./components/AuroraShader").then(m => m.AuroraShader), {
+  ssr: false,
+});
+
 export default function Home(): React.JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const currentYear = new Date().getFullYear();
@@ -46,24 +50,23 @@ export default function Home(): React.JSX.Element {
 
   return (
     <div id="landing-view" className="w-full transition-opacity duration-500">
-      {/* Background Component */}
-      <div className="aura-background-component -z-10 w-full h-[1040px] absolute top-0">
-        <div data-us-project="vTTCp5g4cVl9nwjlT56Z" className="absolute w-full h-full left-0 top-0 -z-10"></div>
-      </div>
-
-      <header className="relative">
+      <header className="relative overflow-hidden min-h-screen">
+        {/* Background Component */}
+        <div className="-z-10 w-full h-full absolute inset-0">
+          <AuroraShader />
+        </div>
         <div className="sm:px-6 lg:px-8 max-w-7xl mr-auto ml-auto pr-4 pl-4">
           {/* Nav */}
           <nav className="flex mt-6 items-center justify-between">
             <Link href="/" className="flex items-center">
-              <img src="/logo.svg" alt="Fuin" className="h-11 w-11" />
+              <img src="/logo.svg" alt="Fuin" className="h-24 w-24" />
             </Link>
 
-            <div className="hidden md:flex md:gap-x-2 bg-white/5 border-white/10 border rounded-full pt-1 pr-1 pb-1 pl-1 backdrop-blur-lg gap-x-2 gap-y-1 items-center">
-              <Link href="#primitives" className="hover:text-white text-sm font-medium text-white/80 font-geist pt-2 pr-3 pb-2 pl-3 transition-colors">Primitives</Link>
-              <Link href="#actors" className="px-3 py-2 text-sm font-medium text-white/80 hover:text-white font-geist transition-colors">Actors</Link>
-              <Link href="#" className="px-3 py-2 text-sm font-medium text-white/60 hover:text-white font-geist transition-colors">Docs</Link>
-              <Link href="/dashboard/vaults" className="bg-white text-black rounded-full px-4 py-1.5 text-sm font-medium font-geist transition-opacity hover:opacity-90">Launch App</Link>
+            <div className="hidden md:flex md:gap-x-1 bg-white/5 border-white/10 border rounded-full p-1.5 backdrop-blur-lg items-center">
+              <Link href="#primitives" className="hover:text-white hover:bg-white/5 text-sm font-medium text-white/80 font-geist px-4 py-2 rounded-full transition-all">Primitives</Link>
+              <Link href="#actors" className="hover:text-white hover:bg-white/5 text-sm font-medium text-white/80 font-geist px-4 py-2 rounded-full transition-all">Actors</Link>
+              <Link href="/docs" className="hover:text-white hover:bg-white/5 text-sm font-medium text-white/60 font-geist px-4 py-2 rounded-full transition-all">Docs</Link>
+              <Link href="/dashboard/vaults" className="bg-white text-black rounded-full px-5 py-2 text-sm font-semibold font-geist transition-all hover:bg-white/90 hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] ml-1">Launch App</Link>
             </div>
 
             <button
@@ -97,8 +100,8 @@ export default function Home(): React.JSX.Element {
               Fuin
             </h1>
 
-            <p className="sm:text-lg [animation:fadeSlideIn_1s_ease-out_0.3s_both] text-base font-normal text-white/70 font-geist max-w-2xl mt-6 mr-auto ml-auto">
-              Programmable authorization for Solana. Issue scoped keys to AI agents and delegates — custody stays with you.
+            <p className="sm:text-lg [animation:fadeSlideIn_1s_ease-out_0.3s_both] text-base font-normal text-white/70 font-geist max-w-xl mt-6 mr-auto ml-auto">
+              Programmable authorization for Solana. Issue scoped keys to AI agents and delegates - custody stays with you.
             </p>
 
             <div className="flex flex-col sm:flex-row [animation:fadeSlideIn_1s_ease-out_0.4s_both] mt-10 gap-x-4 gap-y-3 items-center justify-center">
@@ -341,11 +344,11 @@ export default function Home(): React.JSX.Element {
           <div className="grid gap-8 md:grid-cols-4">
             <div className="md:col-span-2">
               <Link href="/" className="flex items-center mb-4">
-                <img src="/logo.svg" alt="Fuin" className="h-10 w-10" />
+                <img src="/logo.svg" alt="Fuin" className="h-24 w-24" />
               </Link>
               <p className="text-sm text-white/50 max-w-sm font-geist leading-relaxed">Fuin is a programmable Identity Access Management (IAM) layer and restrictive wallet protocol built natively for the Solana VM.</p>
               <div className="mt-6 flex items-center gap-3">
-                <Link href="#" className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-transparent px-4 py-2 text-sm font-medium text-white hover:border-white/40 font-geist transition-colors cursor-pointer">
+                <Link href="/docs" className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-transparent px-4 py-2 text-sm font-medium text-white hover:border-white/40 font-geist transition-colors cursor-pointer">
                   <iconify-icon icon="solar:document-text-linear" class="text-lg"></iconify-icon>
                   Read Documentation
                 </Link>
@@ -365,7 +368,7 @@ export default function Home(): React.JSX.Element {
             <div>
               <h4 className="font-pixel text-[10px] tracking-widest uppercase text-white/60 mb-4">Community</h4>
               <ul className="space-y-3 text-sm text-white/50">
-                <li><Link href="https://x.com/Jayant818x" target="_blank" className="hover:text-white transition-colors font-geist flex items-center gap-2"><iconify-icon icon="solar:bird-linear"></iconify-icon> Twitter / X</Link></li>
+                <li><Link href="https://x.com/fuinlabs" target="_blank" className="hover:text-white transition-colors font-geist flex items-center gap-2"><iconify-icon icon="solar:bird-linear"></iconify-icon> Twitter / X</Link></li>
               </ul>
             </div>
           </div>

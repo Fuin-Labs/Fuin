@@ -32,7 +32,7 @@ function SidebarContent({ onClose, isCollapsed, onToggleCollapse }: { onClose?: 
       <div style={{ display: "flex", alignItems: "center", justifyContent: isCollapsed ? "center" : "space-between", marginBottom: "32px", padding: isCollapsed ? "0" : "0 8px" }}>
         <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
           <Link href="/" style={{ textDecoration: "none", display: "flex", alignItems: "center", gap: "8px", pointerEvents: isCollapsed ? "none" : "auto" }}>
-            <img src="/logo.svg" alt="Fuin" style={{ height: "1.5rem", width: "1.5rem" }} />
+            <img src="/logo.svg" alt="Fuin" style={{ height: "3rem", width: "3rem" }} />
             {!isCollapsed && (
               <span style={{ color: COLORS.text, fontSize: "1.25rem", fontWeight: 600, letterSpacing: "-0.025em" }}>
                 Fuin
