@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { PublicKey } from "@solana/web3.js";
 import type { Config } from "../config.js";
+import { resolveContext } from "../resolve.js";
 
 export const transferSolSchema = {
-  guardian: z.string().describe("Guardian wallet public key (base58)"),
-  vault_nonce: z.coerce.number().int().describe("Vault nonce"),
-  delegate_nonce: z.coerce.number().int().describe("Delegate nonce"),
+  guardian: z.string().optional().describe("Guardian wallet public key (base58). Auto-resolved if omitted."),
+  vault_nonce: z.coerce.number().int().optional().describe("Vault nonce. Auto-resolved if omitted."),
+  delegate_nonce: z.coerce.number().int().optional().describe("Delegate nonce. Auto-resolved if omitted."),
   destination: z.string().describe("Destination wallet public key (base58)"),
   amount_sol: z.coerce
     .number()
@@ -61,21 +62,27 @@ function parseAnchorError(error: any): string {
 export async function transferSol(
   config: Config,
   args: {
-    guardian: string;
-    vault_nonce: number;
-    delegate_nonce: number;
+    guardian?: string;
+    vault_nonce?: number;
+    delegate_nonce?: number;
     destination: string;
     amount_sol: number;
   }
 ) {
-  const guardian = new PublicKey(args.guardian);
   const destination = new PublicKey(args.destination);
+
+  let ctx;
+  try {
+    ctx = await resolveContext(config, args);
+  } catch (error: any) {
+    return { content: [{ type: "text" as const, text: error.message }], isError: true };
+  }
 
   try {
     const txSig = await config.client.transferSol(
-      guardian,
-      args.vault_nonce,
-      args.delegate_nonce,
+      ctx.guardian,
+      ctx.vaultNonce,
+      ctx.delegateNonce,
       destination,
       args.amount_sol,
       config.keypair
@@ -108,9 +115,9 @@ export async function transferSol(
       `Transfer failed: ${explanation}`,
       ``,
       `Details:`,
-      `  Guardian: ${args.guardian}`,
-      `  Vault Nonce: ${args.vault_nonce}`,
-      `  Delegate Nonce: ${args.delegate_nonce}`,
+      `  Guardian: ${ctx.guardian.toBase58()}`,
+      `  Vault Nonce: ${ctx.vaultNonce}`,
+      `  Delegate Nonce: ${ctx.delegateNonce}`,
       `  Destination: ${args.destination}`,
       `  Amount: ${args.amount_sol} SOL`,
     ].join("\n");

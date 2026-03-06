@@ -2,14 +2,15 @@ import { z } from "zod";
 import { PublicKey } from "@solana/web3.js";
 import { PYTH_FEED_IDS } from "@fuin-labs/sdk";
 import { transferSplPull } from "@fuin-labs/sdk/src/pull-oracle";
+import { resolveContext } from "../resolve.js";
 import type { Config } from "../config.js";
 
 const feedNames = Object.keys(PYTH_FEED_IDS);
 
 export const transferSplSchema = {
-  guardian: z.string().describe("Guardian wallet public key (base58)"),
-  vault_nonce: z.coerce.number().int().describe("Vault nonce"),
-  delegate_nonce: z.coerce.number().int().describe("Delegate nonce"),
+  guardian: z.string().optional().describe("Guardian wallet public key (base58). Auto-resolved if omitted."),
+  vault_nonce: z.coerce.number().int().optional().describe("Vault nonce. Auto-resolved if omitted."),
+  delegate_nonce: z.coerce.number().int().optional().describe("Delegate nonce. Auto-resolved if omitted."),
   mint: z.string().describe("SPL token mint address (base58)"),
   destination: z.string().describe("Destination wallet public key (base58)"),
   amount: z.coerce
@@ -63,16 +64,22 @@ function parseAnchorError(error: any): string {
 export async function transferSpl(
   config: Config,
   args: {
-    guardian: string;
-    vault_nonce: number;
-    delegate_nonce: number;
+    guardian?: string;
+    vault_nonce?: number;
+    delegate_nonce?: number;
     mint: string;
     destination: string;
     amount: number;
     price_feed?: string;
   }
 ) {
-  const guardian = new PublicKey(args.guardian);
+  let ctx;
+  try {
+    ctx = await resolveContext(config, args);
+  } catch (error: any) {
+    return { content: [{ type: "text" as const, text: error.message }], isError: true };
+  }
+
   const mint = new PublicKey(args.mint);
   const destination = new PublicKey(args.destination);
 
@@ -93,9 +100,9 @@ export async function transferSpl(
   try {
     const txSig = await transferSplPull(
       config.client,
-      guardian,
-      args.vault_nonce,
-      args.delegate_nonce,
+      ctx.guardian,
+      ctx.vaultNonce,
+      ctx.delegateNonce,
       mint,
       destination,
       args.amount,
@@ -132,9 +139,9 @@ export async function transferSpl(
       `SPL transfer failed: ${explanation}`,
       ``,
       `Details:`,
-      `  Guardian: ${args.guardian}`,
-      `  Vault Nonce: ${args.vault_nonce}`,
-      `  Delegate Nonce: ${args.delegate_nonce}`,
+      `  Guardian: ${ctx.guardian.toBase58()}`,
+      `  Vault Nonce: ${ctx.vaultNonce}`,
+      `  Delegate Nonce: ${ctx.delegateNonce}`,
       `  Mint: ${args.mint}`,
       `  Destination: ${args.destination}`,
       `  Amount: ${args.amount}`,

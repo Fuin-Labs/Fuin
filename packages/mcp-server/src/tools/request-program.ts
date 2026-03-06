@@ -2,12 +2,13 @@ import { z } from "zod";
 import { PublicKey } from "@solana/web3.js";
 import BN from "bn.js";
 import { findVaultPda, findDelegatePda } from "@fuin-labs/sdk";
+import { resolveContext } from "../resolve.js";
 import type { Config } from "../config.js";
 
 export const requestProgramSchema = {
-  guardian: z.string().describe("Guardian wallet public key (base58)"),
-  vault_nonce: z.coerce.number().int().describe("Vault nonce"),
-  delegate_nonce: z.coerce.number().int().describe("Delegate nonce"),
+  guardian: z.string().optional().describe("Guardian wallet public key (base58). Auto-resolved if omitted."),
+  vault_nonce: z.coerce.number().int().optional().describe("Vault nonce. Auto-resolved if omitted."),
+  delegate_nonce: z.coerce.number().int().optional().describe("Delegate nonce. Auto-resolved if omitted."),
   program_address: z
     .string()
     .describe("Solana program address to request access to (base58)"),
@@ -17,19 +18,25 @@ export const requestProgramSchema = {
 export async function requestProgram(
   config: Config,
   args: {
-    guardian: string;
-    vault_nonce: number;
-    delegate_nonce: number;
+    guardian?: string;
+    vault_nonce?: number;
+    delegate_nonce?: number;
     program_address: string;
     reason: string;
   }
 ) {
-  const guardian = new PublicKey(args.guardian);
-  const vaultNonce = new BN(args.vault_nonce);
-  const delegateNonce = new BN(args.delegate_nonce);
+  let ctx;
+  try {
+    ctx = await resolveContext(config, args);
+  } catch (error: any) {
+    return { content: [{ type: "text" as const, text: error.message }], isError: true };
+  }
+
+  const vaultNonce = new BN(ctx.vaultNonce);
+  const delegateNonce = new BN(ctx.delegateNonce);
 
   const [vaultPda] = findVaultPda(
-    guardian,
+    ctx.guardian,
     vaultNonce,
     config.client.program.programId
   );
@@ -62,7 +69,7 @@ export async function requestProgram(
     body: JSON.stringify({
       vaultPda: vaultPda.toBase58(),
       delegatePda: delegatePda.toBase58(),
-      guardian: args.guardian,
+      guardian: ctx.guardian.toBase58(),
       programAddress: args.program_address,
       reason: args.reason,
     }),

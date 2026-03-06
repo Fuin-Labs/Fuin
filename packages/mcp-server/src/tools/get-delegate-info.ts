@@ -3,12 +3,13 @@ import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import BN from "bn.js";
 import { findVaultPda, findDelegatePda, CAN_SWAP, CAN_TRANSFER, CAN_STAKE, CAN_LP } from "@fuin-labs/sdk";
 import { fetchDelegateByPda, fetchVaultByPda } from "../accounts.js";
+import { resolveContext } from "../resolve.js";
 import type { Config } from "../config.js";
 
 export const getDelegateInfoSchema = {
-  guardian: z.string().describe("Guardian wallet public key (base58)"),
-  vault_nonce: z.coerce.number().int().describe("Vault nonce"),
-  delegate_nonce: z.coerce.number().int().describe("Delegate nonce"),
+  guardian: z.string().optional().describe("Guardian wallet public key (base58). Auto-resolved if omitted."),
+  vault_nonce: z.coerce.number().int().optional().describe("Vault nonce. Auto-resolved if omitted."),
+  delegate_nonce: z.coerce.number().int().optional().describe("Delegate nonce. Auto-resolved if omitted."),
 };
 
 function formatPermissions(perms: number): string {
@@ -22,13 +23,19 @@ function formatPermissions(perms: number): string {
 
 export async function getDelegateInfo(
   config: Config,
-  args: { guardian: string; vault_nonce: number; delegate_nonce: number }
+  args: { guardian?: string; vault_nonce?: number; delegate_nonce?: number }
 ) {
-  const guardian = new PublicKey(args.guardian);
-  const vaultNonce = new BN(args.vault_nonce);
-  const delegateNonce = new BN(args.delegate_nonce);
+  let ctx;
+  try {
+    ctx = await resolveContext(config, args);
+  } catch (error: any) {
+    return { content: [{ type: "text" as const, text: error.message }], isError: true };
+  }
 
-  const [vaultPda] = findVaultPda(guardian, vaultNonce, config.client.program.programId);
+  const vaultNonce = new BN(ctx.vaultNonce);
+  const delegateNonce = new BN(ctx.delegateNonce);
+
+  const [vaultPda] = findVaultPda(ctx.guardian, vaultNonce, config.client.program.programId);
   const [delegatePda] = findDelegatePda(vaultPda, delegateNonce, config.client.program.programId);
 
   const delegate = await fetchDelegateByPda(config.client.program, delegatePda);
@@ -38,7 +45,7 @@ export async function getDelegateInfo(
       content: [
         {
           type: "text" as const,
-          text: `No delegate found at PDA: ${delegatePda.toBase58()}\nVault: ${vaultPda.toBase58()}\nGuardian: ${args.guardian}, Vault Nonce: ${args.vault_nonce}, Delegate Nonce: ${args.delegate_nonce}`,
+          text: `No delegate found at PDA: ${delegatePda.toBase58()}\nVault: ${vaultPda.toBase58()}\nGuardian: ${ctx.guardian.toBase58()}, Vault Nonce: ${ctx.vaultNonce}, Delegate Nonce: ${ctx.delegateNonce}`,
         },
       ],
     };

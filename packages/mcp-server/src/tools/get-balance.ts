@@ -3,11 +3,12 @@ import { PublicKey, LAMPORTS_PER_SOL } from "@solana/web3.js";
 import BN from "bn.js";
 import { findVaultPda } from "@fuin-labs/sdk";
 import { fetchVaultByPda } from "../accounts.js";
+import { resolveContext } from "../resolve.js";
 import type { Config } from "../config.js";
 
 export const getBalanceSchema = {
-  guardian: z.string().describe("Guardian wallet public key (base58)"),
-  vault_nonce: z.coerce.number().int().describe("Vault nonce"),
+  guardian: z.string().optional().describe("Guardian wallet public key (base58). Auto-resolved if omitted."),
+  vault_nonce: z.coerce.number().int().optional().describe("Vault nonce. Auto-resolved if omitted."),
 };
 
 function formatState(state: Record<string, unknown>): string {
@@ -19,10 +20,25 @@ function formatState(state: Record<string, unknown>): string {
 
 export async function getBalance(
   config: Config,
-  args: { guardian: string; vault_nonce: number }
+  args: { guardian?: string; vault_nonce?: number }
 ) {
-  const guardian = new PublicKey(args.guardian);
-  const nonce = new BN(args.vault_nonce);
+  let guardian: PublicKey;
+  let vaultNonce: number;
+
+  if (args.guardian && args.vault_nonce !== undefined) {
+    guardian = new PublicKey(args.guardian);
+    vaultNonce = args.vault_nonce;
+  } else {
+    try {
+      const ctx = await resolveContext(config, args);
+      guardian = ctx.guardian;
+      vaultNonce = ctx.vaultNonce;
+    } catch (error: any) {
+      return { content: [{ type: "text" as const, text: error.message }], isError: true };
+    }
+  }
+
+  const nonce = new BN(vaultNonce);
   const [vaultPda] = findVaultPda(guardian, nonce, config.client.program.programId);
 
   const vault = await fetchVaultByPda(
@@ -36,7 +52,7 @@ export async function getBalance(
       content: [
         {
           type: "text" as const,
-          text: `No vault found for guardian ${args.guardian} with nonce ${args.vault_nonce}.\nExpected PDA: ${vaultPda.toBase58()}`,
+          text: `No vault found for guardian ${guardian.toBase58()} with nonce ${vaultNonce}.\nExpected PDA: ${vaultPda.toBase58()}`,
         },
       ],
     };

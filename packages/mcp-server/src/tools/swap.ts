@@ -1,11 +1,12 @@
 import { z } from "zod";
 import { PublicKey } from "@solana/web3.js";
+import { resolveContext } from "../resolve.js";
 import type { Config } from "../config.js";
 
 export const swapSchema = {
-  guardian: z.string().describe("Guardian wallet public key (base58)"),
-  vault_nonce: z.coerce.number().int().describe("Vault nonce"),
-  delegate_nonce: z.coerce.number().int().describe("Delegate nonce"),
+  guardian: z.string().optional().describe("Guardian wallet public key (base58). Auto-resolved if omitted."),
+  vault_nonce: z.coerce.number().int().optional().describe("Vault nonce. Auto-resolved if omitted."),
+  delegate_nonce: z.coerce.number().int().optional().describe("Delegate nonce. Auto-resolved if omitted."),
   pool_address: z
     .string()
     .describe("Meteora DLMM pool address (base58)"),
@@ -70,9 +71,9 @@ function parseAnchorError(error: any): string {
 export async function swap(
   config: Config,
   args: {
-    guardian: string;
-    vault_nonce: number;
-    delegate_nonce: number;
+    guardian?: string;
+    vault_nonce?: number;
+    delegate_nonce?: number;
     pool_address: string;
     input_mint: string;
     amount_in: number;
@@ -81,16 +82,22 @@ export async function swap(
     feed_account: string;
   }
 ) {
-  const guardian = new PublicKey(args.guardian);
+  let ctx;
+  try {
+    ctx = await resolveContext(config, args);
+  } catch (error: any) {
+    return { content: [{ type: "text" as const, text: error.message }], isError: true };
+  }
+
   const poolAddress = new PublicKey(args.pool_address);
   const inputMint = new PublicKey(args.input_mint);
   const feedAccount = new PublicKey(args.feed_account);
 
   try {
     const result = await config.client.swap(
-      guardian,
-      args.vault_nonce,
-      args.delegate_nonce,
+      ctx.guardian,
+      ctx.vaultNonce,
+      ctx.delegateNonce,
       poolAddress,
       inputMint,
       args.amount_in,
@@ -129,9 +136,9 @@ export async function swap(
       `Swap failed: ${explanation}`,
       ``,
       `Details:`,
-      `  Guardian: ${args.guardian}`,
-      `  Vault Nonce: ${args.vault_nonce}`,
-      `  Delegate Nonce: ${args.delegate_nonce}`,
+      `  Guardian: ${ctx.guardian.toBase58()}`,
+      `  Vault Nonce: ${ctx.vaultNonce}`,
+      `  Delegate Nonce: ${ctx.delegateNonce}`,
       `  Pool: ${args.pool_address}`,
       `  Input Mint: ${args.input_mint}`,
       `  Amount: ${args.amount_in}`,
