@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { use, useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -20,7 +21,7 @@ import { COLORS } from "../../_lib/constants";
 import { useIsMobile } from "../../_hooks/useMediaQuery";
 import { fetchVaultLabel, setVaultLabel, saveVault } from "../../_actions/vaults";
 
-export default function VaultDetailPage({ params }: { params: Promise<{ nonce: string }> }) {
+export default function VaultDetailPage({ params }: { params: Promise<{ nonce: string }> }): React.JSX.Element {
   const { nonce: nonceStr } = use(params);
   const nonce = Number(nonceStr);
   const { connected, publicKey } = useFuinClient();

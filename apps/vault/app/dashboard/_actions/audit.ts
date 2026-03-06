@@ -2,6 +2,8 @@
 
 import { logDelegateAction, getAuditLogsByVault, type AuditAction } from "@fuin-labs/db";
 
+type AuditLog = Awaited<ReturnType<typeof getAuditLogsByVault>>[number];
+
 export async function logDelegateControlAction(params: {
   delegatePda: string;
   vaultPda: string;
@@ -15,7 +17,7 @@ export async function logDelegateControlAction(params: {
 
 export async function fetchAuditLogsByVault(vaultPda: string) {
   const logs = await getAuditLogsByVault(vaultPda);
-  return logs.map((log) => ({
+  return logs.map((log: AuditLog) => ({
     id: log.id,
     delegatePda: log.delegatePda,
     vaultPda: log.vaultPda,

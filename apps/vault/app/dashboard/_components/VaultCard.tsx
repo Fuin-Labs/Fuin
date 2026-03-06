@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import Link from "next/link";
 import { motion } from "framer-motion";
@@ -15,7 +16,7 @@ interface VaultCardProps {
   label?: string | null;
 }
 
-export function VaultCard({ vault, delegateCount, label }: VaultCardProps) {
+export function VaultCard({ vault, delegateCount, label }: VaultCardProps): React.JSX.Element {
   const state = getVaultState(vault.account.state);
   const nonce = vault.account.nonce.toNumber();
   const dailyCap = vault.account.policies.spending.dailyCap.toNumber();
@@ -32,7 +33,7 @@ export function VaultCard({ vault, delegateCount, label }: VaultCardProps) {
           display: "flex",
           flexDirection: "column",
           gap: "20px",
-        }}
+        } as any}
       >
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start" }}>
           <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>

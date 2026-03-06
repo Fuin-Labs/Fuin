@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
@@ -16,7 +17,7 @@ import { PageHeader } from "../_components/PageHeader";
 import { fetchVaultLabelsByGuardian } from "../_actions/vaults";
 import { fetchDelegatesByVault } from "../_lib/accounts";
 
-export default function VaultsPage() {
+export default function VaultsPage(): React.JSX.Element {
   const { connected, publicKey, connection, client } = useFuinClient();
   const { vaults, loading } = useVaults();
   const isMobile = useIsMobile();

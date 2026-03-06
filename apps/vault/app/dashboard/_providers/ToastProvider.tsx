@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { createContext, useCallback, useState, type ReactNode } from "react";
 
@@ -24,7 +25,7 @@ export const ToastContext = createContext<ToastContextValue>({
 
 let nextId = 0;
 
-export function ToastProvider({ children }: { children: ReactNode }) {
+export function ToastProvider({ children }: { children: ReactNode }): React.JSX.Element {
   const [toasts, setToasts] = useState<Toast[]>([]);
 
   const removeToast = useCallback((id: number) => {

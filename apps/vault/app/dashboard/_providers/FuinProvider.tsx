@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { createContext, useEffect, useState, type ReactNode } from "react";
 import { useConnection, useWallet } from "@solana/wallet-adapter-react";
@@ -19,7 +20,7 @@ export const FuinContext = createContext<FuinContextValue>({
   connected: false,
 });
 
-export function FuinProvider({ children }: { children: ReactNode }) {
+export function FuinProvider({ children }: { children: ReactNode }): React.JSX.Element {
   const { connection } = useConnection();
   const wallet = useWallet();
   const [client, setClient] = useState<FuinClient | null>(null);

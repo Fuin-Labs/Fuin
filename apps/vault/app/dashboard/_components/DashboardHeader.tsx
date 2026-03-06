@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { Menu } from "lucide-react";
 import { COLORS } from "../_lib/constants";
@@ -12,7 +13,7 @@ interface DashboardHeaderProps {
   onMenuToggle?: () => void;
 }
 
-export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps) {
+export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps): React.JSX.Element {
   const isMobile = useIsMobile();
   const pathname = usePathname();
   const headerCtx = useHeader();

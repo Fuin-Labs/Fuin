@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, ReactNode } from "react";
 import { useHeader } from "../_providers/HeaderProvider";
@@ -9,7 +10,7 @@ interface PageHeaderProps {
     action?: ReactNode;
 }
 
-export function PageHeader({ title, subtitle, action }: PageHeaderProps) {
+export function PageHeader({ title, subtitle, action }: PageHeaderProps): React.JSX.Element | null {
     const { setTitle, setSubtitle, setAction } = useHeader();
 
     useEffect(() => {

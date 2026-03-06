@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useMemo } from "react";
 import { ConnectionProvider, WalletProvider } from "@solana/wallet-adapter-react";
@@ -16,7 +17,7 @@ function resolveNetwork(): WalletAdapterNetwork {
   return WalletAdapterNetwork.Devnet;
 }
 
-export function WalletProviders({ children }: { children: React.ReactNode }) {
+export function WalletProviders({ children }: { children: React.ReactNode }): React.JSX.Element {
   const network = resolveNetwork();
   const endpoint = useMemo(
     () => process.env.NEXT_PUBLIC_SOLANA_RPC_URL || clusterApiUrl(network),

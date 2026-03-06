@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
@@ -9,7 +10,7 @@ import { useWalletBalance } from "../_hooks/useWalletBalance";
 import { useIsMobile } from "../_hooks/useMediaQuery";
 import { Wallet, LogOut } from "lucide-react";
 
-export function WalletButton() {
+export function WalletButton(): React.JSX.Element {
   const { publicKey, disconnect, connected } = useWallet();
   const { setVisible } = useWalletModal();
   const { balance } = useWalletBalance();

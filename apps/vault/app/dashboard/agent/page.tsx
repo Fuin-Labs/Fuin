@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { motion } from "framer-motion";
 import { Bot, Key } from "lucide-react";
@@ -10,7 +11,7 @@ import { EmptyState } from "../_components/ui/EmptyState";
 import { DelegateDetailView } from "./_components/DelegateDetailView";
 import { COLORS } from "../_lib/constants";
 
-export default function AgentPage() {
+export default function AgentPage(): React.JSX.Element {
   const { connected } = useFuinClient();
   const { delegates, loading } = useDelegatesByAuthority();
   const isMobile = useIsMobile();

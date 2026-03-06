@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { Shield, ShieldOff } from "lucide-react";
@@ -15,7 +16,7 @@ interface FreezeToggleProps {
   onSuccess: () => void;
 }
 
-export function FreezeToggle({ nonce, isFrozen, onSuccess }: FreezeToggleProps) {
+export function FreezeToggle({ nonce, isFrozen, onSuccess }: FreezeToggleProps): React.JSX.Element {
   const { client } = useFuinClient();
   const { addToast } = useToast();
   const [showModal, setShowModal] = useState(false);

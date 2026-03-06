@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { use, useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -46,7 +47,7 @@ function formatDate(iso: string): string {
   return d.toLocaleDateString("en-US", { month: "short", day: "numeric", year: "numeric" });
 }
 
-export default function AuditLogPage({ params }: { params: Promise<{ nonce: string }> }) {
+export default function AuditLogPage({ params }: { params: Promise<{ nonce: string }> }): React.JSX.Element {
   const { nonce: nonceStr } = use(params);
   const nonce = Number(nonceStr);
   const { connected } = useFuinClient();
@@ -151,7 +152,7 @@ export default function AuditLogPage({ params }: { params: Promise<{ nonce: stri
                   alignItems: "center",
                   justifyContent: "space-between",
                   gap: "12px",
-                }}
+                } as any}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: "14px", flex: 1, minWidth: 0 }}>
                   <Badge variant={badge.variant}>{badge.label}</Badge>

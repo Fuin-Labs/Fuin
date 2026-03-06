@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { use, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -28,7 +29,7 @@ interface CreatedDelegate {
   delegateNonce: number;
 }
 
-export default function KidDelegatePage({ params }: { params: Promise<{ nonce: string }> }) {
+export default function KidDelegatePage({ params }: { params: Promise<{ nonce: string }> }): React.JSX.Element {
   const { nonce: nonceStr } = use(params);
   const vaultNonce = Number(nonceStr);
   const router = useRouter();
@@ -275,7 +276,7 @@ export default function KidDelegatePage({ params }: { params: Promise<{ nonce: s
               fontSize: "0.85rem",
               color: COLORS.textSecondary,
               lineHeight: 1.6,
-            }}
+            } as any}
           >
             Your kid can send transfers up to {dailyAllowance || "0"} SOL per epoch (~2-3 days).
             You can pause or revoke access anytime.

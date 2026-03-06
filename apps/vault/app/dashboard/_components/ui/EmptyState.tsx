@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { COLORS } from "../../_lib/constants";
 
@@ -9,7 +10,7 @@ interface EmptyStateProps {
   action?: React.ReactNode;
 }
 
-export function EmptyState({ icon, title, description, action }: EmptyStateProps) {
+export function EmptyState({ icon, title, description, action }: EmptyStateProps): React.JSX.Element {
   return (
     <div
       style={{

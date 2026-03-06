@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect } from "react";
 import Link from "next/link";
@@ -152,7 +153,7 @@ function SidebarContent({ onClose, isCollapsed, onToggleCollapse }: { onClose?: 
   );
 }
 
-export function DashboardSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: DashboardSidebarProps) {
+export function DashboardSidebar({ isOpen, onClose, isCollapsed, onToggleCollapse }: DashboardSidebarProps): React.JSX.Element {
   const pathname = usePathname();
   const isMobile = useIsMobile();
 

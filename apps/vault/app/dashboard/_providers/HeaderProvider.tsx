@@ -13,7 +13,7 @@ interface HeaderContextType {
 
 const HeaderContext = createContext<HeaderContextType | undefined>(undefined);
 
-export function HeaderProvider({ children }: { children: ReactNode }) {
+export function HeaderProvider({ children }: { children: ReactNode }): React.JSX.Element {
     const [title, setTitle] = useState<string | null>(null);
     const [subtitle, setSubtitle] = useState<string | null>(null);
     const [action, setAction] = useState<ReactNode | null>(null);

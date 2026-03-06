@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { motion } from "framer-motion";
 import { COLORS } from "../../_lib/constants";
@@ -7,7 +8,7 @@ interface SpinnerProps {
   size?: number;
 }
 
-export function Spinner({ size = 24 }: SpinnerProps) {
+export function Spinner({ size = 24 }: SpinnerProps): React.JSX.Element {
   return (
     <motion.div
       animate={{ rotate: 360 }}

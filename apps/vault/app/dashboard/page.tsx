@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -14,7 +15,7 @@ import { Spinner } from "./_components/ui/Spinner";
 import { COLORS } from "./_lib/constants";
 import { formatSol } from "./_lib/format";
 
-export default function DashboardPage() {
+export default function DashboardPage(): React.JSX.Element {
   const { client, connection, connected } = useFuinClient();
   const { vaults, loading } = useVaults();
   const isMobile = useIsMobile();

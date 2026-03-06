@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { Button } from "./ui/Button";
@@ -25,7 +26,7 @@ export function TransactionButton({
   fullWidth,
   size = "md",
   disabled,
-}: TransactionButtonProps) {
+}: TransactionButtonProps): React.JSX.Element {
   const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
 

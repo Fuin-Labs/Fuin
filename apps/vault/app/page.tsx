@@ -1,16 +1,29 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import "./landing.css";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 
+// Declare iconify-icon web component for TypeScript
+declare module "react" {
+  namespace JSX {
+    interface IntrinsicElements {
+      "iconify-icon": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
+        icon: string;
+        class?: string;
+      };
+    }
+  }
+}
+
 const UsecaseFlow = dynamic(() => import("./components/UsecaseFlow").then(m => m.UsecaseFlow), {
   ssr: false,
   loading: () => <div style={{ minHeight: 500 }} />,
 });
 
-export default function Home() {
+export default function Home(): React.JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const currentYear = new Date().getFullYear();
 

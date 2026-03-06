@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState, useCallback } from "react";
 import { Check, X, Clock } from "lucide-react";
@@ -31,7 +32,7 @@ interface ProgramRequestsProps {
   onSuccess: () => void;
 }
 
-export function ProgramRequests({ vaultPda, nonce, currentAllowList, onSuccess }: ProgramRequestsProps) {
+export function ProgramRequests({ vaultPda, nonce, currentAllowList, onSuccess }: ProgramRequestsProps): React.JSX.Element | null {
   const { addToast } = useToast();
   const { client } = useFuinClient();
   const [requests, setRequests] = useState<ProgramRequest[]>([]);

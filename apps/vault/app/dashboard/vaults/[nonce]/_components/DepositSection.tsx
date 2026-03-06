@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { SystemProgram, Transaction, LAMPORTS_PER_SOL } from "@solana/web3.js";
@@ -14,7 +15,7 @@ interface DepositSectionProps {
   onSuccess: () => void;
 }
 
-export function DepositSection({ vaultPda, onSuccess }: DepositSectionProps) {
+export function DepositSection({ vaultPda, onSuccess }: DepositSectionProps): React.JSX.Element {
   const { connection } = useConnection();
   const wallet = useWallet();
   const [amount, setAmount] = useState("1");

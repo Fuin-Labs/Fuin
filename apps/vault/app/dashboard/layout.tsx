@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { WalletProviders } from "./_providers/WalletProviders";
@@ -35,7 +36,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   );
 }
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({ children }: { children: React.ReactNode }): React.JSX.Element {
   return (
     <WalletProviders>
       <FuinProvider>

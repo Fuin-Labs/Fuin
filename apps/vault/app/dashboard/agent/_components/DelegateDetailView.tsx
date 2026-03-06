@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useEffect, useState } from "react";
 import { motion } from "framer-motion";
@@ -34,7 +35,7 @@ function getDelegateStatus(d: DelegateAccount["account"]) {
   return { label: "Active", variant: "active" as const };
 }
 
-export function DelegateDetailView({ delegate }: DelegateDetailViewProps) {
+export function DelegateDetailView({ delegate }: DelegateDetailViewProps): React.JSX.Element {
   const d = delegate.account;
   const { client, connection } = useFuinClient();
   const { addToast } = useToast();

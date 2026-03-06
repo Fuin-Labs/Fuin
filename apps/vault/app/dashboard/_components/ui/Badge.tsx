@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { COLORS } from "../../_lib/constants";
 
@@ -20,7 +21,7 @@ interface BadgeProps {
   dot?: boolean;
 }
 
-export function Badge({ variant, children, dot }: BadgeProps) {
+export function Badge({ variant, children, dot }: BadgeProps): React.JSX.Element {
   const s = VARIANT_STYLES[variant];
   return (
     <span

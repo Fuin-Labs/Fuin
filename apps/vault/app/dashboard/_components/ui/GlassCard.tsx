@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { motion } from "framer-motion";
 import type { CSSProperties, ReactNode } from "react";
@@ -13,7 +14,7 @@ interface GlassCardProps {
   style?: CSSProperties;
 }
 
-export function GlassCard({ children, padding = "32px", hover = false, accent, onClick, style }: GlassCardProps) {
+export function GlassCard({ children, padding = "32px", hover = false, accent, onClick, style }: GlassCardProps): React.JSX.Element {
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
@@ -27,7 +28,7 @@ export function GlassCard({ children, padding = "32px", hover = false, accent, o
         cursor: onClick ? "pointer" : "default",
         ...(accent ? { borderColor: accent } : {}),
         ...style,
-      }}
+      } as any}
     >
       {children}
     </motion.div>

@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { Copy, ExternalLink, Shield } from "lucide-react";
 import { COLORS } from "../../../_lib/constants";
@@ -16,7 +17,7 @@ interface VaultOverviewProps {
   balance: number;
 }
 
-export function VaultOverview({ vault, vaultPda, balance }: VaultOverviewProps) {
+export function VaultOverview({ vault, vaultPda, balance }: VaultOverviewProps): React.JSX.Element {
   const { addToast } = useToast();
   const isMobile = useIsMobile();
   const state = getVaultState(vault.state);

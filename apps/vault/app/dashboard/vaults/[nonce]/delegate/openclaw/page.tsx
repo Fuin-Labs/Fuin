@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { use, useState } from "react";
 import { useRouter } from "next/navigation";
@@ -32,7 +33,7 @@ interface CreatedDelegate {
   validityHours: string;
 }
 
-export default function OpenClawDelegatePage({ params }: { params: Promise<{ nonce: string }> }) {
+export default function OpenClawDelegatePage({ params }: { params: Promise<{ nonce: string }> }): React.JSX.Element {
   const { nonce: nonceStr } = use(params);
   const vaultNonce = Number(nonceStr);
   const router = useRouter();

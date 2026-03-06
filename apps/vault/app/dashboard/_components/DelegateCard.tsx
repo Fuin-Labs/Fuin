@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { motion } from "framer-motion";
 import { User, Clock, Zap } from "lucide-react";
@@ -33,7 +34,7 @@ function getDelegateStatus(d: DelegateAccount["account"]): { label: string; vari
   return { label: "Active", variant: "active" };
 }
 
-export function DelegateCard({ delegate, onPause, onResume, onRevoke, loading, readOnly }: DelegateCardProps) {
+export function DelegateCard({ delegate, onPause, onResume, onRevoke, loading, readOnly }: DelegateCardProps): React.JSX.Element {
   const isMobile = useIsMobile();
   const d = delegate.account;
   const status = getDelegateStatus(d);
@@ -55,7 +56,7 @@ export function DelegateCard({ delegate, onPause, onResume, onRevoke, loading, r
         display: "flex",
         flexDirection: "column",
         gap: "16px",
-      }}
+      } as any}
     >
       {/* Header */}
       <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>

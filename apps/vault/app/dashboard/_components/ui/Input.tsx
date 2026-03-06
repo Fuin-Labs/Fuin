@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import type { CSSProperties } from "react";
 import { COLORS } from "../../_lib/constants";
@@ -14,7 +15,7 @@ interface InputProps {
   style?: CSSProperties;
 }
 
-export function Input({ value, onChange, placeholder, type = "text", label, hint, disabled, style }: InputProps) {
+export function Input({ value, onChange, placeholder, type = "text", label, hint, disabled, style }: InputProps): React.JSX.Element {
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
       {label && (
@@ -44,7 +45,7 @@ export function Input({ value, onChange, placeholder, type = "text", label, hint
           WebkitBackdropFilter: "blur(12px)",
           boxShadow: "inset 0 2px 4px rgba(0,0,0,0.5)",
           ...style,
-        }}
+        } as any}
         onFocus={(e) => {
           e.currentTarget.style.borderColor = COLORS.emeraldBorder;
         }}

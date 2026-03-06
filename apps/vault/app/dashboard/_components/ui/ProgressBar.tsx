@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { COLORS } from "../../_lib/constants";
 
@@ -9,7 +10,7 @@ interface ProgressBarProps {
   color?: string;
 }
 
-export function ProgressBar({ value, max, label, color = COLORS.emerald }: ProgressBarProps) {
+export function ProgressBar({ value, max, label, color = COLORS.emerald }: ProgressBarProps): React.JSX.Element {
   const pct = max > 0 ? Math.min((value / max) * 100, 100) : 0;
   const isOverHalf = pct > 75;
 

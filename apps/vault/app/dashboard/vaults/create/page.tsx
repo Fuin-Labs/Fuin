@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
@@ -16,7 +17,7 @@ import { useIsMobile } from "../../_hooks/useMediaQuery";
 import { useToast } from "../../_hooks/useToast";
 import { saveVault } from "../../_actions/vaults";
 
-export default function CreateVaultPage() {
+export default function CreateVaultPage(): React.JSX.Element {
   const router = useRouter();
   const { client, connected, publicKey } = useFuinClient();
   const { nextNonce } = useAutoNonce();

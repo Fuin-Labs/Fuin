@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState, useEffect } from "react";
 import Link from "next/link";
@@ -35,7 +36,7 @@ interface DelegateListProps {
   vaultNonce: number;
 }
 
-export function DelegateList({ vaultPda, vaultNonce }: DelegateListProps) {
+export function DelegateList({ vaultPda, vaultNonce }: DelegateListProps): React.JSX.Element {
   const { client, publicKey } = useFuinClient();
   const { addToast } = useToast();
   const isMobile = useIsMobile();

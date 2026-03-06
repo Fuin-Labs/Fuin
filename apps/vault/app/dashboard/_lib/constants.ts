@@ -1,4 +1,4 @@
-import type { CSSProperties } from "react";
+
 
 export const COLORS = {
   bg: "#000000",
@@ -28,7 +28,7 @@ export const COLORS = {
   purpleSubtle: "rgba(168, 85, 247, 0.1)",
 };
 
-export const GLASS_STYLE: CSSProperties = {
+export const GLASS_STYLE = {
   backgroundColor: COLORS.bgCard,
   border: `1px solid ${COLORS.border}`,
   borderRadius: "24px",

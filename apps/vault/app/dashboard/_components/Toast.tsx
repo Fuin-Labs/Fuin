@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import { useContext } from "react";
@@ -12,7 +13,7 @@ const TYPE_STYLES: Record<string, { bg: string; border: string; color: string }>
   info: { bg: "rgba(59, 130, 246, 0.1)", border: "rgba(59, 130, 246, 0.3)", color: COLORS.blue },
 };
 
-export function ToastContainer() {
+export function ToastContainer(): React.JSX.Element {
   const { toasts, removeToast } = useContext(ToastContext);
 
   return (

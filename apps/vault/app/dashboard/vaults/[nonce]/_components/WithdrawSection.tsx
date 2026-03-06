@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { GlassCard } from "../../../_components/ui/GlassCard";
@@ -12,7 +13,7 @@ interface WithdrawSectionProps {
   onSuccess: () => void;
 }
 
-export function WithdrawSection({ nonce, onSuccess }: WithdrawSectionProps) {
+export function WithdrawSection({ nonce, onSuccess }: WithdrawSectionProps): React.JSX.Element {
   const { client } = useFuinClient();
   const [amount, setAmount] = useState("1");
 

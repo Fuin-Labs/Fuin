@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { motion } from "framer-motion";
 import type { CSSProperties, ReactNode } from "react";
@@ -16,7 +17,7 @@ interface ButtonProps {
   style?: CSSProperties;
 }
 
-const VARIANT_STYLES: Record<ButtonVariant, CSSProperties> = {
+const VARIANT_STYLES: Record<ButtonVariant, React.CSSProperties> = {
   primary: {
     backgroundColor: COLORS.emerald,
     color: COLORS.bg,
@@ -39,13 +40,13 @@ const VARIANT_STYLES: Record<ButtonVariant, CSSProperties> = {
   },
 };
 
-const SIZE_STYLES: Record<string, CSSProperties> = {
+const SIZE_STYLES: Record<string, React.CSSProperties> = {
   sm: { padding: "8px 16px", fontSize: "0.85rem", borderRadius: "8px" },
   md: { padding: "12px 24px", fontSize: "1rem", borderRadius: "10px" },
   lg: { padding: "16px 32px", fontSize: "1.1rem", borderRadius: "12px" },
 };
 
-export function Button({ children, onClick, variant = "primary", disabled, fullWidth, size = "md", style }: ButtonProps) {
+export function Button({ children, onClick, variant = "primary", disabled, fullWidth, size = "md", style }: ButtonProps): React.JSX.Element {
   return (
     <motion.button
       whileHover={disabled ? undefined : { scale: 1.02 }}
@@ -62,7 +63,7 @@ export function Button({ children, onClick, variant = "primary", disabled, fullW
         ...SIZE_STYLES[size],
         ...VARIANT_STYLES[variant],
         ...style,
-      }}
+      } as any}
     >
       {children}
     </motion.button>

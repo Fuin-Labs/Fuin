@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { motion, AnimatePresence } from "framer-motion";
 import type { ReactNode } from "react";
@@ -16,7 +17,7 @@ interface ModalProps {
   loading?: boolean;
 }
 
-export function Modal({ open, onClose, onConfirm, title, children, confirmLabel = "Confirm", confirmVariant = "danger", loading }: ModalProps) {
+export function Modal({ open, onClose, onConfirm, title, children, confirmLabel = "Confirm", confirmVariant = "danger", loading }: ModalProps): React.JSX.Element {
   return (
     <AnimatePresence>
       {open && (
@@ -47,7 +48,7 @@ export function Modal({ open, onClose, onConfirm, title, children, confirmLabel 
               padding: "32px",
               maxWidth: "440px",
               width: "90%",
-            }}
+            } as any}
           >
             <h3 style={{ color: COLORS.text, fontSize: "1.25rem", fontWeight: 700, marginBottom: "12px" }}>
               {title}

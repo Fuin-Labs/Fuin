@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { useState } from "react";
 import { Plus, Trash2 } from "lucide-react";
@@ -36,7 +37,7 @@ export function UpdatePoliciesForm({
   currentAllowList,
   currentDenyList,
   onSuccess,
-}: UpdatePoliciesFormProps) {
+}: UpdatePoliciesFormProps): React.JSX.Element {
   const { client } = useFuinClient();
   const isMobile = useIsMobile();
   const [dailyCap, setDailyCap] = useState(String(currentDailyCap / LAMPORTS_PER_SOL));

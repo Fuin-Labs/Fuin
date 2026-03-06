@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { Send, ArrowLeftRight, Landmark, Droplets } from "lucide-react";
 import { COLORS } from "../_lib/constants";
@@ -17,7 +18,7 @@ interface PermissionCheckboxesProps {
   disabled?: boolean;
 }
 
-export function PermissionCheckboxes({ value, onChange, disabled }: PermissionCheckboxesProps) {
+export function PermissionCheckboxes({ value, onChange, disabled }: PermissionCheckboxesProps): React.JSX.Element {
   const toggle = (perm: number) => {
     onChange(value ^ perm);
   };

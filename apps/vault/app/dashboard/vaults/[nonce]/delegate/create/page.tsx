@@ -1,4 +1,5 @@
 "use client";
+import React from "react";
 
 import { use } from "react";
 import { motion } from "framer-motion";
@@ -8,7 +9,7 @@ import { GlassCard } from "../../../../_components/ui/GlassCard";
 import { COLORS } from "../../../../_lib/constants";
 import { useIsMobile } from "../../../../_hooks/useMediaQuery";
 
-export default function CreateDelegatePage({ params }: { params: Promise<{ nonce: string }> }) {
+export default function CreateDelegatePage({ params }: { params: Promise<{ nonce: string }> }): React.JSX.Element {
   const { nonce: nonceStr } = use(params);
   const vaultNonce = Number(nonceStr);
   const isMobile = useIsMobile();
