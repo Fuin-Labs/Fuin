@@ -15,6 +15,8 @@ import {
   rejectRequest,
 } from "../../../_actions/program-requests";
 
+type PendingRequestRow = Awaited<ReturnType<typeof fetchPendingRequests>>[number];
+
 interface ProgramRequest {
   id: string;
   vaultPda: string;
@@ -42,7 +44,7 @@ export function ProgramRequests({ vaultPda, nonce, currentAllowList, onSuccess }
   const load = useCallback(async () => {
     try {
       const data = await fetchPendingRequests(vaultPda);
-      setRequests(data.map((r) => ({ ...r, createdAt: r.createdAt.toISOString() })));
+      setRequests(data.map((r: PendingRequestRow) => ({ ...r, createdAt: r.createdAt.toISOString() })));
     } catch {
       // silent
     } finally {
