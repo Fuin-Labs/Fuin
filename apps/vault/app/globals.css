@@ -51,7 +51,6 @@
   html,
   body {
     max-width: 100vw;
-    zoom: 1.1;
   }
 
   body {
@@ -100,10 +99,21 @@
 }
 
 /* Japanese typography adjustments */
-:lang(ja) .text-hero   { font-size: clamp(2rem, 6.5vw, 5rem); }
-:lang(ja) .text-section { font-size: clamp(1.5rem, 3.5vw, 2.5rem); }
-:lang(ja) .text-headline { font-size: clamp(1.125rem, 2vw, 1.5rem); }
-:lang(ja) .text-subhead  { font-size: clamp(0.875rem, 1.75vw, 1.25rem); }
+:lang(ja) .text-hero {
+  font-size: clamp(2rem, 6.5vw, 5rem);
+}
+
+:lang(ja) .text-section {
+  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+}
+
+:lang(ja) .text-headline {
+  font-size: clamp(1.125rem, 2vw, 1.5rem);
+}
+
+:lang(ja) .text-subhead {
+  font-size: clamp(0.875rem, 1.75vw, 1.25rem);
+}
 
 /* Wallet adapter modal overrides — kept unlayered so !important wins */
 .wallet-adapter-modal-wrapper {
