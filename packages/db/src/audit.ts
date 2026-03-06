@@ -18,7 +18,7 @@ export async function logDelegateAction(params: {
       guardian: params.guardian,
       action: params.action,
       txSignature: params.txSignature ?? null,
-      metadata: (params.metadata as Prisma.InputJsonValue) ?? undefined,
+      metadata: (params.metadata as any) ?? undefined,
     },
   });
 }
