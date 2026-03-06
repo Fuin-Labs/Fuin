@@ -5,12 +5,12 @@ import "../landing.css";
 
 const sections = [
   { id: "overview", label: "Overview" },
-  { id: "quick-start", label: "Quick Start" },
-  { id: "guardian-dashboard", label: "Guardian Dashboard" },
-  { id: "mcp-setup", label: "MCP Server Setup" },
+  { id: "getting-started", label: "Getting Started" },
+  { id: "connect-agent", label: "Connect Your AI Agent" },
   { id: "available-tools", label: "Available Tools" },
-  { id: "agent-actions", label: "Agent Actions" },
+  { id: "what-agents-can-do", label: "What Agents Can Do" },
   { id: "policy-guardrails", label: "Policy Guardrails" },
+  { id: "manage-delegates", label: "Managing Delegates" },
   { id: "reference", label: "Reference" },
 ];
 
@@ -196,17 +196,20 @@ export default function DocsPage() {
         {/* Overview */}
         <SectionHeading id="overview">Overview</SectionHeading>
         <Paragraph>
-          Fuin is a programmable Identity Access Management (IAM) layer built natively for Solana. It enables guardians to create on-chain vaults (PDAs) and issue delegate keys with bitmask permissions, spending caps, and policy constraints to AI agents or human operators.
+          Fuin is a programmable authorization layer on Solana. It lets you create on-chain vaults, deposit funds, and issue scoped delegate keys to AI agents &mdash; with spending caps, permission controls, and policy constraints enforced entirely on-chain.
+        </Paragraph>
+        <Paragraph>
+          Your agent can transfer SOL, send SPL tokens, and execute swaps &mdash; but only within the boundaries you set. You stay in control.
         </Paragraph>
 
-        <SubHeading>Core Concepts</SubHeading>
+        <SubHeading>How It Works</SubHeading>
 
         <div className="grid gap-3 my-6">
           {[
-            { title: "Vault", desc: "An on-chain PDA that holds funds and enforces policies. Created by a guardian with configurable rules." },
-            { title: "Delegate", desc: "A scoped access key issued to an agent or operator. Carries bitmask permissions, spending limits, and expiry." },
-            { title: "Guardian", desc: "The vault owner. Creates vaults, sets policies, deposits funds, issues delegates, and retains ultimate control." },
-            { title: "Policy Engine", desc: "The on-chain validation layer. Checks permissions, spending caps, program allowlists, time windows, and risk thresholds before every transaction." },
+            { title: "1. Create a Vault", desc: "Connect your wallet and create an on-chain vault. This is a PDA that holds your funds and enforces all policies." },
+            { title: "2. Fund the Vault", desc: "Send SOL (or SPL tokens) to your vault address. The vault is the source of all agent transactions." },
+            { title: "3. Issue a Delegate Key", desc: "Generate a keypair for your AI agent and issue a delegate with specific permissions, spending limits, and expiry." },
+            { title: "4. Connect Your Agent", desc: "Configure the Fuin MCP server in your AI client (Claude, Cursor, etc.) with the delegate private key. The agent can now operate within your policy constraints." },
           ].map(({ title, desc }) => (
             <div key={title} className="rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
               <div className="text-sm font-medium font-geist text-white mb-1">{title}</div>
@@ -215,109 +218,73 @@ export default function DocsPage() {
           ))}
         </div>
 
-        <Paragraph>
-          Delegates operate within strict on-chain constraints. Every transaction is validated by the policy engine before execution &mdash; there is no way to bypass limits without the guardian&apos;s intervention.
-        </Paragraph>
+        {/* Getting Started */}
+        <SectionHeading id="getting-started">Getting Started</SectionHeading>
 
-        {/* Quick Start */}
-        <SectionHeading id="quick-start">Quick Start</SectionHeading>
-
-        <SubHeading>Prerequisites</SubHeading>
+        <SubHeading>What You Need</SubHeading>
         <ul className="list-disc list-inside text-white/70 font-geist space-y-2 mb-6">
-          <li>Solana CLI installed (<InlineCode>solana</InlineCode>, <InlineCode>spl-token</InlineCode>)</li>
-          <li>Anchor CLI installed (<InlineCode>anchor</InlineCode>)</li>
-          <li>Node.js + pnpm installed</li>
-          <li>Phantom wallet (or any Solana wallet) set to devnet</li>
+          <li>A Solana wallet (Phantom, Solflare, etc.) set to <strong className="text-white">Devnet</strong></li>
+          <li>Some devnet SOL &mdash; use a <a href="https://faucet.solana.com" target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">faucet</a> or <InlineCode>solana airdrop 2</InlineCode></li>
+          <li>Node.js 18+ installed (for running the MCP server)</li>
         </ul>
 
-        <SubHeading>Deploy the Program</SubHeading>
-        <CodeBlock title="Terminal">{`# Configure Solana CLI for devnet
-solana config set --url https://api.devnet.solana.com
+        <SubHeading>Step 1: Create a Vault</SubHeading>
+        <ol className="list-decimal list-inside text-white/70 font-geist space-y-3 mb-6">
+          <li>Go to the <Link href="/dashboard/vaults" className="text-emerald-400 hover:underline">Fuin Dashboard</Link></li>
+          <li>Connect your wallet (make sure it&apos;s set to Devnet)</li>
+          <li>Click <strong className="text-white">Create Vault</strong></li>
+          <li>Your vault PDA address will be displayed &mdash; copy it</li>
+        </ol>
 
-# Fund your deployer wallet
-solana airdrop 5
-
-# Build and deploy
-cd programs/fuin
-anchor build
-anchor deploy
-
-# Copy IDL to SDK
-cp target/idl/fuin.json ../../packages/sdk/src/idl/fuin.json
-
-# Build the monorepo
-cd ../..
-pnpm build`}</CodeBlock>
-
+        <SubHeading>Step 2: Fund the Vault</SubHeading>
         <Paragraph>
-          Program ID: <InlineCode>E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy</InlineCode>
+          Send SOL to your vault PDA address from your wallet. The vault is the source of all agent transactions.
         </Paragraph>
 
-        <SubHeading>Generate an Agent Keypair</SubHeading>
+        <SubHeading>Step 3: Generate an Agent Keypair</SubHeading>
         <Paragraph>
-          You need two keypairs: your <strong className="text-white">Guardian</strong> wallet (e.g. Phantom) and a separate <strong className="text-white">Agent</strong> keypair for the delegate.
+          Your AI agent needs its own keypair. The public key gets registered as a delegate, and the private key is used by the MCP server to sign transactions.
         </Paragraph>
-        <CodeBlock title="Terminal">{`# Generate agent keypair
-solana-keygen new -o ~/.config/solana/agent.json
-solana address -k ~/.config/solana/agent.json
+        <CodeBlock title="Terminal">{`# Generate a new keypair for your agent
+solana-keygen new -o agent-key.json
 
-# Get base58 private key for MCP config
+# Note the public key — you'll paste it when issuing the delegate
+solana address -k agent-key.json
+
+# Get the base58 private key (needed for MCP server config)
 node -e "
-const fs = require('fs');
 const bs58 = require('bs58');
-const raw = JSON.parse(fs.readFileSync(
-  process.env.HOME + '/.config/solana/agent.json'
-));
+const raw = require('./agent-key.json');
 console.log(bs58.encode(Buffer.from(raw)));
 "
 
-# Fund the agent wallet (it pays tx fees as relayer)
-solana airdrop 1 $(solana address -k ~/.config/solana/agent.json)`}</CodeBlock>
+# Fund the agent wallet (it pays transaction fees)
+solana airdrop 1 $(solana address -k agent-key.json)`}</CodeBlock>
 
-        {/* Guardian Dashboard */}
-        <SectionHeading id="guardian-dashboard">Guardian Dashboard</SectionHeading>
-
+        <SubHeading>Step 4: Issue a Delegate</SubHeading>
+        <ol className="list-decimal list-inside text-white/70 font-geist space-y-3 mb-6">
+          <li>Go to your vault in the <Link href="/dashboard/vaults" className="text-emerald-400 hover:underline">Dashboard</Link></li>
+          <li>Click <strong className="text-white">Issue Delegate</strong></li>
+          <li>Paste the agent&apos;s public key</li>
+          <li>Choose permissions (e.g. Transfer, Swap)</li>
+          <li>Set a spending cap and expiry</li>
+          <li>Submit &mdash; the delegate is created on-chain</li>
+        </ol>
         <Paragraph>
-          The Guardian Dashboard is a Next.js app that provides a full management UI for your vaults and delegates.
+          After creation, the dashboard shows a <strong className="text-white">Quick Start</strong> card with the exact MCP config to copy into your AI client.
         </Paragraph>
 
-        <SubHeading>Create a Vault</SubHeading>
-        <ol className="list-decimal list-inside text-white/70 font-geist space-y-3 mb-6">
-          <li>Launch the guardian app (<InlineCode>pnpm dev:guardian</InlineCode> on port 3001)</li>
-          <li>Connect your Phantom wallet (set to devnet)</li>
-          <li>Click &quot;Create Vault&quot; &mdash; this creates a vault PDA on-chain</li>
-          <li>Fund the vault by sending SOL from Phantom to the vault PDA address shown in the UI</li>
-        </ol>
-
-        <SubHeading>Issue a Delegate</SubHeading>
-        <ol className="list-decimal list-inside text-white/70 font-geist space-y-3 mb-6">
-          <li>Navigate to your vault detail page</li>
-          <li>Click &quot;Issue Delegate&quot;</li>
-          <li>Enter the agent&apos;s public key (from the keypair generated above)</li>
-          <li>Set permissions using the bitmask (e.g. <InlineCode>3</InlineCode> for CAN_SWAP + CAN_TRANSFER)</li>
-          <li>Set a daily spending cap (e.g. 1 SOL)</li>
-          <li>Submit &mdash; the delegate PDA is created on-chain</li>
-        </ol>
-
-        <SubHeading>Manage Delegates</SubHeading>
-        <Paragraph>
-          From the dashboard you can pause, resume, or permanently revoke delegates. Status codes:
-        </Paragraph>
-        <Table
-          headers={["Code", "Action", "Reversible"]}
-          rows={[
-            ["0", "Revoke (permanent)", "No"],
-            ["1", "Pause", "Yes"],
-            ["2", "Resume", "Yes"],
-          ]}
-        />
-
-        {/* MCP Server Setup */}
-        <SectionHeading id="mcp-setup">MCP Server Setup</SectionHeading>
+        {/* Connect Your AI Agent */}
+        <SectionHeading id="connect-agent">Connect Your AI Agent</SectionHeading>
 
         <Paragraph>
           The Fuin MCP server lets AI coding assistants (Claude Desktop, Cursor, Claude Code) interact with your vault directly. It exposes tools for balance checks, transfers, and swaps &mdash; all enforced by on-chain policies.
         </Paragraph>
+
+        <Paragraph>
+          Install via npm &mdash; no server to deploy. The MCP server runs locally on the user&apos;s machine and communicates via stdio.
+        </Paragraph>
+        <CodeBlock title="Install">{`npx -y @fuin-labs/mcp-server`}</CodeBlock>
 
         <SubHeading>Claude Desktop</SubHeading>
         <Paragraph>
@@ -329,7 +296,25 @@ solana airdrop 1 $(solana address -k ~/.config/solana/agent.json)`}</CodeBlock>
       "command": "npx",
       "args": ["-y", "@fuin-labs/mcp-server"],
       "env": {
-        "DELEGATE_PRIVATE_KEY": "<base58-encoded-secret-key>"
+        "DELEGATE_PRIVATE_KEY": "<base58-encoded-secret-key>",
+        "SOLANA_RPC_URL": "https://api.devnet.solana.com"
+      }
+    }
+  }
+}`}</CodeBlock>
+
+        <SubHeading>Claude Code</SubHeading>
+        <Paragraph>
+          Add to <InlineCode>.claude/settings.json</InlineCode> in your project root:
+        </Paragraph>
+        <CodeBlock title=".claude/settings.json">{`{
+  "mcpServers": {
+    "fuin": {
+      "command": "npx",
+      "args": ["-y", "@fuin-labs/mcp-server"],
+      "env": {
+        "DELEGATE_PRIVATE_KEY": "<base58-encoded-secret-key>",
+        "SOLANA_RPC_URL": "https://api.devnet.solana.com"
       }
     }
   }
@@ -345,24 +330,7 @@ solana airdrop 1 $(solana address -k ~/.config/solana/agent.json)`}</CodeBlock>
       "command": "npx",
       "args": ["-y", "@fuin-labs/mcp-server"],
       "env": {
-        "DELEGATE_PRIVATE_KEY": "<base58-encoded-secret-key>"
-      }
-    }
-  }
-}`}</CodeBlock>
-
-        <SubHeading>Claude Code (Local Dev)</SubHeading>
-        <Paragraph>
-          For local development, add the config to <InlineCode>.claude/settings.json</InlineCode> in the repo root:
-        </Paragraph>
-        <CodeBlock title=".claude/settings.json">{`{
-  "mcpServers": {
-    "fuin": {
-      "command": "npx",
-      "args": ["tsx", "packages/mcp-server/src/index.ts"],
-      "cwd": "/absolute/path/to/fuin",
-      "env": {
-        "DELEGATE_PRIVATE_KEY": "<agent base58 secret key>",
+        "DELEGATE_PRIVATE_KEY": "<base58-encoded-secret-key>",
         "SOLANA_RPC_URL": "https://api.devnet.solana.com"
       }
     }
@@ -398,8 +366,8 @@ solana airdrop 1 $(solana address -k ~/.config/solana/agent.json)`}</CodeBlock>
           ]}
         />
 
-        {/* Agent Actions */}
-        <SectionHeading id="agent-actions">Agent Actions</SectionHeading>
+        {/* What Agents Can Do */}
+        <SectionHeading id="what-agents-can-do">What Agents Can Do</SectionHeading>
 
         <SubHeading>SOL Transfer</SubHeading>
         <Paragraph>
@@ -484,60 +452,67 @@ spl-token transfer <MINT_ADDRESS> 500000 <VAULT_PDA> --fund-recipient`}</CodeBlo
           <div className="text-xs text-white/40 font-geist mt-2">Pausing is reversible. Revoking (status = 0) is permanent.</div>
         </div>
 
+        {/* Managing Delegates */}
+        <SectionHeading id="manage-delegates">Managing Delegates</SectionHeading>
+
+        <Paragraph>
+          From the <Link href="/dashboard/vaults" className="text-emerald-400 hover:underline">Guardian Dashboard</Link> you can pause, resume, or permanently revoke delegates at any time.
+        </Paragraph>
+        <Table
+          headers={["Code", "Action", "Reversible"]}
+          rows={[
+            ["0", "Revoke (permanent)", "No"],
+            ["1", "Pause", "Yes"],
+            ["2", "Resume", "Yes"],
+          ]}
+        />
+        <Paragraph>
+          Pausing a delegate immediately blocks all actions. The guardian can resume later. Revoking is permanent &mdash; the delegate key can never be reactivated.
+        </Paragraph>
+
         {/* Reference */}
         <SectionHeading id="reference">Reference</SectionHeading>
 
-        <SubHeading>Program ID</SubHeading>
-        <CodeBlock>{`E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy`}</CodeBlock>
+        <SubHeading>Network</SubHeading>
+        <Paragraph>
+          Fuin is currently live on <strong className="text-white">Solana Devnet</strong>. Make sure your wallet and RPC are set to devnet.
+        </Paragraph>
 
-        <SubHeading>PDA Derivation</SubHeading>
+        <SubHeading>Permissions</SubHeading>
         <Table
-          headers={["Account", "Seeds"]}
+          headers={["Permission", "What It Allows"]}
           rows={[
-            ["Vault", '`["vault", guardian_pubkey, nonce_le_8bytes]`'],
-            ["Delegate", '`["delegate", vault_pubkey, nonce_le_8bytes]`'],
+            ["`CAN_SWAP`", "Token swaps on approved DEX programs"],
+            ["`CAN_TRANSFER`", "SOL and SPL token transfers to any address"],
+            ["`CAN_STAKE`", "Staking operations (coming soon)"],
+            ["`CAN_LP`", "Liquidity provision (coming soon)"],
           ]}
         />
         <Paragraph>
-          Nonces are <InlineCode>BN</InlineCode> values serialized as 8-byte little-endian buffers: <InlineCode>nonce.toArrayLike(Buffer, &quot;le&quot;, 8)</InlineCode>
+          Permissions are combined. For example, a delegate with <InlineCode>CAN_SWAP + CAN_TRANSFER</InlineCode> can do both.
         </Paragraph>
 
-        <SubHeading>Permission Bitmasks</SubHeading>
-        <Table
-          headers={["Permission", "Value", "Binary"]}
-          rows={[
-            ["`CAN_SWAP`", "1", "0001"],
-            ["`CAN_TRANSFER`", "2", "0010"],
-            ["`CAN_STAKE`", "4", "0100"],
-            ["`CAN_LP`", "8", "1000"],
-          ]}
-        />
+        <SubHeading>Supported Price Feeds</SubHeading>
         <Paragraph>
-          Combine permissions with bitwise OR. For example, <InlineCode>CAN_SWAP + CAN_TRANSFER = 3</InlineCode> (binary <InlineCode>0011</InlineCode>).
+          SPL token transfers use Pyth oracle price feeds for USD valuation:
         </Paragraph>
-
-        <SubHeading>Supported Pyth Price Feeds</SubHeading>
         <div className="flex flex-wrap gap-2 my-4">
           {["SOL/USD", "BTC/USD", "ETH/USD", "USDC/USD", "USDT/USD", "BONK/USD", "JUP/USD", "RAY/USD", "WIF/USD"].map(feed => (
             <span key={feed} className="bg-white/5 border border-white/10 rounded-lg px-3 py-1.5 text-sm font-mono text-white/70">{feed}</span>
           ))}
         </div>
 
-        <SubHeading>Program Instructions</SubHeading>
-        <Table
-          headers={["Instruction", "Description"]}
-          rows={[
-            ["`init_vault`", "Create a new vault PDA with initial policies"],
-            ["`issue_delegate`", "Issue a delegate key with permissions, caps, and expiry"],
-            ["`execute_transfer`", "SOL transfer from vault (policy-enforced)"],
-            ["`execute_spl_transfer`", "SPL token transfer from vault (policy-enforced)"],
-            ["`freeze_vault`", "Freeze all vault operations"],
-            ["`unfreeze_vault`", "Resume vault operations"],
-            ["`delegate_control`", "Pause, resume, or revoke a delegate"],
-            ["`update_vault`", "Update vault policies (allowlists, caps)"],
-            ["`withdraw`", "Guardian withdraws funds from vault"],
-          ]}
-        />
+        <SubHeading>SDK (for developers)</SubHeading>
+        <Paragraph>
+          Building a custom integration? The SDK is available on npm:
+        </Paragraph>
+        <CodeBlock title="Install">{`npm install @fuin-labs/sdk`}</CodeBlock>
+        <Paragraph>
+          See the <a href="https://github.com/Fuin-Labs/Fuin" target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">GitHub repository</a> for SDK documentation and examples.
+        </Paragraph>
+
+        <SubHeading>Program ID</SubHeading>
+        <CodeBlock>{`E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy`}</CodeBlock>
 
         <div className="mt-20 pt-8 border-t border-white/10">
           <p className="text-sm text-white/40 font-geist">

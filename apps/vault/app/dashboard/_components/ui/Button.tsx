@@ -4,6 +4,7 @@ import React from "react";
 import { motion } from "framer-motion";
 import type { CSSProperties, ReactNode } from "react";
 import { COLORS } from "../../_lib/constants";
+import { Spinner } from "./Spinner";
 
 type ButtonVariant = "primary" | "secondary" | "danger" | "ghost";
 
@@ -15,6 +16,8 @@ interface ButtonProps {
   fullWidth?: boolean;
   size?: "sm" | "md" | "lg";
   style?: CSSProperties;
+  loading?: boolean;
+  loadingText?: string;
 }
 
 const VARIANT_STYLES: Record<ButtonVariant, React.CSSProperties> = {
@@ -46,26 +49,34 @@ const SIZE_STYLES: Record<string, React.CSSProperties> = {
   lg: { padding: "16px 32px", fontSize: "1.1rem", borderRadius: "12px" },
 };
 
-export function Button({ children, onClick, variant = "primary", disabled, fullWidth, size = "md", style }: ButtonProps): React.JSX.Element {
+export function Button({ children, onClick, variant = "primary", disabled, fullWidth, size = "md", style, loading, loadingText }: ButtonProps): React.JSX.Element {
+  const isDisabled = disabled || loading;
+
   return (
     <motion.button
-      whileHover={disabled ? undefined : { scale: 1.02 }}
-      whileTap={disabled ? undefined : { scale: 0.98 }}
-      onClick={disabled ? undefined : onClick}
+      whileHover={isDisabled ? undefined : { scale: 1.02 }}
+      whileTap={isDisabled ? undefined : { scale: 0.98 }}
+      onClick={isDisabled ? undefined : onClick}
+      disabled={isDisabled}
       style={{
         border: "none",
         fontWeight: 700,
-        cursor: disabled ? "not-allowed" : "pointer",
-        opacity: disabled ? 0.5 : 1,
+        cursor: isDisabled ? "not-allowed" : "pointer",
+        opacity: isDisabled ? 0.5 : 1,
         width: fullWidth ? "100%" : "auto",
         fontFamily: "inherit",
         transition: "opacity 0.2s",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: "8px",
         ...SIZE_STYLES[size],
         ...VARIANT_STYLES[variant],
         ...style,
       } as any}
     >
-      {children}
+      {loading && <Spinner size={16} />}
+      {loading ? (loadingText || children) : children}
     </motion.button>
   );
 }

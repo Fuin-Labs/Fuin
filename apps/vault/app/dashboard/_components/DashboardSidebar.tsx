@@ -46,6 +46,7 @@ function SidebarContent({ onClose, isCollapsed, onToggleCollapse }: { onClose?: 
             <button
               type="button"
               onClick={onClose}
+              aria-label="Close sidebar"
               style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}
             >
               <X size={20} color={COLORS.textMuted} />
@@ -59,6 +60,7 @@ function SidebarContent({ onClose, isCollapsed, onToggleCollapse }: { onClose?: 
                 e.stopPropagation();
                 onToggleCollapse();
               }}
+              aria-label="Collapse sidebar"
               style={{
                 background: "none",
                 border: "none",
@@ -76,6 +78,34 @@ function SidebarContent({ onClose, isCollapsed, onToggleCollapse }: { onClose?: 
               title="Collapse Sidebar"
             >
               <ChevronsLeft size={20} />
+            </button>
+          )}
+
+          {/* Desktop Expand Toggle (collapsed state) */}
+          {!isMobile && onToggleCollapse && isCollapsed && (
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleCollapse();
+              }}
+              aria-label="Expand sidebar"
+              style={{
+                background: "none",
+                border: "none",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                cursor: "pointer",
+                color: COLORS.textMuted,
+                padding: "4px",
+                opacity: 0.7,
+                transition: "opacity 0.2s"
+              }}
+              onMouseEnter={(e) => e.currentTarget.style.opacity = "1"}
+              onMouseLeave={(e) => e.currentTarget.style.opacity = "0.7"}
+              title="Expand Sidebar"
+            >
+              <ChevronsRight size={20} />
             </button>
           )}
         </div>

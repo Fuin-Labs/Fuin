@@ -77,6 +77,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps): 
           <button
             type="button"
             onClick={onMenuToggle}
+            aria-label="Toggle navigation menu"
             style={{
               background: "none",
               border: "none",

@@ -11,11 +11,16 @@ interface InputProps {
   type?: string;
   label?: string;
   hint?: string;
+  error?: string;
   disabled?: boolean;
   style?: CSSProperties;
 }
 
-export function Input({ value, onChange, placeholder, type = "text", label, hint, disabled, style }: InputProps): React.JSX.Element {
+export function Input({ value, onChange, placeholder, type = "text", label, hint, error, disabled, style }: InputProps): React.JSX.Element {
+  const displayMessage = error || hint;
+  const messageColor = error ? COLORS.red : COLORS.textDim;
+  const borderColor = error ? COLORS.red : COLORS.border;
+
   return (
     <div style={{ display: "flex", flexDirection: "column", gap: "6px" }}>
       {label && (
@@ -31,13 +36,12 @@ export function Input({ value, onChange, placeholder, type = "text", label, hint
         disabled={disabled}
         style={{
           backgroundColor: COLORS.bgInput,
-          border: `1px solid ${COLORS.border}`,
+          border: `1px solid ${borderColor}`,
           borderRadius: "10px",
           padding: "12px 16px",
           color: COLORS.text,
           fontSize: "1rem",
           fontFamily: "inherit",
-          outline: "none",
           transition: "border-color 0.2s",
           width: "100%",
           opacity: disabled ? 0.5 : 1,
@@ -47,14 +51,14 @@ export function Input({ value, onChange, placeholder, type = "text", label, hint
           ...style,
         } as any}
         onFocus={(e) => {
-          e.currentTarget.style.borderColor = COLORS.emeraldBorder;
+          if (!error) e.currentTarget.style.borderColor = COLORS.emeraldBorder;
         }}
         onBlur={(e) => {
-          e.currentTarget.style.borderColor = COLORS.border;
+          e.currentTarget.style.borderColor = borderColor;
         }}
       />
-      {hint && (
-        <span style={{ fontSize: "0.75rem", color: COLORS.textDim }}>{hint}</span>
+      {displayMessage && (
+        <span style={{ fontSize: "0.75rem", color: messageColor }}>{displayMessage}</span>
       )}
     </div>
   );

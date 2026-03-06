@@ -58,8 +58,12 @@ export default function Home(): React.JSX.Element {
         <div className="sm:px-6 lg:px-8 max-w-7xl mr-auto ml-auto pr-4 pl-4">
           {/* Nav */}
           <nav className="flex mt-6 items-center justify-between">
-            <Link href="/" className="flex items-center">
-              <img src="/logo.svg" alt="Fuin" className="h-24 w-24" />
+            <Link href="/" className="flex items-center gap-3">
+              <img src="/logo.svg" alt="Fuin" className="h-10 w-10" />
+              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/20 text-[10px] font-pixel text-emerald-400 tracking-wider uppercase">
+                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
+                Devnet
+              </span>
             </Link>
 
             <div className="hidden md:flex md:gap-x-1 bg-white/5 border-white/10 border rounded-full p-1.5 backdrop-blur-lg items-center">
@@ -83,6 +87,7 @@ export default function Home(): React.JSX.Element {
               <div className="flex flex-col gap-4">
                 <Link href="#primitives" className="text-white/80 font-geist" onClick={() => setMobileMenuOpen(false)}>Primitives</Link>
                 <Link href="#actors" className="text-white/80 font-geist" onClick={() => setMobileMenuOpen(false)}>Actors</Link>
+                <Link href="/docs" className="text-white/60 font-geist" onClick={() => setMobileMenuOpen(false)}>Docs</Link>
                 <Link href="/dashboard/vaults" className="text-white font-geist font-medium" onClick={() => setMobileMenuOpen(false)}>Launch App</Link>
               </div>
             </div>
@@ -108,7 +113,7 @@ export default function Home(): React.JSX.Element {
               <Link href="/dashboard/vaults" className="inline-flex min-w-[160px] font-medium text-black tracking-tight bg-white rounded-full pt-[14px] pr-[24px] pb-[14px] pl-[24px] items-center justify-center no-underline transition-opacity hover:opacity-90 font-geist">
                 Launch App
               </Link>
-              <Link href="#" className="inline-flex items-center gap-2 text-base font-medium text-white border border-white/20 rounded-full pt-[14px] pr-[24px] pb-[14px] pl-[24px] font-geist transition-colors hover:border-white/40 cursor-pointer">
+              <Link href="https://github.com/Fuin-Labs/Fuin" target="_blank" className="inline-flex items-center gap-2 text-base font-medium text-white border border-white/20 rounded-full pt-[14px] pr-[24px] pb-[14px] pl-[24px] font-geist transition-colors hover:border-white/40 cursor-pointer">
                 <iconify-icon icon="solar:code-circle-linear" class="text-lg"></iconify-icon>
                 View GitHub
               </Link>
@@ -117,7 +122,7 @@ export default function Home(): React.JSX.Element {
             {/* Powered By — merged into hero */}
             <div className="mt-20 [animation:fadeSlideIn_1s_ease-out_0.5s_both]">
               <p className="text-[10px] font-pixel text-white/50 tracking-widest uppercase mb-4">Powered By</p>
-              <div className="flex flex-wrap gap-x-12 gap-y-6 items-center justify-center opacity-40 grayscale">
+              <div className="flex flex-wrap gap-x-12 gap-y-6 items-center justify-center opacity-60 grayscale">
                 <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:cpu-bold-duotone"></iconify-icon> Solana</span>
                 <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:chart-bold-duotone"></iconify-icon> Pyth Network</span>
                 <span className="text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:bolt-circle-bold-duotone"></iconify-icon> Helius</span>
@@ -284,56 +289,52 @@ export default function Home(): React.JSX.Element {
 
         <div className="grid grid-cols-1 md:grid-cols-2 auto-rows-[320px] md:auto-rows-[340px] gap-4 md:gap-6">
           {/* Actor 1 */}
-          <a href="#" className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
-            <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?w=1200&amp;q=80" alt="Guardian" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-transform duration-[1.5s] ease-out group-hover:scale-105" loading="lazy" decoding="async" />
+          <div className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
+            <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?w=1200&amp;q=80" alt="" aria-hidden="true" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-transform duration-[1.5s] ease-out group-hover:scale-105" loading="lazy" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#060606] via-[#060606]/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 md:p-10">
               <span className="text-[0.65rem] font-pixel tracking-[0.15em] uppercase text-white/60 mb-3">The Owner</span>
-              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white flex items-center justify-between mb-2">
+              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white mb-2">
                 Guardian
-                <iconify-icon icon="solar:arrow-right-up-linear" class="text-2xl text-white opacity-0 -translate-x-4 translate-y-4 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-500 ease-out"></iconify-icon>
               </h3>
-              <p className="text-xs text-[#aaa] font-light max-w-sm font-geist">Creates vaults, sets strict policies, deposits gas, and retains ultimate control to freeze or rotate keys.</p>
+              <p className="text-xs text-text-muted font-light max-w-sm font-geist">Creates vaults, sets strict policies, deposits gas, and retains ultimate control to freeze or rotate keys.</p>
             </div>
-          </a>
+          </div>
 
           {/* Actor 2 */}
-          <a href="#" className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
-            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&amp;q=80" alt="Junior" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-transform duration-[1.5s] ease-out group-hover:scale-105" loading="lazy" decoding="async" />
+          <div className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
+            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&amp;q=80" alt="" aria-hidden="true" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-transform duration-[1.5s] ease-out group-hover:scale-105" loading="lazy" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#060606] via-[#060606]/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 md:p-10">
               <span className="text-[0.65rem] font-pixel tracking-[0.15em] uppercase text-white/60 mb-3">The Beginner</span>
-              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white flex items-center justify-between mb-2">
+              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white mb-2">
                 Junior
-                <iconify-icon icon="solar:arrow-right-up-linear" class="text-2xl text-white opacity-0 -translate-x-4 translate-y-4 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-500 ease-out"></iconify-icon>
               </h3>
-              <p className="text-xs text-[#aaa] font-light max-w-sm font-geist">A human operator acting under daily allowances, spending limits, and strict program whitelists.</p>
+              <p className="text-xs text-text-muted font-light max-w-sm font-geist">A human operator acting under daily allowances, spending limits, and strict program whitelists.</p>
             </div>
-          </a>
+          </div>
 
           {/* Actor 3 */}
-          <a href="#" className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
-            <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&amp;q=80" alt="Agent" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-all duration-[1.5s] ease-out group-hover:scale-105 group-hover:grayscale-0" loading="lazy" decoding="async" />
+          <div className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
+            <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&amp;q=80" alt="" aria-hidden="true" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-all duration-[1.5s] ease-out group-hover:scale-105 group-hover:grayscale-0" loading="lazy" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#060606] via-[#060606]/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 md:p-10">
               <span className="text-[0.65rem] font-pixel tracking-[0.15em] uppercase text-white/60 mb-3">The Autonomous Bot</span>
-              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white flex items-center justify-between mb-2">
+              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white mb-2">
                 Agent
-                <iconify-icon icon="solar:arrow-right-up-linear" class="text-2xl text-white opacity-0 -translate-x-4 translate-y-4 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-500 ease-out"></iconify-icon>
               </h3>
-              <p className="text-xs text-[#aaa] font-light max-w-sm font-geist">An AI operator cryptographically locked to predefined audited routes to prevent exploits driven by hallucination.</p>
+              <p className="text-xs text-text-muted font-light max-w-sm font-geist">An AI operator cryptographically locked to predefined audited routes to prevent exploits driven by hallucination.</p>
             </div>
-          </a>
+          </div>
 
           {/* Actor 4 */}
-          <a href="#" className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
-            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&amp;q=80" alt="Relayer" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-all duration-[1.5s] ease-out group-hover:scale-105 group-hover:grayscale-0" loading="lazy" decoding="async" />
+          <div className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
+            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&amp;q=80" alt="" aria-hidden="true" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-all duration-[1.5s] ease-out group-hover:scale-105 group-hover:grayscale-0" loading="lazy" decoding="async" />
             <div className="absolute inset-0 bg-gradient-to-t from-[#060606] via-[#060606]/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 md:p-10">
               <span className="text-[0.65rem] font-pixel tracking-[0.15em] uppercase text-white/60 mb-3">The Courier</span>
-              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white flex items-center justify-between mb-2">
+              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white mb-2">
                 Relayer
-                <iconify-icon icon="solar:arrow-right-up-linear" class="text-2xl text-white opacity-0 -translate-x-4 translate-y-4 group-hover:opacity-100 group-hover:translate-x-0 group-hover:translate-y-0 transition-all duration-500 ease-out"></iconify-icon>
               </h3>
-              <p className="text-xs text-[#aaa] font-light max-w-sm font-geist">A non-custodial entity that packages and submits intents to the network, automatically receiving gas refunds.</p>
+              <p className="text-xs text-text-muted font-light max-w-sm font-geist">A non-custodial entity that packages and submits intents to the network, automatically receiving gas refunds.</p>
             </div>
-          </a>
+          </div>
         </div>
       </section>
 
@@ -344,7 +345,7 @@ export default function Home(): React.JSX.Element {
           <div className="grid gap-8 md:grid-cols-4">
             <div className="md:col-span-2">
               <Link href="/" className="flex items-center mb-4">
-                <img src="/logo.svg" alt="Fuin" className="h-24 w-24" />
+                <img src="/logo.svg" alt="Fuin" className="h-10 w-10" />
               </Link>
               <p className="text-sm text-white/50 max-w-sm font-geist leading-relaxed">Fuin is a programmable Identity Access Management (IAM) layer and restrictive wallet protocol built natively for the Solana VM.</p>
               <div className="mt-6 flex items-center gap-3">
@@ -361,7 +362,7 @@ export default function Home(): React.JSX.Element {
                 <li><Link href="/dashboard/vaults" className="hover:text-white transition-colors font-geist text-white font-medium">Launch App</Link></li>
                 <li><Link href="#primitives" className="hover:text-white transition-colors font-geist">Architecture</Link></li>
                 <li><Link href="#actors" className="hover:text-white transition-colors font-geist">Actors</Link></li>
-                <li><Link href="#" className="hover:text-white transition-colors font-geist">GitHub</Link></li>
+                <li><Link href="https://github.com/Fuin-Labs/Fuin" target="_blank" className="hover:text-white transition-colors font-geist">GitHub</Link></li>
               </ul>
             </div>
 
@@ -377,7 +378,7 @@ export default function Home(): React.JSX.Element {
             <p className="text-xs text-white/50 font-geist">&copy; <span className="font-geist">{currentYear}</span> Fuin Protocol. All rights reserved.</p>
             <div className="flex gap-4 text-xs text-white/50 font-geist">
               <span className="w-1 h-1 rounded-full bg-white/20 my-auto"></span>
-              <span className="text-emerald-400 font-pixel">Devnet Live</span>
+              <span className="font-geist">Solana</span>
             </div>
           </div>
         </div>
