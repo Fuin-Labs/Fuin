@@ -59,7 +59,7 @@ export default function Home(): React.JSX.Element {
           {/* Nav */}
           <nav className="flex mt-6 items-center justify-between">
             <Link href="/" className="flex items-center gap-3">
-              <img src="/logo.svg" alt="Fuin" className="h-10 w-10" />
+              <img src="/logo.svg" alt="Fuin" className="h-16 w-16" />
               <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/20 text-[10px] font-pixel text-emerald-400 tracking-wider uppercase">
                 <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
                 Devnet
@@ -345,7 +345,7 @@ export default function Home(): React.JSX.Element {
           <div className="grid gap-8 md:grid-cols-4">
             <div className="md:col-span-2">
               <Link href="/" className="flex items-center mb-4">
-                <img src="/logo.svg" alt="Fuin" className="h-10 w-10" />
+                <img src="/logo.svg" alt="Fuin" className="h-16 w-16" />
               </Link>
               <p className="text-sm text-white/50 max-w-sm font-geist leading-relaxed">Fuin is a programmable Identity Access Management (IAM) layer and restrictive wallet protocol built natively for the Solana VM.</p>
               <div className="mt-6 flex items-center gap-3">

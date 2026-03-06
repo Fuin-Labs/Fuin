@@ -135,7 +135,7 @@ export const ClosingCTA: React.FC = () => {
               boxShadow: `0 0 30px rgba(52,211,153,0.4)`,
             }}
           >
-            Start building at fuin.fun
+            Start building at fuinlabs.xyz
           </div>
         </div>
 

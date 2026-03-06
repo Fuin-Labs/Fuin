@@ -152,7 +152,7 @@ export const LiveDashboard: React.FC = () => {
                 textAlign: "center",
               }}
             >
-              app.fuin.fun
+              fuinlabs.xyz
             </div>
           </div>
 
