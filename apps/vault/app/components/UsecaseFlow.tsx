@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { useState } from "react";
+import { JSX, useState } from "react";
 import { Shield, Sparkles, Zap, Lock, Activity, Bot } from "lucide-react";
 
 // --- Animated OpenClaw Agent SVG Component ---
@@ -117,7 +117,7 @@ const FlowStepCard = ({ step, title, desc, icon, delay, accentColor }: any) => {
 }
 
 // --- Main UsecaseFlow Component ---
-export const UsecaseFlow = () => {
+export const UsecaseFlow = (): JSX.Element => {
     const [activeTab, setActiveTab] = useState<"agent" | "junior">("agent");
 
     return (
