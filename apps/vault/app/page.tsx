@@ -70,7 +70,7 @@ export default function Home(): React.JSX.Element {
               <Link href="#primitives" className="hover:text-white hover:bg-white/5 text-sm font-medium text-white/80 font-geist px-4 py-2 rounded-full transition-all">Primitives</Link>
               <Link href="#actors" className="hover:text-white hover:bg-white/5 text-sm font-medium text-white/80 font-geist px-4 py-2 rounded-full transition-all">Actors</Link>
               <Link href="/docs" className="hover:text-white hover:bg-white/5 text-sm font-medium text-white/60 font-geist px-4 py-2 rounded-full transition-all">Docs</Link>
-              <Link href="/dashboard/vaults" className="bg-white text-black rounded-full px-5 py-2 text-sm font-semibold font-geist transition-all hover:bg-white/90 hover:shadow-[0_0_20px_rgba(255,255,255,0.15)] ml-1">Launch App</Link>
+              <Link href="/dashboard/vaults" className="bg-white text-black rounded-full px-5 py-2 text-sm font-semibold font-geist transition-all hover:bg-white/90 ml-1">Launch App</Link>
             </div>
 
             <button
@@ -119,15 +119,6 @@ export default function Home(): React.JSX.Element {
               </Link>
             </div>
 
-            {/* Powered By — merged into hero */}
-            <div className="mt-12 sm:mt-20 [animation:fadeSlideIn_1s_ease-out_0.5s_both]">
-              <p className="text-[10px] font-pixel text-white/50 tracking-widest uppercase mb-4">Powered By</p>
-              <div className="flex flex-wrap gap-x-6 sm:gap-x-12 gap-y-4 items-center justify-center opacity-60 grayscale">
-                <span className="text-base sm:text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:cpu-bold-duotone"></iconify-icon> Solana</span>
-                <span className="text-base sm:text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:chart-bold-duotone"></iconify-icon> Pyth Network</span>
-                <span className="text-base sm:text-xl font-medium font-geist flex items-center gap-2"><iconify-icon icon="solar:bolt-circle-bold-duotone"></iconify-icon> Helius</span>
-              </div>
-            </div>
           </section>
         </div>
       </header>
