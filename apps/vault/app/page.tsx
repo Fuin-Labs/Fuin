@@ -113,9 +113,9 @@ export default function Home(): React.JSX.Element {
               <Link href="/dashboard/vaults" className="inline-flex w-full sm:w-auto min-w-[160px] font-medium text-black tracking-tight bg-white rounded-full px-6 py-3.5 items-center justify-center no-underline transition-opacity hover:opacity-90 font-geist">
                 Launch App
               </Link>
-              <Link href="https://github.com/Fuin-Labs/Fuin" target="_blank" className="inline-flex w-full sm:w-auto items-center gap-2 text-base font-medium text-white border border-white/20 rounded-full px-6 py-3.5 font-geist transition-colors hover:border-white/40 cursor-pointer justify-center">
-                <iconify-icon icon="solar:code-circle-linear" class="text-lg"></iconify-icon>
-                View GitHub
+              <Link href="/docs" className="inline-flex w-full sm:w-auto items-center gap-2 text-base font-medium text-white border border-white/20 rounded-full px-6 py-3.5 font-geist transition-colors hover:border-white/40 cursor-pointer justify-center">
+                <iconify-icon icon="solar:document-text-linear" class="text-lg"></iconify-icon>
+                Read Docs
               </Link>
             </div>
 
