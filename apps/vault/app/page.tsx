@@ -4,6 +4,7 @@ import React from "react";
 import { useEffect, useState } from "react";
 import "./landing.css";
 import dynamic from "next/dynamic";
+import Image from "next/image";
 import Link from "next/link";
 
 // Declare iconify-icon web component for TypeScript
@@ -23,13 +24,26 @@ const UsecaseFlow = dynamic(() => import("./components/UsecaseFlow").then(m => m
   loading: () => <div style={{ minHeight: 500 }} />,
 });
 
-const AuroraShader = dynamic(() => import("./components/AuroraShader").then(m => m.AuroraShader), {
-  ssr: false,
-});
-
 export default function Home(): React.JSX.Element {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [shaderReady, setShaderReady] = useState(false);
   const currentYear = new Date().getFullYear();
+
+  // Detect when Unicorn Studio shader has rendered
+  useEffect(() => {
+    const el = document.querySelector('[data-us-project]');
+    if (!el) return;
+    const observer = new MutationObserver(() => {
+      if (el.querySelector('canvas')) {
+        setShaderReady(true);
+        observer.disconnect();
+      }
+    });
+    observer.observe(el, { childList: true, subtree: true });
+    // In case canvas is already there
+    if (el.querySelector('canvas')) setShaderReady(true);
+    return () => observer.disconnect();
+  }, []);
 
   useEffect(() => {
     const observer = new IntersectionObserver((entries) => {
@@ -51,9 +65,32 @@ export default function Home(): React.JSX.Element {
   return (
     <div id="landing-view" className="w-full transition-opacity duration-500">
       <header className="relative overflow-hidden min-h-screen">
-        {/* Background Component */}
+        {/* Background: Unicorn Studio shader + static image placeholder */}
         <div className="-z-10 w-full h-full absolute inset-0">
-          <AuroraShader />
+          {/* Unicorn Studio shader (starts invisible, fades in when canvas renders) */}
+          <div
+            data-us-project="vTTCp5g4cVl9nwjlT56Z"
+            className="absolute w-full h-full left-0 top-0"
+            style={{
+              opacity: shaderReady ? 1 : 0,
+              transition: "opacity 800ms ease-in-out",
+            }}
+          />
+
+          {/* Static placeholder (visible instantly, fades out once shader loads) */}
+          <Image
+            src="/aurora-bg.png"
+            alt=""
+            fill
+            priority
+            sizes="100vw"
+            style={{
+              objectFit: "cover",
+              opacity: shaderReady ? 0 : 1,
+              transition: "opacity 800ms ease-in-out",
+              pointerEvents: "none",
+            }}
+          />
         </div>
         <div className="sm:px-6 lg:px-8 max-w-7xl mr-auto ml-auto pr-4 pl-4">
           {/* Nav */}

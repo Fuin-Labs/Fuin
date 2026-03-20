@@ -57,95 +57,146 @@ float fbm(vec2 p) {
   return f;
 }
 
+// Ray-sphere intersection: returns (tNear, tFar), or (-1,-1) on miss
+vec2 raySphere(vec3 ro, vec3 rd, vec3 center, float radius) {
+  vec3 oc = ro - center;
+  float b = dot(oc, rd);
+  float c = dot(oc, oc) - radius * radius;
+  float disc = b * b - c;
+  if (disc < 0.0) return vec2(-1.0);
+  float sq = sqrt(disc);
+  return vec2(-b - sq, -b + sq);
+}
+
 void main() {
-  // Aspect-corrected centered UV
-  vec2 uv = v_uv - 0.5;
+  // Normalized coords centered at origin, aspect-corrected
   float aspect = u_resolution.x / u_resolution.y;
-  uv.x *= aspect;
+  vec2 uv = (gl_FragCoord.xy - 0.5 * u_resolution) / min(u_resolution.x, u_resolution.y);
 
   float t = u_time * 0.06;
 
-  // Adapt orb for portrait (mobile) vs landscape
+  // Adapt for portrait (mobile) vs landscape
   bool portrait = aspect < 0.85;
-  vec2 orbCenter = portrait ? vec2(0.0, 0.05) : vec2(0.0, -0.05);
-  float orbRadius = portrait ? 0.22 : 0.32;
-  vec2 p = uv - orbCenter;
-  float dist = length(p);
-  float angle = atan(p.y, p.x);
-  float surfaceDist = max(dist - orbRadius, 0.0);
 
-  // === Domain warping (Inigo Quilez technique) ===
+  // Camera
+  vec3 ro = vec3(0.0, 0.0, 3.5);
+  vec3 rd = normalize(vec3(uv, -1.5));
+
+  // Sphere
+  vec3 sphCenter = portrait ? vec3(0.0, 0.05, 0.0) : vec3(0.0, -0.05, 0.0);
+  float sphRadius = portrait ? 0.55 : 0.75;
+
+  vec2 hit = raySphere(ro, rd, sphCenter, sphRadius);
+
+  // Colors
+  vec3 teal = vec3(0.0, 0.75, 0.68);
+  vec3 cyan = vec3(0.1, 0.85, 0.9);
+
+  // === Aurora glow (computed for all pixels) ===
+  // Closest approach of ray to sphere surface (screen-space proxy)
+  vec3 oc = ro - sphCenter;
+  float tClosest = -dot(oc, rd);
+  vec3 closestPt = ro + rd * max(tClosest, 0.0);
+  float closestDist = length(closestPt - sphCenter);
+  float surfaceDist = max(closestDist - sphRadius, 0.0);
+
+  // 2D projection for directional aurora masks
+  vec2 p2d = uv - sphCenter.xy * 0.3;
+  float dist2d = length(p2d);
+  float angle = atan(p2d.y, p2d.x);
+  float srad2d = sphRadius * 0.5;
+  float sdist2d = max(dist2d - srad2d, 0.0);
+
+  // Domain-warped noise
   vec2 seed = uv * 2.5;
-
   vec2 q = vec2(
     fbm(seed + vec2(0.0, 0.0) + t * 0.7),
     fbm(seed + vec2(5.2, 1.3) + t * 0.5)
   );
-
   vec2 r = vec2(
     fbm(seed + 3.0 * q + vec2(1.7, 9.2) + t * 0.3),
     fbm(seed + 3.0 * q + vec2(8.3, 2.8) + t * 0.4)
   );
-
   float warp = fbm(seed + 3.0 * r);
 
-  // === Geometric masks ===
+  // Glow radiating from sphere surface
+  float glow = exp(-surfaceDist * 4.0);
 
-  // Glow radiating from orb surface
-  float glow = exp(-surfaceDist * 3.0);
-
-  // Pool of light below the orb
-  float belowPool = exp(-pow(p.y + 0.38, 2.0) * 6.0) * exp(-p.x * p.x * 3.0);
+  // Pool of light below the sphere
+  float belowPool = exp(-pow(p2d.y + 0.55, 2.0) * 8.0) * exp(-p2d.x * p2d.x * 4.0);
 
   // Upward tendril bias
-  float upward = smoothstep(-0.1, 0.5, p.y) * exp(-abs(p.x) * 1.5);
+  float upward = smoothstep(-0.1, 0.5, p2d.y) * exp(-abs(p2d.x) * 2.0);
 
-  // Prominent arc toward upper-right (~63 degrees)
+  // Prominent arc toward upper-right
   float arcTarget = 1.1;
   float arc = exp(-pow(angle - arcTarget, 2.0) * 0.8);
-  arc *= smoothstep(0.28, 0.45, dist) * exp(-surfaceDist * 2.0);
+  arc *= smoothstep(srad2d * 0.8, srad2d * 1.4, dist2d) * exp(-sdist2d * 3.0);
 
-  // Combined shape
+  // Combined aurora shape
   float shape = glow * 0.6 + belowPool * 0.4 + upward * 0.3 + arc * 0.5;
-
-  // Modulate with domain-warped noise for organic flow
   float noise = warp * 0.5 + 0.5;
-  float intensity = shape * (0.4 + noise * 0.6);
+  float auroraIntensity = shape * (0.4 + noise * 0.6);
 
   // Thin detail wisps
   float wisps = snoise(uv * 10.0 + r * 3.0 + vec2(t * 0.8, t * 0.6));
   wisps = max(wisps, 0.0);
-  intensity += wisps * glow * 0.12;
+  auroraIntensity += wisps * glow * 0.12;
 
-  // Dark orb cutout
-  float orb = smoothstep(orbRadius - 0.015, orbRadius + 0.01, dist);
-  intensity *= orb;
+  vec3 auroraColor = mix(teal, cyan, warp * 0.3 + 0.15) * auroraIntensity * 0.25;
 
-  // Bright rim at orb edge
-  float rim = exp(-pow(dist - orbRadius, 2.0) * 400.0);
-  intensity += rim * 0.5;
+  vec3 finalColor;
 
-  // === Color ===
-  vec3 teal = vec3(0.0, 0.75, 0.68);
-  vec3 cyan = vec3(0.1, 0.85, 0.9);
-  vec3 color = mix(teal, cyan, warp * 0.3 + 0.15);
+  if (hit.x > 0.0) {
+    // === Sphere surface ===
+    vec3 hitPt = ro + rd * hit.x;
+    vec3 N = normalize(hitPt - sphCenter);
 
-  vec3 finalColor = color * intensity * 0.22;
+    // Fresnel (glass-like rim glow)
+    float NdotV = max(dot(-rd, N), 0.0);
+    float fresnel = pow(1.0 - NdotV, 3.5);
 
-  // Vignette — wider on portrait/mobile so aurora isn't clipped
+    // Subtle surface noise (internal swirl)
+    float surfNoise = fbm(N.xy * 3.0 + t * 0.15) * 0.03;
+
+    // Dark glass interior
+    vec3 interior = vec3(0.005) + teal * surfNoise;
+
+    // Fresnel rim light
+    vec3 rimColor = mix(teal, cyan, fresnel) * fresnel * 0.7;
+
+    // Specular highlight from upper-right light source
+    vec3 lightDir = normalize(vec3(0.5, 0.8, 1.0));
+    vec3 refl = reflect(-lightDir, N);
+    float spec = pow(max(dot(refl, -rd), 0.0), 40.0);
+
+    // Aurora light bleeding onto sphere surface
+    vec3 auroraBleed = auroraColor * fresnel * 0.4;
+
+    finalColor = interior + rimColor + cyan * spec * 0.2 + auroraBleed;
+  } else {
+    // === Outside sphere — aurora only ===
+    finalColor = auroraColor;
+
+    // Extra bright edge glow right at sphere silhouette
+    float edgeGlow = exp(-surfaceDist * surfaceDist * 300.0);
+    finalColor += mix(teal, cyan, 0.5) * edgeGlow * 0.35;
+  }
+
+  // Vignette
   float vigStart = portrait ? 0.25 : 0.35;
   float vigEnd = portrait ? 0.95 : 0.85;
   float vig = 1.0 - smoothstep(vigStart, vigEnd, length(v_uv - 0.5));
   finalColor *= vig;
 
-  // Slight gamma lift
+  // Gamma lift
   finalColor = pow(finalColor, vec3(0.92));
 
   gl_FragColor = vec4(finalColor, 1.0);
 }
 `;
 
-export function AuroraShader() {
+export function AuroraShader({ onReady }: { onReady?: () => void }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const rafRef = useRef<number>(0);
 
@@ -201,10 +252,15 @@ export function AuroraShader() {
     window.addEventListener("resize", resize);
 
     const start = performance.now();
+    let firstFrame = true;
     function render() {
       const t = (performance.now() - start) * 0.001;
       gl!.uniform1f(uTime, t);
       gl!.drawArrays(gl!.TRIANGLE_STRIP, 0, 4);
+      if (firstFrame) {
+        firstFrame = false;
+        onReady?.();
+      }
       rafRef.current = requestAnimationFrame(render);
     }
     rafRef.current = requestAnimationFrame(render);
