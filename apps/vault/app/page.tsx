@@ -4,8 +4,10 @@ import React from "react";
 import { useEffect, useState } from "react";
 import "./landing.css";
 import dynamic from "next/dynamic";
-import Image from "next/image";
 import Link from "next/link";
+
+// Tiny blurred snapshot of the shader output — inlined as base64, zero network cost
+const BLUR_PLACEHOLDER = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAACXBIWXMAAAAAAAAAAQCEeRdzAAAB+klEQVR4nI2U65KaQBCF+bP0DDcBRVzEFS+4Saqy7/92vefQTInGpPJjCsTh668vQ+ScV5ck6rJcXVWrvL+r3D5Vvn6rjBeVwx7Pdrj2Klf8HkeV81nleFS369SVNd7Hu5Kpj1ONxDkV71XSVGW1UmkalWFQ+fVT5fOGFz9U9h2uBwNeABuOeIZAm0ZdvlLnMwBTdXEyA2EpsJQ8V6kqlQ6AC17+AeB5MEuCzyeD9bBtthCoYAeYSyaYi30ALi0LszzMRgH40dszmm0BKxGYZXIwE4O5t2dgsKxrs6QNzXjP2u5aC8YssgKpPsL+DlzXVrcBsJ5GgKzXBmKdYSYvYHegf055gxQP1gha1QAVhQXLMgTGPjfDXgNnO24uVwZhAwhlisGKAQnz2Cv+H0B2eTk6TDGMC1OlHYP9F1AAlACdLatSpW0NHNLl87BCyrIEumlFLsYNV4ByMwFsDGvJKwPQvJwXa4l97o86Evi2UEfXJmBeWKqsJY9d2xicxpN1bXteQKM7zE9/SsrGzCmzKWF0CO4wi303d76eTB9mMX4AJtOfU+TNxk7H5WRnlx8Gwrh4zwDt1krBmvp7PSPPM0gYjpDZoQk72Jxw5MarAYNh+OpwPjkBLAPnNrUmsfORl2Rhl1vtCLgCdBttHvfdvZ79/KHg2X6yJPQbgvNx+yYtpucAAAAASUVORK5CYII=)";
 
 // Declare iconify-icon web component for TypeScript
 declare module "react" {
@@ -65,30 +67,22 @@ export default function Home(): React.JSX.Element {
   return (
     <div id="landing-view" className="w-full transition-opacity duration-500">
       <header className="relative overflow-hidden min-h-screen">
-        {/* Background: Unicorn Studio shader + static image placeholder */}
-        <div className="-z-10 w-full h-full absolute inset-0">
-          {/* Unicorn Studio shader (starts invisible, fades in when canvas renders) */}
+        {/* Background: inline blur placeholder → Unicorn Studio shader crossfade */}
+        <div
+          className="-z-10 w-full h-full absolute inset-0"
+          style={{
+            backgroundImage: BLUR_PLACEHOLDER,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+          }}
+        >
+          {/* Unicorn Studio shader (fades in once canvas renders) */}
           <div
             data-us-project="vTTCp5g4cVl9nwjlT56Z"
             className="absolute w-full h-full left-0 top-0"
             style={{
               opacity: shaderReady ? 1 : 0,
               transition: "opacity 800ms ease-in-out",
-            }}
-          />
-
-          {/* Static placeholder (visible instantly, fades out once shader loads) */}
-          <Image
-            src="/aurora-bg.png"
-            alt=""
-            fill
-            priority
-            sizes="100vw"
-            style={{
-              objectFit: "cover",
-              opacity: shaderReady ? 0 : 1,
-              transition: "opacity 800ms ease-in-out",
-              pointerEvents: "none",
             }}
           />
         </div>
