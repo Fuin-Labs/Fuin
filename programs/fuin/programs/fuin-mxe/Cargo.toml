@@ -1,0 +1,51 @@
+[package]
+name = "fuin-mxe"
+version = "0.1.0"
+description = "Arcium MXE circuits for Fuin (confidential spending-policy evaluation)"
+edition = "2021"
+
+[lib]
+crate-type = ["cdylib", "lib"]
+name = "fuin_mxe"
+
+[features]
+default = []
+cpi = ["no-entrypoint"]
+no-entrypoint = []
+no-idl = []
+no-log-ix-name = []
+idl-build = ["anchor-lang/idl-build"]
+anchor-debug = []
+custom-heap = []
+custom-panic = []
+
+[dependencies]
+# Anchor — pinned to the same version used by programs/fuin.
+anchor-lang = "0.32.1"
+
+# Arcium crates.
+#
+# TODO(verify): Arcium's published documentation (docs.arcium.com/developers/*)
+# does NOT list exact crate names or versions in Cargo.toml form. The canonical
+# way to bootstrap an Arcium project is `arcium init <name>`, which generates a
+# manifest with the correct crates. Before filling in the `check_spending_policy`
+# body on Apr 25, run `arcium init` in a scratch directory and copy the exact
+# dependency block here. The names/versions below are best-guess placeholders
+# based on crates.io search + the `use arcis::*;` import pattern the docs show.
+#
+# If `cargo check` fails because these crates don't resolve, that's expected —
+# either the crate names are slightly different (e.g. `arcis` vs `arcis-imports`),
+# or they live on a private/Git registry and need a `[patch]` or Git source.
+# arcium-anchor — Anchor integration layer (account macros for MXE programs).
+# arcium-anchor = "0.1"            # TODO(verify): exact name + version
+# arcium-client — client-side helpers. Likely NOT needed inside the circuit
+# crate itself (it's for the caller program / off-chain tests), but listed in
+# the task spec. Leaving commented so it doesn't break `cargo check`.
+# arcium-client = "0.1"            # TODO(verify): exact name + version
+# arcis-imports — the DSL import prelude. The docs sometimes show
+# `use arcis::*;` and sometimes `use arcis_imports::*;`. Which crate ships the
+# prelude (`arcis` vs `arcis-imports`) is not confirmed from public docs.
+# arcis-imports = "0.1"            # TODO(verify): exact name + version
+
+[lints.rust]
+unexpected_cfgs = { level = "warn", check-cfg = ['cfg(target_os, values("solana"))'] }
