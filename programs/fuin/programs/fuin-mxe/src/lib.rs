@@ -10,14 +10,10 @@
 //!     programs/fuin/src/handlers/  (to be added ~Apr 28 — see
 //!     frontier-hackathon.md §6.5).
 //!
-//! NOTE on imports: Arcium's public docs sometimes show `use arcis::*;` and
-//! sometimes `use arcis_imports::*;`. Once `arcium init` is run and the
-//! canonical manifest is pulled in, align the `use` statements with whichever
-//! crate actually ships the prelude.
-//
-// TODO(verify): Confirm outer-module import once arcium init is run.
-// The hackathon brief (§6.4) uses `arcis_imports`; the docs show `arcis`.
-use arcis_imports::*;
+// TODO(verify): Confirm the inner `use arcis::*;` import below against
+// https://docs.arcium.com/developers/program — §6.4 of the plan uses
+// `arcis_imports::*` at outer scope; current public docs show `arcis::*`
+// inside `mod circuits`. Exactly one is correct; `arcium init` will confirm.
 
 #[encrypted]
 mod circuits {
@@ -104,6 +100,7 @@ mod circuits {
             current_spent
         };
 
+        // Re-encrypt the output under the same shared owner as the input ciphertext (Arcis idiom).
         policy_ctxt
             .owner
             .from_arcis(CheckOutput { allowed, new_daily_spent })

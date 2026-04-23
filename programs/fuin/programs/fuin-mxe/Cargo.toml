@@ -10,14 +10,10 @@ name = "fuin_mxe"
 
 [features]
 default = []
-cpi = ["no-entrypoint"]
-no-entrypoint = []
-no-idl = []
-no-log-ix-name = []
-idl-build = ["anchor-lang/idl-build"]
-anchor-debug = []
-custom-heap = []
-custom-panic = []
+# TODO(verify): confirm which features arcium build actually needs.
+# The Anchor-program feature set was stripped here because Arcis circuits
+# are compiled by `arcium build` and don't emit an Anchor IDL or entrypoint.
+# `arcium init` output on Apr 25 will show the canonical feature set.
 
 [dependencies]
 # Anchor — pinned to the same version used by programs/fuin.
