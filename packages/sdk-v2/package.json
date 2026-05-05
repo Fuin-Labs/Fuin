@@ -1,0 +1,33 @@
+{
+  "name": "@fuin-labs/sdk-v2",
+  "version": "0.1.0",
+  "description": "TypeScript SDK for Fuin v2 — proof-of-intent layer for AI agent swarms on Solana",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "type": "module",
+  "scripts": {
+    "build": "tsup src/index.ts --format esm --dts --sourcemap --clean",
+    "check-types": "tsc --noEmit"
+  },
+  "publishConfig": {
+    "main": "./dist/index.js",
+    "types": "./dist/index.d.ts"
+  },
+  "files": [
+    "dist",
+    "src/idl"
+  ],
+  "keywords": [
+    "solana",
+    "fuin",
+    "ai-agents",
+    "swarm",
+    "intent",
+    "anchor"
+  ],
+  "license": "Apache-2.0",
+  "dependencies": {
+    "@coral-xyz/anchor": "^0.32.1",
+    "@solana/web3.js": "^1.98.4"
+  }
+}

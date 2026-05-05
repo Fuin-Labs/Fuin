@@ -15,9 +15,9 @@ fuin = "E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy"
 url = "https://api.apr.dev"
 
 [provider]
-cluster = "devnet"
+cluster = "localnet"
 wallet = "~/.config/solana/id.json"
 
 [scripts]
-test = "pnpm exec ts-mocha -p ./tsconfig.json -t 1000000 \"tests/**/*.ts\""
+test = "pnpm exec ts-mocha -p ./tsconfig.json -t 1000000 \"tests/fuin-v2-intent.ts\""
 

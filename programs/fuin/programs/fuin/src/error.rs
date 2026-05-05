@@ -52,4 +52,40 @@ pub enum ErrorCode{
     DelegateInactive,
     #[msg("Swap execution failed")]
     SwapFailed,
+    #[msg("Intent has been revoked")]
+    IntentRevoked,
+    #[msg("Intent has expired")]
+    IntentExpired,
+    #[msg("Intent budget exceeded")]
+    IntentBudgetExceeded,
+    #[msg("Child intent budget exceeds parent remaining budget")]
+    ChildBudgetTooLarge,
+    #[msg("Child intent expires after parent")]
+    ChildExpiresAfterParent,
+    #[msg("Child policy version mismatch with parent")]
+    PolicyVersionMismatch,
+    #[msg("Child predicate is not a subset of parent predicate")]
+    PredicateNotSubset,
+    #[msg("Wrong parent intent reference")]
+    WrongParentReference,
+    #[msg("Action exceeds intent scope")]
+    ActionExceedsScope,
+    #[msg("Action target index is invalid")]
+    InvalidActionIndex,
+    #[msg("Failed to parse action instruction")]
+    ActionParseFailed,
+    #[msg("Action target is not a supported program")]
+    ActionUnsupported,
+    #[msg("Intent depth limit exceeded")]
+    DepthLimitExceeded,
+    #[msg("Mismatched user across intent chain")]
+    UserMismatch,
+    #[msg("Agent does not match intent")]
+    AgentMismatch,
+    #[msg("Ancestor chain in remaining_accounts is malformed")]
+    BrokenAncestorChain,
+    #[msg("Read-only intent cannot spend")]
+    ReadOnlyViolation,
+    #[msg("Current policy version does not match intent")]
+    StalePolicyVersion,
 }

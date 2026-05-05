@@ -27,3 +27,15 @@ pub use freeze_vault::*;
 
 pub mod execute_swap;
 pub use execute_swap::*;
+
+pub mod sign_root_intent;
+pub use sign_root_intent::*;
+
+pub mod derive_child_intent;
+pub use derive_child_intent::*;
+
+pub mod verify_authorizes;
+pub use verify_authorizes::*;
+
+pub mod revoke_intent;
+pub use revoke_intent::*;
