@@ -1,6 +1,20 @@
 @import "tailwindcss";
 
 @theme {
+  /* v2 (swarm) tokens */
+  --color-ink: var(--ink);
+  --color-ink-deep: var(--ink-deep);
+  --color-ink-rise: var(--ink-rise);
+  --color-rule: var(--rule);
+  --color-rule-soft: var(--rule-soft);
+  --color-cream: var(--cream);
+  --color-cream-soft: var(--cream-soft);
+  --color-mute: var(--mute);
+  --color-ledger: var(--ledger);
+  --color-ledger-low: var(--ledger-low);
+  --color-oxide: var(--oxide);
+
+  /* v1 tokens (kept for /dashboard compatibility) */
   --color-accent: var(--accent);
   --color-accent-subtle: var(--accent-subtle);
   --color-accent-border: var(--accent-border);
@@ -23,7 +37,20 @@
 
 @layer base {
   :root {
-    /* ── Backgrounds ── */
+    /* ── v2 palette (OKLCH, ink-blue-black + cream + ledger-yellow accent) ── */
+    --ink: oklch(0.16 0.014 230);
+    --ink-deep: oklch(0.13 0.012 230);
+    --ink-rise: oklch(0.20 0.012 230);
+    --rule: oklch(0.30 0.014 230);
+    --rule-soft: oklch(0.24 0.012 230);
+    --cream: oklch(0.95 0.008 80);
+    --cream-soft: oklch(0.86 0.008 80);
+    --mute: oklch(0.66 0.012 230);
+    --ledger: oklch(0.83 0.165 92);
+    --ledger-low: oklch(0.83 0.165 92 / 0.14);
+    --oxide: oklch(0.55 0.18 30);
+
+    /* ── v1 tokens (kept) ── */
     --background: #000000;
     --foreground: #ffffff;
     --bg-card: rgba(255, 255, 255, 0.04);
@@ -31,24 +58,16 @@
     --bg-input: rgba(255, 255, 255, 0.05);
     --bg-elevated: #0f0f0f;
     --bg-sunken: #0a0a0a;
-
-    /* ── Accent (Emerald) ── */
     --accent: #34d399;
     --accent-glow: rgba(52, 211, 153, 0.4);
     --accent-subtle: rgba(52, 211, 153, 0.1);
     --accent-border: rgba(52, 211, 153, 0.2);
-
-    /* ── Text ── */
     --text-primary: #ffffff;
     --text-secondary: rgba(255, 255, 255, 0.8);
     --text-muted: rgba(255, 255, 255, 0.5);
     --text-dim: rgba(255, 255, 255, 0.35);
-
-    /* ── Borders ── */
     --border: rgba(255, 255, 255, 0.1);
     --border-light: rgba(255, 255, 255, 0.15);
-
-    /* ── Status ── */
     --green: #22c55e;
     --green-subtle: rgba(34, 197, 94, 0.1);
     --green-border: rgba(34, 197, 94, 0.3);
@@ -61,12 +80,22 @@
     --purple: #a855f7;
     --purple-subtle: rgba(168, 85, 247, 0.1);
 
-    /* ── Spacing ── */
+    /* ── Spacing scale (4pt) ── */
+    --s-1: 4px;
+    --s-2: 8px;
+    --s-3: 12px;
+    --s-4: 16px;
+    --s-5: 24px;
+    --s-6: 32px;
+    --s-7: 48px;
+    --s-8: 64px;
+    --s-9: 96px;
+    --s-10: 128px;
+
     --space-section: 112px;
     --space-group: 64px;
     --space-element: 24px;
 
-    /* ── Border Radius ── */
     --radius-sm: 8px;
     --radius-md: 12px;
     --radius-lg: 16px;
@@ -74,103 +103,146 @@
     --radius-full: 999px;
   }
 
-  html,
-  body {
-    max-width: 100vw;
+  html, body { max-width: 100vw; }
+
+  * { box-sizing: border-box; padding: 0; margin: 0; }
+
+  a { color: inherit; text-decoration: none; }
+
+  /* v2 default body */
+  body.v2 {
+    color: var(--cream);
+    background: var(--ink);
+    font-family: var(--font-body), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
-  body {
+  /* v1 default body (used by existing pages that opt in) */
+  body.v1 {
     color: var(--foreground);
     background: var(--background);
+    font-family: var(--font-geist-sans), sans-serif;
   }
 
-  * {
-    box-sizing: border-box;
-    padding: 0;
-    margin: 0;
-  }
-
-  a {
-    color: inherit;
-    text-decoration: none;
+  body { /* fallback default = v2 */
+    color: var(--cream);
+    background: var(--ink);
+    font-family: var(--font-body), system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 }
 
-/* ── Typography Tokens ── */
-.text-hero {
-  font-size: clamp(2.5rem, 8vw, 6rem);
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: -0.03em;
-}
+/* ── v2 typography utilities ── */
+.font-display { font-family: var(--font-display), Georgia, serif; }
+.font-body    { font-family: var(--font-body), system-ui, sans-serif; }
+.font-mono    { font-family: var(--font-mono-v2), ui-monospace, "SF Mono", Menlo, monospace; }
 
-.text-section {
-  font-size: clamp(1.75rem, 4vw, 3rem);
-  line-height: 1.1;
-  font-weight: 700;
-  letter-spacing: -0.02em;
+/* fluid display sizes (marketing surfaces) */
+.t-h1 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(3rem, 7vw, 6.5rem);
+  line-height: 0.98;
+  letter-spacing: -0.025em;
+  font-weight: 500;
 }
-
-.text-headline {
-  font-size: clamp(1.25rem, 2.5vw, 1.875rem);
-  line-height: 1.2;
-  font-weight: 600;
+.t-h2 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.85rem, 3.6vw, 3rem);
+  line-height: 1.05;
+  letter-spacing: -0.018em;
+  font-weight: 500;
+}
+.t-h3 {
+  font-family: var(--font-display), Georgia, serif;
+  font-size: clamp(1.35rem, 2.4vw, 1.75rem);
+  line-height: 1.15;
   letter-spacing: -0.01em;
+  font-weight: 500;
+}
+.t-eyebrow {
+  font-family: var(--font-mono-v2), monospace;
+  font-size: 0.78rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--mute);
+}
+.t-body {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: clamp(1rem, 1.1vw, 1.13rem);
+  line-height: 1.62;
+  max-width: 68ch;
+  color: var(--cream-soft);
+}
+.t-small {
+  font-family: var(--font-body), system-ui, sans-serif;
+  font-size: 0.92rem;
+  line-height: 1.5;
+  color: var(--mute);
+}
+.t-mono {
+  font-family: var(--font-mono-v2), monospace;
+  font-size: 0.85rem;
+  letter-spacing: 0.01em;
+  color: var(--cream-soft);
 }
 
-.text-subhead {
-  font-size: clamp(1rem, 2vw, 1.5rem);
-  line-height: 1.4;
-  font-weight: 400;
+/* ── v2 motion ── */
+@keyframes v2-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.v2-rise {
+  animation: v2-rise 0.7s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.v2-rise-delayed {
+  animation: v2-rise 0.8s 0.12s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.v2-rise-late {
+  animation: v2-rise 0.9s 0.24s cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
-/* Japanese typography adjustments */
-:lang(ja) .text-hero {
-  font-size: clamp(2rem, 6.5vw, 5rem);
+/* ── v2 hairline rule (typeset) ── */
+.rule-h {
+  height: 1px;
+  background: var(--rule);
+}
+.rule-v {
+  width: 1px;
+  background: var(--rule);
 }
 
-:lang(ja) .text-section {
-  font-size: clamp(1.5rem, 3.5vw, 2.5rem);
+/* ── selection ── */
+::selection {
+  background: var(--ledger);
+  color: var(--ink);
 }
 
-:lang(ja) .text-headline {
-  font-size: clamp(1.125rem, 2vw, 1.5rem);
-}
+/* ── scrollbars (subtle) ── */
+::-webkit-scrollbar { width: 10px; height: 10px; }
+::-webkit-scrollbar-track { background: var(--ink-deep); }
+::-webkit-scrollbar-thumb { background: var(--rule); border-radius: 0; }
+::-webkit-scrollbar-thumb:hover { background: var(--mute); }
 
-:lang(ja) .text-subhead {
-  font-size: clamp(0.875rem, 1.75vw, 1.25rem);
-}
-
-/* Wallet adapter modal overrides — kept unlayered so !important wins */
+/* ── wallet adapter (preserved from v1) ── */
 .wallet-adapter-modal-wrapper {
   background-color: rgba(5, 5, 5, 0.95) !important;
   backdrop-filter: blur(12px);
 }
-
 .wallet-adapter-modal-container {
   background-color: rgba(20, 20, 20, 0.95) !important;
   border: 1px solid rgba(255, 255, 255, 0.08) !important;
   border-radius: 24px !important;
 }
-
-.wallet-adapter-modal-title {
-  color: #ffffff !important;
-}
-
+.wallet-adapter-modal-title { color: #ffffff !important; }
 .wallet-adapter-button {
   background-color: rgba(255, 255, 255, 0.05) !important;
   border-radius: 12px !important;
   color: #ffffff !important;
 }
-
-.wallet-adapter-button:hover {
-  background-color: rgba(250, 204, 21, 0.1) !important;
-}
-
-.wallet-adapter-modal-list li {
-  border-radius: 12px !important;
-}
-
+.wallet-adapter-button:hover { background-color: rgba(250, 204, 21, 0.1) !important; }
+.wallet-adapter-modal-list li { border-radius: 12px !important; }
 .wallet-adapter-button-trigger {
   background-color: #FACC15 !important;
   color: #050505 !important;
@@ -178,10 +250,9 @@
   font-weight: 700 !important;
 }
 
-/* ── Accessibility ── */
 :focus-visible {
-  outline: 2px solid var(--accent);
-  outline-offset: 2px;
+  outline: 1px solid var(--ledger);
+  outline-offset: 3px;
 }
 
 @media (prefers-reduced-motion: reduce) {

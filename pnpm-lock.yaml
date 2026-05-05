@@ -176,6 +176,9 @@ importers:
       '@fuin-labs/sdk':
         specifier: workspace:^
         version: link:../../packages/sdk
+      '@fuin-labs/sdk-v2':
+        specifier: workspace:*
+        version: link:../../packages/sdk-v2
       '@repo/ui':
         specifier: workspace:*
         version: link:../../packages/ui

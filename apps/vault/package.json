@@ -14,6 +14,7 @@
     "@coral-xyz/anchor": "^0.32.1",
     "@fuin-labs/db": "workspace:^",
     "@fuin-labs/sdk": "workspace:^",
+    "@fuin-labs/sdk-v2": "workspace:*",
     "@repo/ui": "workspace:*",
     "@solana/wallet-adapter-base": "^0.9.27",
     "@solana/wallet-adapter-react": "^0.15.39",
