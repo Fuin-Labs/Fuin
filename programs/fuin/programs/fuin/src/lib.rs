@@ -70,4 +70,37 @@ pub mod fuin {
     ) -> Result<()> {
         handlers::execute_swap(ctx, nonce_vault, nonce_delegate, amount_in, min_amount_out, feed_id)
     }
+
+    // === Fuin v2 — Proof-of-Intent (swarm) ===
+
+    pub fn sign_root_intent(
+        ctx: Context<SignRootIntent>,
+        nonce: u64,
+        goal_predicate: crate::state::predicate::GoalPredicate,
+        budget: u64,
+        expires_at: i64,
+    ) -> Result<()> {
+        handlers::sign_root_intent(ctx, nonce, goal_predicate, budget, expires_at)
+    }
+
+    pub fn derive_child_intent(
+        ctx: Context<DeriveChildIntent>,
+        child_nonce: u64,
+        child_predicate: crate::state::predicate::GoalPredicate,
+        child_budget: u64,
+        child_expires_at: i64,
+    ) -> Result<()> {
+        handlers::derive_child_intent(ctx, child_nonce, child_predicate, child_budget, child_expires_at)
+    }
+
+    pub fn verify_authorizes<'info>(
+        ctx: Context<'_, '_, 'info, 'info, VerifyAuthorizes<'info>>,
+        target_ix_index: u8,
+    ) -> Result<()> {
+        handlers::verify_authorizes(ctx, target_ix_index)
+    }
+
+    pub fn revoke_intent(ctx: Context<RevokeIntent>) -> Result<()> {
+        handlers::revoke_intent(ctx)
+    }
 }
