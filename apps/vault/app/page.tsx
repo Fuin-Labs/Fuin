@@ -1,410 +1,900 @@
 "use client";
-import React from "react";
 
-import { useEffect, useState } from "react";
-import "./landing.css";
-import dynamic from "next/dynamic";
+import React, { useEffect, useRef } from "react";
 import Link from "next/link";
 
-// Tiny blurred snapshot of the shader output — inlined as base64, zero network cost
-const BLUR_PLACEHOLDER = "url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABQAAAAQCAYAAAAWGF8bAAAACXBIWXMAAAAAAAAAAQCEeRdzAAAB+klEQVR4nI2U65KaQBCF+bP0DDcBRVzEFS+4Saqy7/92vefQTInGpPJjCsTh668vQ+ScV5ck6rJcXVWrvL+r3D5Vvn6rjBeVwx7Pdrj2Klf8HkeV81nleFS369SVNd7Hu5Kpj1ONxDkV71XSVGW1UmkalWFQ+fVT5fOGFz9U9h2uBwNeABuOeIZAm0ZdvlLnMwBTdXEyA2EpsJQ8V6kqlQ6AC17+AeB5MEuCzyeD9bBtthCoYAeYSyaYi30ALi0LszzMRgH40dszmm0BKxGYZXIwE4O5t2dgsKxrs6QNzXjP2u5aC8YssgKpPsL+DlzXVrcBsJ5GgKzXBmKdYSYvYHegf055gxQP1gha1QAVhQXLMgTGPjfDXgNnO24uVwZhAwhlisGKAQnz2Cv+H0B2eTk6TDGMC1OlHYP9F1AAlACdLatSpW0NHNLl87BCyrIEumlFLsYNV4ByMwFsDGvJKwPQvJwXa4l97o86Evi2UEfXJmBeWKqsJY9d2xicxpN1bXteQKM7zE9/SsrGzCmzKWF0CO4wi303d76eTB9mMX4AJtOfU+TNxk7H5WRnlx8Gwrh4zwDt1krBmvp7PSPPM0gYjpDZoQk72Jxw5MarAYNh+OpwPjkBLAPnNrUmsfORl2Rhl1vtCLgCdBttHvfdvZ79/KHg2X6yJPQbgvNx+yYtpucAAAAASUVORK5CYII=)";
+const PROGRAM_ID = "E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy";
+const DEMO_ROOT_PDA = "4BH2MJwZ5oHSY3u4eEGNuVXCdK3zWMa1YBXWxCEqGdAn";
+const EXPLORER = (addr: string) =>
+  `https://explorer.solana.com/address/${addr}?cluster=devnet`;
 
-// Declare iconify-icon web component for TypeScript
-declare module "react" {
-  namespace JSX {
-    interface IntrinsicElements {
-      "iconify-icon": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
-        icon: string;
-        class?: string;
-      };
-    }
-  }
+function useV2BodyClass() {
+  useEffect(() => {
+    document.body.classList.add("v2");
+    return () => document.body.classList.remove("v2");
+  }, []);
 }
 
-const UsecaseFlow = dynamic(() => import("./components/UsecaseFlow").then(m => m.UsecaseFlow), {
-  ssr: false,
-  loading: () => <div style={{ minHeight: 500 }} />,
-});
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return <span className="t-eyebrow">{children}</span>;
+}
 
-export default function Home(): React.JSX.Element {
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [shaderReady, setShaderReady] = useState(false);
-  const currentYear = new Date().getFullYear();
-
-  // Detect when Unicorn Studio shader has rendered
-  useEffect(() => {
-    const el = document.querySelector('[data-us-project]');
-    if (!el) return;
-    const observer = new MutationObserver(() => {
-      if (el.querySelector('canvas')) {
-        setShaderReady(true);
-        observer.disconnect();
-      }
-    });
-    observer.observe(el, { childList: true, subtree: true });
-    // In case canvas is already there
-    if (el.querySelector('canvas')) setShaderReady(true);
-    return () => observer.disconnect();
-  }, []);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver((entries) => {
-      entries.forEach((entry) => {
-        if (entry.isIntersecting) {
-          entry.target.classList.add("animate");
-          observer.unobserve(entry.target);
-        }
-      });
-    }, { threshold: 0.2, rootMargin: "0px 0px -10% 0px" });
-
-    document.querySelectorAll(".animate-on-scroll").forEach((el) => {
-      observer.observe(el);
-    });
-
-    return () => observer.disconnect();
-  }, []);
-
+function Mono({ children }: { children: React.ReactNode }) {
   return (
-    <div id="landing-view" className="w-full transition-opacity duration-500">
-      <header className="relative overflow-hidden min-h-screen">
-        {/* Background: inline blur placeholder → Unicorn Studio shader crossfade */}
-        <div
-          className="-z-10 w-full h-full absolute inset-0"
-          style={{
-            backgroundImage: BLUR_PLACEHOLDER,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-          }}
-        >
-          {/* Unicorn Studio shader (fades in once canvas renders) */}
-          <div
-            data-us-project="vTTCp5g4cVl9nwjlT56Z"
-            className="absolute w-full h-full left-0 top-0"
+    <span className="font-mono" style={{ color: "var(--cream-soft)" }}>
+      {children}
+    </span>
+  );
+}
+
+function HairlineRow() {
+  return <div className="rule-h" />;
+}
+
+/* ── Header ─────────────────────────────────────────────────────────────── */
+function Header() {
+  return (
+    <header
+      className="sticky top-0 z-30"
+      style={{
+        background: "color-mix(in oklch, var(--ink) 88%, transparent)",
+        backdropFilter: "blur(8px)",
+        borderBottom: "1px solid var(--rule-soft)",
+      }}
+    >
+      <div className="max-w-[1180px] mx-auto px-6 lg:px-10 h-14 flex items-center justify-between">
+        <Link href="/" className="flex items-baseline gap-3">
+          <span
+            className="font-display text-[1.15rem]"
+            style={{ letterSpacing: "0.02em", color: "var(--cream)" }}
+          >
+            Fuin
+          </span>
+          <span className="t-eyebrow" style={{ fontSize: "0.7rem" }}>
+            v2 · swarm
+          </span>
+        </Link>
+
+        <nav className="hidden md:flex items-center gap-8 text-sm">
+          <a
+            href="#shape"
+            className="hover:opacity-100 opacity-70 transition-opacity"
+            style={{ color: "var(--cream-soft)" }}
+          >
+            Shape
+          </a>
+          <a
+            href="#boundary"
+            className="hover:opacity-100 opacity-70 transition-opacity"
+            style={{ color: "var(--cream-soft)" }}
+          >
+            Boundary
+          </a>
+          <a
+            href="#sdk"
+            className="hover:opacity-100 opacity-70 transition-opacity"
+            style={{ color: "var(--cream-soft)" }}
+          >
+            SDK
+          </a>
+          <a
+            href="#evidence"
+            className="hover:opacity-100 opacity-70 transition-opacity"
+            style={{ color: "var(--cream-soft)" }}
+          >
+            Evidence
+          </a>
+          <Link
+            href={`/audit/${DEMO_ROOT_PDA}`}
+            className="px-3 py-1.5 text-[0.85rem] font-mono"
             style={{
-              opacity: shaderReady ? 1 : 0,
-              transition: "opacity 800ms ease-in-out",
+              color: "var(--ink)",
+              background: "var(--ledger)",
+              borderRadius: "2px",
+              letterSpacing: "0.04em",
             }}
+          >
+            Open audit →
+          </Link>
+        </nav>
+      </div>
+    </header>
+  );
+}
+
+/* ── Hero ───────────────────────────────────────────────────────────────── */
+function Hero() {
+  return (
+    <section className="relative">
+      <div className="max-w-[1180px] mx-auto px-6 lg:px-10 pt-24 lg:pt-32 pb-20 lg:pb-28">
+        <div className="v2-rise" style={{ marginBottom: "var(--s-7)" }}>
+          <Eyebrow>Fuin v2 · swarm-first agent infrastructure</Eyebrow>
+        </div>
+
+        <h1
+          className="t-h1 v2-rise-delayed"
+          style={{ color: "var(--cream)", maxWidth: "20ch" }}
+        >
+          The open trust layer
+          <br />
+          for AI agent swarms{" "}
+          <span style={{ fontStyle: "italic", color: "var(--ledger)" }}>
+            on Solana
+          </span>
+          .
+        </h1>
+
+        <p
+          className="t-body v2-rise-late"
+          style={{ marginTop: "var(--s-7)", maxWidth: "62ch" }}
+        >
+          One human signature authorizes a hierarchical tree of agents. Every
+          action attributable. Every scope cryptographically derived from the
+          root. When an agent steps outside what you signed, the math denies it
+          — without a custodian, without a middleware, without a per-card
+          ledger to audit.
+        </p>
+
+        <div
+          className="v2-rise-late flex flex-wrap items-center gap-x-8 gap-y-4"
+          style={{ marginTop: "var(--s-8)" }}
+        >
+          <Link
+            href={`/audit/${DEMO_ROOT_PDA}`}
+            className="font-mono text-[0.95rem] inline-flex items-center gap-2 px-5 py-3"
+            style={{
+              color: "var(--ink)",
+              background: "var(--ledger)",
+              borderRadius: "2px",
+              letterSpacing: "0.03em",
+            }}
+          >
+            Read the live audit tree
+            <span aria-hidden>→</span>
+          </Link>
+          <a
+            href="#shape"
+            className="font-mono text-[0.9rem] inline-flex items-center gap-2 opacity-80 hover:opacity-100 transition-opacity"
+            style={{
+              color: "var(--cream)",
+              borderBottom: "1px solid var(--rule)",
+              paddingBottom: "2px",
+            }}
+          >
+            See how the shape works
+          </a>
+        </div>
+
+        <div
+          className="v2-rise-late grid grid-cols-1 md:grid-cols-3 gap-8 mt-20"
+          style={{ borderTop: "1px solid var(--rule-soft)", paddingTop: "var(--s-7)" }}
+        >
+          <Stat
+            value="1 sig"
+            label="root authorization · all leaves derive from it"
+          />
+          <Stat
+            value="0 CPI"
+            label="sibling-instruction verifier · zero integration burden"
+          />
+          <Stat
+            value="∞ depth"
+            label="agent hierarchies bounded only by parent scope"
           />
         </div>
-        <div className="sm:px-6 lg:px-8 max-w-7xl mr-auto ml-auto pr-4 pl-4">
-          {/* Nav */}
-          <nav className="flex mt-6 items-center justify-between">
-            <Link href="/" className="flex items-center gap-3">
-              <img src="/logo.svg" alt="Fuin" className="h-24 w-24" />
-              <span className="hidden sm:inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-400/10 border border-emerald-400/20 text-[10px] font-pixel text-emerald-400 tracking-wider uppercase">
-                <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse" />
-                Devnet
-              </span>
-            </Link>
+      </div>
+    </section>
+  );
+}
 
-            <div className="hidden md:flex md:gap-x-1 bg-white/5 border-white/10 border rounded-full p-1.5 backdrop-blur-lg items-center">
-              <Link href="#primitives" className="hover:text-white hover:bg-white/5 text-sm font-medium text-white/80 font-geist px-4 py-2 rounded-full transition-all">Primitives</Link>
-              <Link href="#actors" className="hover:text-white hover:bg-white/5 text-sm font-medium text-white/80 font-geist px-4 py-2 rounded-full transition-all">Actors</Link>
-              <Link href="/docs" className="hover:text-white hover:bg-white/5 text-sm font-medium text-white/60 font-geist px-4 py-2 rounded-full transition-all">Docs</Link>
-              <Link href="/dashboard/vaults" className="bg-white text-black rounded-full px-5 py-2 text-sm font-semibold font-geist transition-all hover:bg-white/90 ml-1">Launch App</Link>
-            </div>
-
-            <button
-              className="md:hidden inline-flex text-sm font-medium font-geist bg-white/5 border-white/10 border rounded-lg pt-2 pr-3 pb-2 pl-3 backdrop-blur gap-x-2 gap-y-2 items-center text-white/80 cursor-pointer"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              <iconify-icon icon="solar:hamburger-menu-linear" class="text-lg"></iconify-icon>
-              Menu
-            </button>
-          </nav>
-
-          {mobileMenuOpen && (
-            <div className="md:hidden absolute top-full left-0 right-0 mt-2 p-4 bg-black/95 border border-white/10 rounded-xl backdrop-blur-xl z-50">
-              <div className="flex flex-col gap-4">
-                <Link href="#primitives" className="text-white/80 font-geist" onClick={() => setMobileMenuOpen(false)}>Primitives</Link>
-                <Link href="#actors" className="text-white/80 font-geist" onClick={() => setMobileMenuOpen(false)}>Actors</Link>
-                <Link href="/docs" className="text-white/60 font-geist" onClick={() => setMobileMenuOpen(false)}>Docs</Link>
-                <Link href="/dashboard/vaults" className="text-white font-geist font-medium" onClick={() => setMobileMenuOpen(false)}>Launch App</Link>
-              </div>
-            </div>
-          )}
-
-          {/* Hero */}
-          <section className="z-10 pt-12 pb-16 sm:pt-20 sm:pb-24 md:pt-48 md:pb-32 text-center max-w-5xl mx-auto px-4 relative">
-
-            <div className="inline-flex items-center gap-2 px-3 py-1 mb-4 sm:mb-6 rounded-full bg-white/5 border border-white/10 text-white/70 [animation:fadeSlideIn_1s_ease-out_0.1s_both]">
-              <span className="h-1.5 w-1.5 rounded-full bg-emerald-400 animate-pulse"></span>
-              <span className="text-xs font-medium font-pixel">Solana IAM Protocol</span>
-            </div>
-
-            <h1 className="text-hero [animation:fadeSlideIn_1s_ease-out_0.2s_forwards] font-geist opacity-0 max-w-5xl mx-auto text-white">
-              Fuin
-            </h1>
-
-            <p className="text-sm sm:text-base md:text-lg [animation:fadeSlideIn_1s_ease-out_0.3s_both] font-normal text-white/70 font-geist max-w-md sm:max-w-xl mt-4 sm:mt-6 mx-auto leading-relaxed">
-              Programmable authorization for Solana. Issue scoped keys to AI agents and delegates - custody stays with you.
-            </p>
-
-            <div className="flex flex-col sm:flex-row [animation:fadeSlideIn_1s_ease-out_0.4s_both] mt-8 sm:mt-10 gap-3 sm:gap-x-4 items-center justify-center">
-              <Link href="/dashboard/vaults" className="inline-flex w-full sm:w-auto min-w-[160px] font-medium text-black tracking-tight bg-white rounded-full px-6 py-3.5 items-center justify-center no-underline transition-opacity hover:opacity-90 font-geist">
-                Launch App
-              </Link>
-              <Link href="/docs" className="inline-flex w-full sm:w-auto items-center gap-2 text-base font-medium text-white border border-white/20 rounded-full px-6 py-3.5 font-geist transition-colors hover:border-white/40 cursor-pointer justify-center">
-                <iconify-icon icon="solar:document-text-linear" class="text-lg"></iconify-icon>
-                Read Docs
-              </Link>
-            </div>
-
-          </section>
-        </div>
-      </header>
-
-      {/* Value section */}
-      <section className="overflow-hidden relative">
-        <div className="section-divider"></div>
-        <div className="sm:px-6 lg:px-8 max-w-7xl mr-auto ml-auto py-28 pr-6 pl-6">
-          <div className="grid md:grid-cols-2 gap-x-16 gap-y-12 items-center">
-            <div>
-              <span className="font-pixel text-[11px] text-white/50 tracking-widest uppercase mb-6 block animate-on-scroll">The Problem</span>
-              <h2 className="text-section [animation:fadeSlideIn_1s_ease-out_0.1s_both] animate-on-scroll font-geist text-white">Delegation shouldn&apos;t mean losing custody.</h2>
-              <p className="mt-6 text-base text-white/60 leading-relaxed [animation:fadeSlideIn_1s_ease-out_0.2s_both] animate-on-scroll font-geist">Traditional wallets operate on an all-or-nothing model. Fuin introduces a programmable layer that lets you issue highly restricted session keys to AI agents or human delegates. They can transact on your behalf, but only within the exact boundaries you define.</p>
-              <div className="flex [animation:fadeSlideIn_1s_ease-out_0.3s_both] animate-on-scroll mt-8 gap-x-3 gap-y-3 items-center">
-                <ul className="space-y-3">
-                  <li className="flex items-center gap-3 text-sm text-white/80 font-geist"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 text-lg"></iconify-icon> Prevent AI hallucination-led exploits</li>
-                  <li className="flex items-center gap-3 text-sm text-white/80 font-geist"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 text-lg"></iconify-icon> Zero gas fees for delegates (Relayer pays)</li>
-                  <li className="flex items-center gap-3 text-sm text-white/80 font-geist"><iconify-icon icon="solar:check-circle-linear" class="text-emerald-400 text-lg"></iconify-icon> Revoke access instantly on-chain</li>
-                </ul>
-              </div>
-            </div>
-            <div className="[animation:fadeSlideIn_1s_ease-out_0.4s_both] animate-on-scroll relative">
-              <div className="aspect-square w-full rounded-2xl border border-white/10 bg-[#0f0f0f] p-6 relative overflow-hidden flex flex-col">
-                {/* Decorative grid background */}
-                <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px]"></div>
-
-                {/* Mock UI */}
-                <div className="relative z-10 flex-1 flex flex-col gap-4">
-                  <div className="flex items-center justify-between border-b border-white/10 pb-4">
-                    <span className="text-sm font-medium font-geist text-white">Vault Configurations</span>
-                    <iconify-icon icon="solar:shield-check-bold-duotone" class="text-2xl text-emerald-400"></iconify-icon>
-                  </div>
-
-                  <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-white/50 font-geist uppercase">Delegate</span>
-                      <span className="text-xs text-emerald-400 font-pixel bg-emerald-400/10 px-2 py-0.5 rounded">Active</span>
-                    </div>
-                    <div className="text-sm text-white font-geist font-medium">Trading Bot (Agent)</div>
-                    <div className="mt-3 grid grid-cols-2 gap-2">
-                      <div className="bg-black/40 rounded p-2 border border-white/5">
-                        <div className="text-[10px] text-white/50 mb-1 font-geist">Cap</div>
-                        <div className="text-xs text-white font-geist">20 SOL / Day</div>
-                      </div>
-                      <div className="bg-black/40 rounded p-2 border border-white/5">
-                        <div className="text-[10px] text-white/50 mb-1 font-geist">Allowed</div>
-                        <div className="text-xs text-white font-geist truncate">Jupiter, Meteora</div>
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="bg-[#0a0a0a] border border-white/10 rounded-lg p-4 opacity-50">
-                    <div className="flex items-center justify-between mb-2">
-                      <span className="text-xs text-white/50 font-geist uppercase">Delegate</span>
-                      <span className="text-xs text-rose-400 font-pixel bg-rose-400/10 px-2 py-0.5 rounded">Revoked</span>
-                    </div>
-                    <div className="text-sm text-white font-geist font-medium">Junior Wallet</div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Features (Primitives) */}
-      <section className="z-10 sm:px-6 lg:px-8 max-w-7xl mr-auto ml-auto py-28 pr-6 pl-6 relative" id="primitives">
-        <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4 mb-10">
-          <div>
-            <h2 className="text-section font-geist text-white [animation:fadeSlideIn_1s_ease-out_0.2s_both] animate-on-scroll">Core Primitives</h2>
-            <p className="mt-4 text-base text-white/60 font-geist max-w-2xl [animation:fadeSlideIn_1s_ease-out_0.3s_both] animate-on-scroll">A robust, composable architecture designed for security, auditability, and seamless meta-transactions on Solana.</p>
-          </div>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-3 gap-x-4 gap-y-4">
-          {/* Big feature — Policy Engine */}
-          <div className="group relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[#0f0f0f] md:col-span-2 md:row-span-2 [animation:fadeSlideIn_1s_ease-out_0.4s_both] animate-on-scroll hover:border-[var(--border-light)] transition-colors">
-            <div className="p-6 sm:p-8 h-full flex flex-col">
-              <div className="flex items-center gap-3 mb-6">
-                <div className="w-10 h-10 rounded-lg bg-black border border-white/10 flex items-center justify-center">
-                  <iconify-icon icon="solar:code-square-linear" class="text-xl text-white/80"></iconify-icon>
-                </div>
-                <span className="text-xs text-white/50 font-pixel tracking-widest uppercase">Engine</span>
-              </div>
-              <h3 className="text-headline font-geist text-white">On-chain Policy Engine</h3>
-              <p className="mt-3 text-sm sm:text-base text-white/60 font-geist max-w-md">The heart of Fuin. A modular system enforcing constraints before execution. Guardians can compose rules using distinct modules.</p>
-
-              <div className="mt-8 grid grid-cols-2 gap-3 flex-1">
-                <div className="bg-black/50 border border-white/5 rounded-xl p-4">
-                  <div className="text-white text-sm mb-1 font-medium font-geist">Spending Module</div>
-                  <div className="text-xs text-white/50 font-geist">Enforce daily caps and token whitelists. Verifies via Pyth/Switchboard oracles.</div>
-                </div>
-                <div className="bg-black/50 border border-white/5 rounded-xl p-4">
-                  <div className="text-white text-sm mb-1 font-medium font-geist">Program Module</div>
-                  <div className="text-xs text-white/50 font-geist">Strict allowlists for target programs (CPIs) preventing malicious interaction.</div>
-                </div>
-                <div className="bg-black/50 border border-white/5 rounded-xl p-4">
-                  <div className="text-white text-sm mb-1 font-medium font-geist">Time Module</div>
-                  <div className="text-xs text-white/50 font-geist">Epoch-based rate limits and expiration logic for temporary sessions.</div>
-                </div>
-                <div className="bg-black/50 border border-white/5 rounded-xl p-4">
-                  <div className="text-white text-sm mb-1 font-medium font-geist">Risk Module</div>
-                  <div className="text-xs text-white/50 font-geist">Max slippage controls and anomaly detection for DeFi operations.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right column */}
-          <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[#0f0f0f] [animation:fadeSlideIn_1s_ease-out_0.6s_both] animate-on-scroll p-6 hover:border-[var(--border-light)] transition-colors">
-            <iconify-icon icon="solar:gas-station-linear" class="text-2xl text-white/60 mb-4"></iconify-icon>
-            <h3 className="text-xl font-medium tracking-tight text-white font-geist">
-              GasTank PDA
-            </h3>
-            <p className="mt-2 text-sm text-white/60 font-geist">Guardians fund a central PDA. The protocol automatically refunds Relayers for gas upon successful intent execution.</p>
-          </div>
-
-          {/* Bottom small */}
-          <div className="relative overflow-hidden rounded-2xl border border-[var(--border)] bg-[#0f0f0f] [animation:fadeSlideIn_1s_ease-out_0.1s_both] animate-on-scroll p-6 hover:border-[var(--border-light)] transition-colors">
-            <iconify-icon icon="solar:routing-linear" class="text-2xl text-white/60 mb-3"></iconify-icon>
-            <h3 className="text-lg font-medium tracking-tight text-white font-geist">
-              Deterministic Routing
-            </h3>
-            <p className="mt-2 text-sm text-white/60 font-geist">Agents are restricted to predefined `Route` enums (e.g., JupiterSwap, MeteoraLP) to guarantee execution paths.</p>
-          </div>
-
-          {/* Bottom small */}
-          <div className="overflow-hidden bg-[#0f0f0f] border border-[var(--border)] rounded-2xl relative [animation:fadeSlideIn_1s_ease-out_0.2s_both] animate-on-scroll p-6 hover:border-[var(--border-light)] transition-colors">
-            <iconify-icon icon="solar:shield-warning-linear" class="text-2xl text-white/60 mb-3"></iconify-icon>
-            <h3 className="text-lg font-medium tracking-tight text-white font-geist">
-              Replay Protection
-            </h3>
-            <p className="mt-2 text-sm text-white/60 font-geist">Every meta-transaction enforces a monotonic nonce counter to prevent duplicate intent submissions.</p>
-          </div>
-
-          {/* Bottom small */}
-          <div className="overflow-hidden bg-[#0f0f0f] border border-[var(--border)] rounded-2xl relative [animation:fadeSlideIn_1s_ease-out_0.3s_both] animate-on-scroll p-6 hover:border-[var(--border-light)] transition-colors">
-            <iconify-icon icon="solar:pen-new-square-linear" class="text-2xl text-white/60 mb-3"></iconify-icon>
-            <h3 className="text-lg font-medium tracking-tight text-white font-geist">
-              ed25519 Intents
-            </h3>
-            <p className="mt-2 text-sm text-white/60 font-geist">ERC-4337 style meta-transactions. Users sign intents off-chain, verifying signatures natively on execution.</p>
-          </div>
-        </div>
-      </section>
-
-      {/* Web3 For Everyone - UsecaseFlow injected here */}
-      <UsecaseFlow />
-
-      {/* System Actors */}
-      <section id="actors" className="relative z-10 py-28 md:py-32 px-6 max-w-[1200px] mx-auto">
-        <span className="font-pixel text-[11px] text-white/50 tracking-widest uppercase mb-6 block">
-          Network Participants
-        </span>
-
-        <h2 className="text-section font-geist mb-16 text-white">
-          System Actors
-        </h2>
-
-        <div className="grid grid-cols-1 md:grid-cols-2 auto-rows-[320px] md:auto-rows-[340px] gap-4 md:gap-6">
-          {/* Actor 1 */}
-          <div className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
-            <img src="https://images.unsplash.com/photo-1639322537228-f710d846310a?w=1200&amp;q=80" alt="" aria-hidden="true" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-transform duration-[1.5s] ease-out group-hover:scale-105" loading="lazy" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#060606] via-[#060606]/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 md:p-10">
-              <span className="text-[0.65rem] font-pixel tracking-[0.15em] uppercase text-white/60 mb-3">The Owner</span>
-              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white mb-2">
-                Guardian
-              </h3>
-              <p className="text-xs text-text-muted font-light max-w-sm font-geist">Creates vaults, sets strict policies, deposits gas, and retains ultimate control to freeze or rotate keys.</p>
-            </div>
-          </div>
-
-          {/* Actor 2 */}
-          <div className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
-            <img src="https://images.unsplash.com/photo-1558494949-ef010cbdcc31?w=1200&amp;q=80" alt="" aria-hidden="true" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-transform duration-[1.5s] ease-out group-hover:scale-105" loading="lazy" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#060606] via-[#060606]/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 md:p-10">
-              <span className="text-[0.65rem] font-pixel tracking-[0.15em] uppercase text-white/60 mb-3">The Beginner</span>
-              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white mb-2">
-                Junior
-              </h3>
-              <p className="text-xs text-text-muted font-light max-w-sm font-geist">A human operator acting under daily allowances, spending limits, and strict program whitelists.</p>
-            </div>
-          </div>
-
-          {/* Actor 3 */}
-          <div className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
-            <img src="https://images.unsplash.com/photo-1620712943543-bcc4688e7485?w=1200&amp;q=80" alt="" aria-hidden="true" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-all duration-[1.5s] ease-out group-hover:scale-105 group-hover:grayscale-0" loading="lazy" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#060606] via-[#060606]/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 md:p-10">
-              <span className="text-[0.65rem] font-pixel tracking-[0.15em] uppercase text-white/60 mb-3">The Autonomous Bot</span>
-              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white mb-2">
-                Agent
-              </h3>
-              <p className="text-xs text-text-muted font-light max-w-sm font-geist">An AI operator cryptographically locked to predefined audited routes to prevent exploits driven by hallucination.</p>
-            </div>
-          </div>
-
-          {/* Actor 4 */}
-          <div className="group relative rounded-2xl overflow-hidden block border border-white/[0.04]">
-            <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=1200&amp;q=80" alt="" aria-hidden="true" width={1200} height={800} className="absolute inset-0 w-full h-full object-cover grayscale opacity-60 transition-all duration-[1.5s] ease-out group-hover:scale-105 group-hover:grayscale-0" loading="lazy" decoding="async" />
-            <div className="absolute inset-0 bg-gradient-to-t from-[#060606] via-[#060606]/40 to-transparent opacity-90 group-hover:opacity-100 transition-opacity duration-500 flex flex-col justify-end p-8 md:p-10">
-              <span className="text-[0.65rem] font-pixel tracking-[0.15em] uppercase text-white/60 mb-3">The Courier</span>
-              <h3 className="font-geist text-2xl md:text-3xl font-medium tracking-tight text-white mb-2">
-                Relayer
-              </h3>
-              <p className="text-xs text-text-muted font-light max-w-sm font-geist">A non-custodial entity that packages and submits intents to the network, automatically receiving gas refunds.</p>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* Footer */}
-      <footer className="xl:mt-0 relative bg-black">
-        <div className="section-divider"></div>
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div className="md:col-span-2">
-              <Link href="/" className="flex items-center mb-4">
-                <img src="/logo.svg" alt="Fuin" className="h-24 w-24" />
-              </Link>
-              <p className="text-sm text-white/50 max-w-sm font-geist leading-relaxed">Fuin is a programmable Identity Access Management (IAM) layer and restrictive wallet protocol built natively for the Solana VM.</p>
-              <div className="mt-6 flex items-center gap-3">
-                <Link href="/docs" className="inline-flex items-center gap-2 rounded-lg border border-white/20 bg-transparent px-4 py-2 text-sm font-medium text-white hover:border-white/40 font-geist transition-colors cursor-pointer">
-                  <iconify-icon icon="solar:document-text-linear" class="text-lg"></iconify-icon>
-                  Read Documentation
-                </Link>
-              </div>
-            </div>
-
-            <div>
-              <h4 className="font-pixel text-[10px] tracking-widest uppercase text-white/60 mb-4">Protocol</h4>
-              <ul className="space-y-3 text-sm text-white/50">
-                <li><Link href="/dashboard/vaults" className="hover:text-white transition-colors font-geist text-white font-medium">Launch App</Link></li>
-                <li><Link href="#primitives" className="hover:text-white transition-colors font-geist">Architecture</Link></li>
-                <li><Link href="#actors" className="hover:text-white transition-colors font-geist">Actors</Link></li>
-                <li><Link href="https://github.com/Fuin-Labs/Fuin" target="_blank" className="hover:text-white transition-colors font-geist">GitHub</Link></li>
-              </ul>
-            </div>
-
-            <div>
-              <h4 className="font-pixel text-[10px] tracking-widest uppercase text-white/60 mb-4">Community</h4>
-              <ul className="space-y-3 text-sm text-white/50">
-                <li><Link href="https://x.com/fuinlabs" target="_blank" className="hover:text-white transition-colors font-geist flex items-center gap-2"><iconify-icon icon="solar:bird-linear"></iconify-icon> Twitter / X</Link></li>
-              </ul>
-            </div>
-          </div>
-
-          <div className="mt-12 flex flex-col sm:flex-row items-center justify-between gap-4 border-t border-white/10 pt-8">
-            <p className="text-xs text-white/50 font-geist">&copy; <span className="font-geist">{currentYear}</span> Fuin Protocol. All rights reserved.</p>
-            <div className="flex gap-4 text-xs text-white/50 font-geist">
-              <span className="w-1 h-1 rounded-full bg-white/20 my-auto"></span>
-              <span className="font-geist">Solana</span>
-            </div>
-          </div>
-        </div>
-      </footer>
+function Stat({ value, label }: { value: string; label: string }) {
+  return (
+    <div>
+      <div
+        className="font-display"
+        style={{
+          fontSize: "clamp(1.6rem, 2.2vw, 2.1rem)",
+          color: "var(--ledger)",
+          lineHeight: 1,
+          marginBottom: "var(--s-3)",
+          letterSpacing: "-0.01em",
+        }}
+      >
+        {value}
+      </div>
+      <div className="t-small" style={{ maxWidth: "32ch" }}>
+        {label}
+      </div>
     </div>
+  );
+}
+
+/* ── The Shape (anatomy of an intent tree) ──────────────────────────────── */
+function Shape() {
+  return (
+    <section
+      id="shape"
+      className="relative"
+      style={{ background: "var(--ink-deep)", borderTop: "1px solid var(--rule-soft)" }}
+    >
+      <div className="max-w-[1180px] mx-auto px-6 lg:px-10 py-24 lg:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16">
+          <div className="lg:col-span-4">
+            <Eyebrow>§ 01 · the shape</Eyebrow>
+            <h2 className="t-h2 mt-6" style={{ color: "var(--cream)" }}>
+              An intent is a tree.
+            </h2>
+            <p className="t-body" style={{ marginTop: "var(--s-5)" }}>
+              The user signs once at the root. Every child intent is derived
+              under it, with a budget and scope strictly bounded by what the
+              parent permits. Action verification walks the chain. The whole
+              swarm operates inside the cone of authority that began with one
+              human signature.
+            </p>
+          </div>
+
+          <div className="lg:col-span-8">
+            <IntentTreeFigure />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* The figure: a hand-laid SVG-ish diagram in CSS — root + 3 children + boundary attempt */
+function IntentTreeFigure() {
+  return (
+    <figure
+      className="relative"
+      style={{
+        background: "var(--ink-rise)",
+        border: "1px solid var(--rule-soft)",
+        padding: "var(--s-7)",
+      }}
+    >
+      <div className="t-eyebrow mb-6" style={{ color: "var(--mute)" }}>
+        figure 01 · live tree, autonomous trading desk
+      </div>
+
+      <svg
+        viewBox="0 0 720 420"
+        className="w-full h-auto"
+        role="img"
+        aria-label="Hierarchical intent tree with one root, three live children, and one boundary-rejected attempt"
+      >
+        <defs>
+          <pattern
+            id="dot"
+            x="0"
+            y="0"
+            width="10"
+            height="10"
+            patternUnits="userSpaceOnUse"
+          >
+            <circle cx="1" cy="1" r="0.6" fill="oklch(0.30 0.014 230)" />
+          </pattern>
+        </defs>
+
+        {/* Connectors */}
+        <g stroke="oklch(0.30 0.014 230)" strokeWidth="1" fill="none">
+          <path d="M 360 100 L 360 160" />
+          <path d="M 200 220 L 200 200 L 360 200 L 360 160" />
+          <path d="M 360 220 L 360 200" />
+          <path d="M 520 220 L 520 200 L 360 200" />
+          <path d="M 600 220 L 600 200 L 360 200" strokeDasharray="4 5" />
+        </g>
+
+        {/* Root */}
+        <TreeNode
+          x={250}
+          y={20}
+          w={220}
+          h={80}
+          label="root intent"
+          agent="orchestrator"
+          scope="DEX = Jupiter · 24h window"
+          budget="500 USDC"
+          tone="root"
+        />
+
+        {/* 3 children + 1 rejected */}
+        <TreeNode
+          x={90}
+          y={220}
+          w={220}
+          h={80}
+          label="child · research"
+          agent="research-agent"
+          scope="read-only"
+          budget="50 / 50 USDC"
+          tone="ok"
+        />
+        <TreeNode
+          x={250}
+          y={220}
+          w={220}
+          h={80}
+          label="child · execute"
+          agent="execute-agent"
+          scope="DEX = Jupiter"
+          budget="400 / 400 USDC"
+          tone="ok"
+        />
+        <TreeNode
+          x={410}
+          y={220}
+          w={220}
+          h={80}
+          label="child · audit"
+          agent="audit-agent"
+          scope="read-only"
+          budget="50 / 50 USDC"
+          tone="ok"
+        />
+        <TreeNode
+          x={580}
+          y={220}
+          w={130}
+          h={80}
+          label="rogue · denied"
+          agent="—"
+          scope="dex=Raydium"
+          budget="boundary"
+          tone="denied"
+        />
+
+        {/* Caption hint at root */}
+        <g>
+          <text
+            x="360"
+            y="340"
+            textAnchor="middle"
+            fontFamily="var(--font-mono-v2), monospace"
+            fontSize="11"
+            fill="oklch(0.66 0.012 230)"
+            letterSpacing="0.06em"
+          >
+            ↑ subset validated at derive · cumulative predicates evaluated at action
+          </text>
+          <text
+            x="360"
+            y="364"
+            textAnchor="middle"
+            fontFamily="var(--font-mono-v2), monospace"
+            fontSize="11"
+            fill="oklch(0.66 0.012 230)"
+            letterSpacing="0.06em"
+          >
+            walked via remaining_accounts at verify_authorizes
+          </text>
+        </g>
+      </svg>
+
+      <figcaption
+        className="t-small mt-6 pt-6"
+        style={{ borderTop: "1px solid var(--rule-soft)" }}
+      >
+        Real account shape on devnet. Root, three live children, one rejected
+        sibling. The denied node never settles — when its agent attempts an
+        action, the cumulative predicate walk reaches the root&apos;s
+        DEX = Jupiter constraint and the transaction reverts atomically.
+      </figcaption>
+    </figure>
+  );
+}
+
+function TreeNode({
+  x,
+  y,
+  w,
+  h,
+  label,
+  agent,
+  scope,
+  budget,
+  tone,
+}: {
+  x: number;
+  y: number;
+  w: number;
+  h: number;
+  label: string;
+  agent: string;
+  scope: string;
+  budget: string;
+  tone: "root" | "ok" | "denied";
+}) {
+  const stroke =
+    tone === "root"
+      ? "oklch(0.83 0.165 92)"
+      : tone === "denied"
+      ? "oklch(0.55 0.18 30)"
+      : "oklch(0.30 0.014 230)";
+  const labelColor =
+    tone === "root"
+      ? "oklch(0.83 0.165 92)"
+      : tone === "denied"
+      ? "oklch(0.55 0.18 30)"
+      : "oklch(0.66 0.012 230)";
+  const opacity = tone === "denied" ? 0.55 : 1;
+  return (
+    <g opacity={opacity}>
+      <rect
+        x={x}
+        y={y}
+        width={w}
+        height={h}
+        fill="oklch(0.20 0.012 230)"
+        stroke={stroke}
+        strokeWidth={tone === "root" ? 1.2 : 1}
+        strokeDasharray={tone === "denied" ? "4 4" : undefined}
+      />
+      <text
+        x={x + 14}
+        y={y + 22}
+        fontFamily="var(--font-mono-v2), monospace"
+        fontSize="10"
+        fill={labelColor}
+        letterSpacing="0.12em"
+      >
+        {label.toUpperCase()}
+      </text>
+      <text
+        x={x + 14}
+        y={y + 42}
+        fontFamily="var(--font-display), serif"
+        fontSize="14"
+        fill="oklch(0.95 0.008 80)"
+      >
+        {agent}
+      </text>
+      <text
+        x={x + 14}
+        y={y + 60}
+        fontFamily="var(--font-body), sans-serif"
+        fontSize="11"
+        fill="oklch(0.86 0.008 80)"
+      >
+        {scope}
+      </text>
+      <text
+        x={x + w - 14}
+        y={y + h - 10}
+        textAnchor="end"
+        fontFamily="var(--font-mono-v2), monospace"
+        fontSize="10"
+        fill="oklch(0.86 0.008 80)"
+      >
+        {budget}
+      </text>
+    </g>
+  );
+}
+
+/* ── The Boundary (the math denies it) ──────────────────────────────────── */
+function Boundary() {
+  return (
+    <section id="boundary" className="relative">
+      <div className="max-w-[1180px] mx-auto px-6 lg:px-10 py-24 lg:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          <div className="lg:col-span-7">
+            <Eyebrow>§ 02 · the boundary</Eyebrow>
+            <h2 className="t-h2 mt-6" style={{ color: "var(--cream)" }}>
+              When a sub-agent steps out of scope,
+              <br />
+              the transaction reverts. <em>Atomically.</em>
+            </h2>
+            <p className="t-body" style={{ marginTop: "var(--s-5)" }}>
+              <code className="font-mono">verify_authorizes</code> runs as a{" "}
+              <em>sibling</em> instruction in the same transaction as the
+              action. It reads the action via{" "}
+              <code className="font-mono">sysvar::instructions</code>, parses
+              it to an <code className="font-mono">ActionDescriptor</code>,
+              evaluates the leaf intent&apos;s predicate, then walks the
+              ancestor chain and evaluates each parent&apos;s predicate too.
+              If anything along the chain rejects, the whole transaction
+              reverts. The action never executes. Helius gets no fee. Jupiter
+              gets no order. Nothing settles.
+            </p>
+            <p className="t-body" style={{ marginTop: "var(--s-4)" }}>
+              No CPI from Fuin into the action program. No middleware to
+              integrate. The atomicity of Solana&apos;s transaction model is
+              the enforcement.
+            </p>
+          </div>
+
+          <div className="lg:col-span-5">
+            <CodeBlock
+              filename="atomic.tx"
+              lines={[
+                ["// ix 0  — Fuin verifier", "muted"],
+                ["fuin.verify_authorizes(intent, target_ix=1)", "code"],
+                ["  ↳ load IntentCommitment", "code"],
+                ["  ↳ parse target ix → ActionDescriptor", "code"],
+                ["  ↳ evaluate leaf predicate", "code"],
+                ["  ↳ walk ancestors via remaining_accounts", "code"],
+                ["    └─ root.predicate(action)  → ✗ Raydium", "deny"],
+                ["", "code"],
+                ["// ix 1  — the action", "muted"],
+                ["raydium.swap(in=USDC, out=SOL, ...)", "code"],
+                ["", "code"],
+                ["└── tx reverts. action never executes.", "deny"],
+              ]}
+            />
+            <p
+              className="t-small mt-4"
+              style={{ color: "var(--mute)", letterSpacing: "0.06em" }}
+            >
+              Live on devnet. Custom error{" "}
+              <code className="font-mono">ProgramNotAllowed</code>.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CodeBlock({
+  filename,
+  lines,
+}: {
+  filename: string;
+  lines: [string, "code" | "muted" | "deny"][];
+}) {
+  return (
+    <div
+      style={{
+        background: "var(--ink-rise)",
+        border: "1px solid var(--rule-soft)",
+      }}
+    >
+      <div
+        className="px-4 py-2 t-eyebrow flex items-center justify-between"
+        style={{ borderBottom: "1px solid var(--rule-soft)" }}
+      >
+        <span>{filename}</span>
+        <span style={{ fontSize: "0.65rem" }}>solana · sibling-ix model</span>
+      </div>
+      <pre
+        className="font-mono text-[0.85rem] leading-[1.7] px-4 py-5 overflow-x-auto"
+        style={{ color: "var(--cream-soft)" }}
+      >
+        {lines.map(([line, kind], i) => (
+          <div
+            key={i}
+            style={{
+              color:
+                kind === "muted"
+                  ? "var(--mute)"
+                  : kind === "deny"
+                  ? "var(--oxide)"
+                  : "var(--cream-soft)",
+              minHeight: "1lh",
+            }}
+          >
+            {line || " "}
+          </div>
+        ))}
+      </pre>
+    </div>
+  );
+}
+
+/* ── SDK ─────────────────────────────────────────────────────────────────── */
+function Sdk() {
+  return (
+    <section
+      id="sdk"
+      className="relative"
+      style={{ background: "var(--ink-deep)", borderTop: "1px solid var(--rule-soft)" }}
+    >
+      <div className="max-w-[1180px] mx-auto px-6 lg:px-10 py-24 lg:py-32">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 lg:gap-16 items-start">
+          <div className="lg:col-span-5">
+            <Eyebrow>§ 03 · the surface</Eyebrow>
+            <h2 className="t-h2 mt-6" style={{ color: "var(--cream)" }}>
+              Forty lines of TypeScript and your swarm runs under one signature.
+            </h2>
+            <p className="t-body" style={{ marginTop: "var(--s-5)" }}>
+              Install <code className="font-mono">@fuin-labs/sdk-v2</code>.
+              Sign a root intent. Derive children. Wrap any action behind{" "}
+              <code className="font-mono">verifyAuthorizes</code>. The SDK is
+              a thin shell over the on-chain program — no off-chain server,
+              no API key, no SaaS quota.
+            </p>
+            <p className="t-small mt-6">
+              Zero-integration mode is the default for any x402 service.
+              Helius and SendAI work unmodified — the SPL fee transfer only
+              lands when Fuin&apos;s preceding verify ix passed.
+            </p>
+          </div>
+
+          <div className="lg:col-span-7">
+            <CodeBlock
+              filename="trading-desk.ts"
+              lines={[
+                ["import { Fuin, GoalPredicate } from \"@fuin-labs/sdk-v2\";", "code"],
+                ["", "code"],
+                ["const fuin = new Fuin({ provider, idl });", "code"],
+                ["", "code"],
+                ["// 1. user signs the root", "muted"],
+                ["const root = await fuin.signRootIntent({", "code"],
+                ["  user, agent: orchestrator.publicKey,", "code"],
+                ["  predicate: GoalPredicate.composite()", "code"],
+                ["    .onlyOnDexes([JUPITER])", "code"],
+                ["    .withinTimeWindow(start, end)", "code"],
+                ["    .build(),", "code"],
+                ["  budget: 500_000_000n,", "code"],
+                ["  expiresAt: BigInt(now + 86400),", "code"],
+                ["});", "code"],
+                ["", "code"],
+                ["// 2. orchestrator spawns sub-agents", "muted"],
+                ["await fuin.deriveChildIntent({", "code"],
+                ["  parentAgent: orchestrator,", "code"],
+                ["  parent: root.pda,", "code"],
+                ["  childAgent: research.publicKey,", "code"],
+                ["  predicate: GoalPredicate.readOnly(),", "code"],
+                ["  budget: 50_000_000n, expiresAt, nonce: 1,", "code"],
+                ["});", "code"],
+                ["", "code"],
+                ["// 3. wrap any action behind a sibling verifier", "muted"],
+                ["await fuin.sendVerifiedAction({", "code"],
+                ["  agent: execute, intent: executePda,", "code"],
+                ["  ancestors: [root.pda],", "code"],
+                ["  actionIx: jupiterSwapIx,", "code"],
+                ["});", "code"],
+              ]}
+            />
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ── Live evidence (devnet/mainnet receipts) ─────────────────────────────── */
+function Evidence() {
+  return (
+    <section id="evidence" className="relative">
+      <div className="max-w-[1180px] mx-auto px-6 lg:px-10 py-24 lg:py-32">
+        <Eyebrow>§ 04 · evidence</Eyebrow>
+        <h2 className="t-h2 mt-6" style={{ color: "var(--cream)" }}>
+          Live on Solana. Click any line.
+        </h2>
+        <p className="t-body" style={{ marginTop: "var(--s-5)" }}>
+          The protocol ships, not the deck. Below: the program ID and a real
+          intent tree from a live demo run — open Solana Explorer and walk
+          the chain yourself.
+        </p>
+
+        <div className="mt-12">
+          <EvidenceRow
+            label="Program"
+            mono={PROGRAM_ID}
+            href={EXPLORER(PROGRAM_ID)}
+          />
+          <EvidenceRow
+            label="Root intent"
+            mono={DEMO_ROOT_PDA}
+            href={EXPLORER(DEMO_ROOT_PDA)}
+            note="signed by user · agent = orchestrator · 500 USDC budget"
+          />
+          <EvidenceRow
+            label="Research child"
+            mono="AyJCgX1bA7SECij2LdVZLRyeBMiKL71kEUsjFSDiiMvZ"
+            href={EXPLORER(
+              "AyJCgX1bA7SECij2LdVZLRyeBMiKL71kEUsjFSDiiMvZ"
+            )}
+            note="read-only · 50 USDC"
+          />
+          <EvidenceRow
+            label="Execute child"
+            mono="2KuKNXJtuGeESNeZLyb5YGZUrpsja824m62Kf9E67XMJ"
+            href={EXPLORER(
+              "2KuKNXJtuGeESNeZLyb5YGZUrpsja824m62Kf9E67XMJ"
+            )}
+            note="DEX = Jupiter · 400 USDC"
+          />
+          <EvidenceRow
+            label="Audit child"
+            mono="8BHTWBRnz8n7dwiuXue4YonAu7nC1xrg7tMrds2wEUGN"
+            href={EXPLORER(
+              "8BHTWBRnz8n7dwiuXue4YonAu7nC1xrg7tMrds2wEUGN"
+            )}
+            note="read-only · 50 USDC · daily report PDA"
+          />
+        </div>
+
+        <div
+          className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-16"
+          style={{ borderTop: "1px solid var(--rule-soft)", paddingTop: "var(--s-7)" }}
+        >
+          <div>
+            <Eyebrow>shipped</Eyebrow>
+            <ul className="mt-4 space-y-3 t-small" style={{ color: "var(--cream-soft)" }}>
+              <Line>v1 grant-funded, deployed</Line>
+              <Line>v2 on devnet, mainnet pending deploy</Line>
+              <Line>10/10 anchor integration tests green</Line>
+              <Line>
+                <span style={{ color: "var(--mute)" }}>full demo:</span>{" "}
+                <code className="font-mono">apps/swarm-demo</code>
+              </Line>
+            </ul>
+          </div>
+          <div>
+            <Eyebrow>roadmap (post-hack)</Eyebrow>
+            <ul className="mt-4 space-y-3 t-small" style={{ color: "var(--cream-soft)" }}>
+              <Line>open predicate registry · 3rd-party publishing</Line>
+              <Line>ZK-private intent commitments via Bonsol RISC0</Line>
+              <Line>cross-chain via ERC-8004</Line>
+              <Line>verifiable inference proofs · Bonsol</Line>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function EvidenceRow({
+  label,
+  mono,
+  href,
+  note,
+}: {
+  label: string;
+  mono: string;
+  href: string;
+  note?: string;
+}) {
+  return (
+    <a
+      href={href}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="grid grid-cols-1 md:grid-cols-12 gap-4 py-5 group transition-colors"
+      style={{ borderTop: "1px solid var(--rule-soft)" }}
+    >
+      <div
+        className="md:col-span-2 t-eyebrow"
+        style={{ alignSelf: "center", letterSpacing: "0.14em" }}
+      >
+        {label}
+      </div>
+      <div className="md:col-span-7 font-mono text-[0.88rem] break-all" style={{ color: "var(--cream)" }}>
+        {mono}
+      </div>
+      <div className="md:col-span-3 t-small flex items-center justify-between">
+        <span style={{ color: "var(--mute)" }}>{note}</span>
+        <span
+          aria-hidden
+          className="font-mono opacity-50 group-hover:opacity-100 transition-opacity"
+          style={{ color: "var(--ledger)" }}
+        >
+          ↗
+        </span>
+      </div>
+    </a>
+  );
+}
+
+function Line({ children }: { children: React.ReactNode }) {
+  return (
+    <li className="flex gap-3" style={{ paddingLeft: 0 }}>
+      <span style={{ color: "var(--ledger)", fontFamily: "var(--font-mono-v2), monospace" }}>
+        →
+      </span>
+      <span>{children}</span>
+    </li>
+  );
+}
+
+/* ── Footer ─────────────────────────────────────────────────────────────── */
+function Footer() {
+  return (
+    <footer
+      style={{
+        borderTop: "1px solid var(--rule-soft)",
+        background: "var(--ink-deep)",
+      }}
+    >
+      <div className="max-w-[1180px] mx-auto px-6 lg:px-10 py-16">
+        <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
+          <div className="md:col-span-5">
+            <div
+              className="font-display text-[1.15rem]"
+              style={{ color: "var(--cream)", letterSpacing: "0.02em" }}
+            >
+              Fuin
+            </div>
+            <p className="t-small mt-3" style={{ maxWidth: "42ch" }}>
+              Built by Fuin Labs. Backed by a Solana Foundation India grant.
+              Frontier hackathon submission · May 2026.
+            </p>
+          </div>
+
+          <FooterCol
+            title="Protocol"
+            items={[
+              ["Architecture", "https://github.com/Fuin-Labs/Fuin"],
+              ["v1 vault", "/dashboard"],
+              ["v2 audit", `/audit/${DEMO_ROOT_PDA}`],
+            ]}
+          />
+          <FooterCol
+            title="Developers"
+            items={[
+              ["@fuin-labs/sdk-v2", "https://github.com/Fuin-Labs/Fuin"],
+              ["Swarm demo", "https://github.com/Fuin-Labs/Fuin"],
+              ["Predicate registry", "#evidence"],
+            ]}
+          />
+          <FooterCol
+            title="Network"
+            items={[
+              ["Solana Explorer", EXPLORER(PROGRAM_ID)],
+              ["Devnet status", "https://status.solana.com/"],
+            ]}
+          />
+        </div>
+
+        <div
+          className="t-small mt-12 pt-6 flex flex-col md:flex-row justify-between gap-4"
+          style={{ borderTop: "1px solid var(--rule-soft)", color: "var(--mute)" }}
+        >
+          <span>
+            Open trust layer · {new Date().getFullYear()} · Apache-2.0
+          </span>
+          <span className="font-mono text-[0.75rem]" style={{ letterSpacing: "0.1em" }}>
+            FUIN-V2 / SWARM / {PROGRAM_ID.slice(0, 6)}…{PROGRAM_ID.slice(-4)}
+          </span>
+        </div>
+      </div>
+    </footer>
+  );
+}
+
+function FooterCol({
+  title,
+  items,
+}: {
+  title: string;
+  items: [string, string][];
+}) {
+  return (
+    <div className="md:col-span-2">
+      <Eyebrow>{title}</Eyebrow>
+      <ul className="mt-4 space-y-2.5 t-small">
+        {items.map(([label, href]) => (
+          <li key={label}>
+            <a
+              href={href}
+              className="hover:text-[var(--ledger)] transition-colors"
+              style={{ color: "var(--cream-soft)" }}
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+/* ── Page ───────────────────────────────────────────────────────────────── */
+export default function Home(): React.JSX.Element {
+  useV2BodyClass();
+  return (
+    <main className="min-h-screen relative" style={{ background: "var(--ink)" }}>
+      <Header />
+      <Hero />
+      <Shape />
+      <Boundary />
+      <Sdk />
+      <Evidence />
+      <Footer />
+    </main>
   );
 }

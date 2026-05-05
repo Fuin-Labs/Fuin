@@ -1,6 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
+import { Vollkorn, Schibsted_Grotesk, Fragment_Mono } from "next/font/google";
 import { GeistPixelSquare } from "geist/font/pixel";
 import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
@@ -15,9 +16,32 @@ const geistMono = localFont({
   variable: "--font-geist-mono",
 });
 
+const vollkorn = Vollkorn({
+  subsets: ["latin"],
+  variable: "--font-display",
+  weight: ["400", "500", "600", "700", "800"],
+  style: ["normal", "italic"],
+  display: "swap",
+});
+
+const schibsted = Schibsted_Grotesk({
+  subsets: ["latin"],
+  variable: "--font-body",
+  weight: ["400", "500", "600", "700"],
+  display: "swap",
+});
+
+const fragmentMono = Fragment_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono-v2",
+  weight: ["400"],
+  display: "swap",
+});
+
 export const metadata: Metadata = {
-  title: "Fuin — Programmable IAM on Solana",
-  description: "Fuin implements cryptographic seals for digital assets on Solana.",
+  title: "Fuin — open trust layer for AI agent swarms on Solana",
+  description:
+    "One human signature authorizes a hierarchical tree of AI agents. Every action attributable, every scope cryptographically derived from the root.",
 };
 
 export default function RootLayout({
@@ -28,13 +52,13 @@ export default function RootLayout({
   return (
     <html lang="en">
       <head />
-      <body className={`${geistSans.variable} ${geistMono.variable} ${GeistPixelSquare.variable} antialiased text-white bg-black h-full overflow-y-auto overflow-x-hidden`} style={{ fontFamily: "var(--font-geist-sans), sans-serif" }}>
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} ${GeistPixelSquare.variable} ${vollkorn.variable} ${schibsted.variable} ${fragmentMono.variable} antialiased`}
+      >
         {children}
-        <Script src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js" strategy="lazyOnload" />
         <Script
-          id="unicorn-script"
+          src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
           strategy="lazyOnload"
-          dangerouslySetInnerHTML={{ __html: `!function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();` }}
         />
         <Analytics />
       </body>
