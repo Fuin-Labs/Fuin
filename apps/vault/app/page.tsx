@@ -1,7 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect } from "react";
 import Link from "next/link";
+import { tokenize } from "./lib/tokenize";
 
 const PROGRAM_ID = "E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy";
 const DEMO_ROOT_PDA = "4BH2MJwZ5oHSY3u4eEGNuVXCdK3zWMa1YBXWxCEqGdAn";
@@ -17,18 +18,6 @@ function useV2BodyClass() {
 
 function Eyebrow({ children }: { children: React.ReactNode }) {
   return <span className="t-eyebrow">{children}</span>;
-}
-
-function Mono({ children }: { children: React.ReactNode }) {
-  return (
-    <span className="font-mono" style={{ color: "var(--cream-soft)" }}>
-      {children}
-    </span>
-  );
-}
-
-function HairlineRow() {
-  return <div className="rule-h" />;
 }
 
 /* ── Header ─────────────────────────────────────────────────────────────── */
@@ -84,6 +73,13 @@ function Header() {
           >
             Evidence
           </a>
+          <Link
+            href="/swarm"
+            className="hover:opacity-100 opacity-70 transition-opacity"
+            style={{ color: "var(--cream-soft)" }}
+          >
+            Run demo
+          </Link>
           <Link
             href={`/audit/${DEMO_ROOT_PDA}`}
             className="px-3 py-1.5 text-[0.85rem] font-mono"
@@ -169,18 +165,9 @@ function Hero() {
           className="v2-rise-late grid grid-cols-1 md:grid-cols-3 gap-8 mt-20"
           style={{ borderTop: "1px solid var(--rule-soft)", paddingTop: "var(--s-7)" }}
         >
-          <Stat
-            value="1 sig"
-            label="root authorization · all leaves derive from it"
-          />
-          <Stat
-            value="0 CPI"
-            label="sibling-instruction verifier · zero integration burden"
-          />
-          <Stat
-            value="∞ depth"
-            label="agent hierarchies bounded only by parent scope"
-          />
+          <Stat value="1 sig" label="root authorization · all leaves derive" />
+          <Stat value="0 CPI" label="sibling-ix model · zero integration" />
+          <Stat value="any depth" label="bounded only by parent scope" />
         </div>
       </div>
     </section>
@@ -242,7 +229,6 @@ function Shape() {
   );
 }
 
-/* The figure: a hand-laid SVG-ish diagram in CSS — root + 3 children + boundary attempt */
 function IntentTreeFigure() {
   return (
     <figure
@@ -257,119 +243,64 @@ function IntentTreeFigure() {
         figure 01 · live tree, autonomous trading desk
       </div>
 
-      <svg
-        viewBox="0 0 720 420"
-        className="w-full h-auto"
-        role="img"
-        aria-label="Hierarchical intent tree with one root, three live children, and one boundary-rejected attempt"
-      >
-        <defs>
-          <pattern
-            id="dot"
-            x="0"
-            y="0"
-            width="10"
-            height="10"
-            patternUnits="userSpaceOnUse"
-          >
-            <circle cx="1" cy="1" r="0.6" fill="oklch(0.30 0.014 230)" />
-          </pattern>
-        </defs>
+      {/* Desktop SVG */}
+      <div className="hidden lg:block">
+        <svg
+          viewBox="0 0 720 420"
+          className="w-full h-auto"
+          role="img"
+          aria-label="Hierarchical intent tree with one root, three live children, and one boundary-rejected attempt"
+        >
+          <defs>
+            <pattern
+              id="dot"
+              x="0"
+              y="0"
+              width="10"
+              height="10"
+              patternUnits="userSpaceOnUse"
+            >
+              <circle cx="1" cy="1" r="0.6" fill="oklch(0.30 0.014 230)" />
+            </pattern>
+          </defs>
 
-        {/* Connectors */}
-        <g stroke="oklch(0.30 0.014 230)" strokeWidth="1" fill="none">
-          <path d="M 360 100 L 360 160" />
-          <path d="M 200 220 L 200 200 L 360 200 L 360 160" />
-          <path d="M 360 220 L 360 200" />
-          <path d="M 520 220 L 520 200 L 360 200" />
-          <path d="M 600 220 L 600 200 L 360 200" strokeDasharray="4 5" />
-        </g>
+          {/* Connectors */}
+          <g stroke="oklch(0.30 0.014 230)" strokeWidth="1" fill="none">
+            <path d="M 360 100 L 360 160" />
+            <path d="M 200 220 L 200 200 L 360 200 L 360 160" />
+            <path d="M 360 220 L 360 200" />
+            <path d="M 520 220 L 520 200 L 360 200" />
+            <path d="M 600 220 L 600 200 L 360 200" strokeDasharray="4 5" />
+          </g>
 
-        {/* Root */}
-        <TreeNode
-          x={250}
-          y={20}
-          w={220}
-          h={80}
-          label="root intent"
-          agent="orchestrator"
-          scope="DEX = Jupiter · 24h window"
-          budget="500 USDC"
-          tone="root"
-        />
+          <TreeNode x={250} y={20} w={220} h={80} label="root intent" agent="orchestrator" scope="DEX = Jupiter · 24h window" budget="500 USDC" tone="root" />
+          <TreeNode x={90} y={220} w={220} h={80} label="child · research" agent="research-agent" scope="read-only" budget="50 / 50 USDC" tone="ok" />
+          <TreeNode x={250} y={220} w={220} h={80} label="child · execute" agent="execute-agent" scope="DEX = Jupiter" budget="400 / 400 USDC" tone="ok" />
+          <TreeNode x={410} y={220} w={220} h={80} label="child · audit" agent="audit-agent" scope="read-only" budget="50 / 50 USDC" tone="ok" />
+          <TreeNode x={580} y={220} w={130} h={80} label="rogue · denied" agent="—" scope="dex=Raydium" budget="boundary" tone="denied" />
 
-        {/* 3 children + 1 rejected */}
-        <TreeNode
-          x={90}
-          y={220}
-          w={220}
-          h={80}
-          label="child · research"
-          agent="research-agent"
-          scope="read-only"
-          budget="50 / 50 USDC"
-          tone="ok"
-        />
-        <TreeNode
-          x={250}
-          y={220}
-          w={220}
-          h={80}
-          label="child · execute"
-          agent="execute-agent"
-          scope="DEX = Jupiter"
-          budget="400 / 400 USDC"
-          tone="ok"
-        />
-        <TreeNode
-          x={410}
-          y={220}
-          w={220}
-          h={80}
-          label="child · audit"
-          agent="audit-agent"
-          scope="read-only"
-          budget="50 / 50 USDC"
-          tone="ok"
-        />
-        <TreeNode
-          x={580}
-          y={220}
-          w={130}
-          h={80}
-          label="rogue · denied"
-          agent="—"
-          scope="dex=Raydium"
-          budget="boundary"
-          tone="denied"
-        />
+          <g>
+            <text x="360" y="340" textAnchor="middle" fontFamily="var(--font-mono-v2), monospace" fontSize="11" fill="oklch(0.66 0.012 230)" letterSpacing="0.06em">
+              ↑ subset validated at derive · cumulative predicates evaluated at action
+            </text>
+            <text x="360" y="364" textAnchor="middle" fontFamily="var(--font-mono-v2), monospace" fontSize="11" fill="oklch(0.66 0.012 230)" letterSpacing="0.06em">
+              walked via remaining_accounts at verify_authorizes
+            </text>
+          </g>
+        </svg>
+      </div>
 
-        {/* Caption hint at root */}
-        <g>
-          <text
-            x="360"
-            y="340"
-            textAnchor="middle"
-            fontFamily="var(--font-mono-v2), monospace"
-            fontSize="11"
-            fill="oklch(0.66 0.012 230)"
-            letterSpacing="0.06em"
-          >
-            ↑ subset validated at derive · cumulative predicates evaluated at action
-          </text>
-          <text
-            x="360"
-            y="364"
-            textAnchor="middle"
-            fontFamily="var(--font-mono-v2), monospace"
-            fontSize="11"
-            fill="oklch(0.66 0.012 230)"
-            letterSpacing="0.06em"
-          >
-            walked via remaining_accounts at verify_authorizes
-          </text>
-        </g>
-      </svg>
+      {/* Mobile fallback — vertical card tree */}
+      <div className="lg:hidden flex flex-col gap-3">
+        <MobileNode tone="root" label="root intent" agent="orchestrator" scope="DEX = Jupiter · 24h window" budget="500 USDC" />
+        <MobileConnector />
+        <div className="grid grid-cols-1 gap-3 pl-4" style={{ borderLeft: "1px solid var(--rule-soft)" }}>
+          <MobileNode tone="ok" label="child · research" agent="research-agent" scope="read-only" budget="50 / 50 USDC" />
+          <MobileNode tone="ok" label="child · execute" agent="execute-agent" scope="DEX = Jupiter" budget="400 / 400 USDC" />
+          <MobileNode tone="ok" label="child · audit" agent="audit-agent" scope="read-only" budget="50 / 50 USDC" />
+          <MobileNode tone="denied" label="rogue · denied" agent="—" scope="dex=Raydium" budget="boundary" />
+        </div>
+      </div>
 
       <figcaption
         className="t-small mt-6 pt-6"
@@ -384,6 +315,67 @@ function IntentTreeFigure() {
   );
 }
 
+function MobileConnector() {
+  return (
+    <div
+      aria-hidden
+      style={{
+        width: "1px",
+        height: "20px",
+        background: "var(--rule-soft)",
+        marginLeft: "16px",
+      }}
+    />
+  );
+}
+
+function MobileNode({
+  tone,
+  label,
+  agent,
+  scope,
+  budget,
+}: {
+  tone: "root" | "ok" | "denied";
+  label: string;
+  agent: string;
+  scope: string;
+  budget: string;
+}) {
+  const accent =
+    tone === "root"
+      ? "var(--ledger)"
+      : tone === "denied"
+      ? "var(--oxide)"
+      : "var(--rule)";
+  const opacity = tone === "denied" ? 0.65 : 1;
+  return (
+    <div
+      style={{
+        background: "var(--ink)",
+        border: `1px solid ${accent}`,
+        padding: "12px 14px",
+        opacity,
+        ...(tone === "denied" ? { borderStyle: "dashed" } : {}),
+      }}
+    >
+      <div className="t-eyebrow" style={{ color: accent, fontSize: "0.66rem" }}>
+        {label}
+      </div>
+      <div className="font-display mt-1" style={{ fontSize: "1rem", color: "var(--cream)" }}>
+        {agent}
+      </div>
+      <div className="flex items-baseline justify-between mt-1">
+        <span className="t-small" style={{ color: "var(--cream-soft)" }}>
+          {scope}
+        </span>
+        <span className="font-mono text-[0.78rem]" style={{ color: "var(--cream-soft)" }}>
+          {budget}
+        </span>
+      </div>
+    </div>
+  );
+}
 function TreeNode({
   x,
   y,
@@ -561,22 +553,43 @@ function CodeBlock({
         className="font-mono text-[0.85rem] leading-[1.7] px-4 py-5 overflow-x-auto"
         style={{ color: "var(--cream-soft)" }}
       >
-        {lines.map(([line, kind], i) => (
-          <div
-            key={i}
-            style={{
-              color:
-                kind === "muted"
-                  ? "var(--mute)"
-                  : kind === "deny"
-                  ? "var(--oxide)"
-                  : "var(--cream-soft)",
-              minHeight: "1lh",
-            }}
-          >
-            {line || " "}
-          </div>
-        ))}
+        {lines.map(([line, kind], i) => {
+          if (kind !== "code") {
+            return (
+              <div
+                key={i}
+                style={{
+                  color: kind === "muted" ? "var(--mute)" : "var(--oxide)",
+                  minHeight: "1lh",
+                }}
+              >
+                {line || " "}
+              </div>
+            );
+          }
+          const spans = tokenize(line);
+          return (
+            <div key={i} style={{ color: "var(--cream-soft)", minHeight: "1lh" }}>
+              {line === ""
+                ? " "
+                : spans.map((s, j) => (
+                    <span
+                      key={j}
+                      style={{
+                        color:
+                          s.kind === "kw"
+                            ? "var(--ledger)"
+                            : s.kind === "str"
+                            ? "var(--cream)"
+                            : "var(--cream-soft)",
+                      }}
+                    >
+                      {s.text}
+                    </span>
+                  ))}
+            </div>
+          );
+        })}
       </pre>
     </div>
   );
@@ -802,7 +815,7 @@ function Footer() {
     >
       <div className="max-w-[1180px] mx-auto px-6 lg:px-10 py-16">
         <div className="grid grid-cols-1 md:grid-cols-12 gap-10">
-          <div className="md:col-span-5">
+          <div className="md:col-span-3">
             <div
               className="font-display text-[1.15rem]"
               style={{ color: "var(--cream)", letterSpacing: "0.02em" }}
@@ -828,7 +841,7 @@ function Footer() {
             items={[
               ["@fuin-labs/sdk-v2", "https://github.com/Fuin-Labs/Fuin"],
               ["Swarm demo", "https://github.com/Fuin-Labs/Fuin"],
-              ["Predicate registry", "#evidence"],
+              ["Predicate registry", null],
             ]}
           />
           <FooterCol
@@ -861,21 +874,33 @@ function FooterCol({
   items,
 }: {
   title: string;
-  items: [string, string][];
+  items: [string, string | null][];
 }) {
   return (
-    <div className="md:col-span-2">
+    <div className="md:col-span-3">
       <Eyebrow>{title}</Eyebrow>
       <ul className="mt-4 space-y-2.5 t-small">
         {items.map(([label, href]) => (
           <li key={label}>
-            <a
-              href={href}
-              className="hover:text-[var(--ledger)] transition-colors"
-              style={{ color: "var(--cream-soft)" }}
-            >
-              {label}
-            </a>
+            {href ? (
+              <a
+                href={href}
+                className="hover:text-[var(--ledger)] transition-colors"
+                style={{ color: "var(--cream-soft)" }}
+              >
+                {label}
+              </a>
+            ) : (
+              <span
+                style={{ color: "var(--mute)", cursor: "default" }}
+                aria-disabled="true"
+              >
+                {label}{" "}
+                <span className="font-mono" style={{ fontSize: "0.7rem", opacity: 0.6 }}>
+                  (soon)
+                </span>
+              </span>
+            )}
           </li>
         ))}
       </ul>
