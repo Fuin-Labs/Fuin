@@ -6,6 +6,8 @@
     "dev": "turbo run dev",
     "dev:vault": "turbo run dev --filter=vault",
     "dev:video": "turbo run dev --filter=video",
+    "relayer:dev": "pnpm --filter @fuin-labs/relayer dev",
+    "relayer:start": "pnpm --filter @fuin-labs/relayer start",
     "build:program": "cd programs/fuin && anchor build",
     "lint": "turbo run lint",
     "format": "prettier --write \"**/*.{ts,tsx,md}\"",
