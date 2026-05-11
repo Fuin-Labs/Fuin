@@ -2,7 +2,6 @@ import { Connection, Keypair, Transaction, VersionedTransaction } from "@solana/
 import { FuinClient } from "@fuin-labs/sdk";
 import bs58 from "bs58";
 
-/** Minimal Wallet compatible with AnchorProvider (avoids broken anchor.Wallet ESM export) */
 class NodeWallet {
   constructor(readonly payer: Keypair) {}
   get publicKey() { return this.payer.publicKey; }
@@ -20,6 +19,7 @@ export interface Config {
   keypair: Keypair;
   connection: Connection;
   client: FuinClient;
+  relayerUrl: string;
 }
 
 export function loadConfig(): Config {
@@ -47,5 +47,7 @@ export function loadConfig(): Config {
   const wallet = new NodeWallet(keypair);
   const client = new FuinClient(connection, wallet as any);
 
-  return { keypair, connection, client };
+  const relayerUrl = process.env.FUIN_RELAYER_URL ?? "http://127.0.0.1:8788";
+
+  return { keypair, connection, client, relayerUrl };
 }
