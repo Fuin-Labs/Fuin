@@ -1,4 +1,5 @@
 import * as anchor from "@coral-xyz/anchor";
+import BN from "bn.js";
 import {
   Connection,
   Keypair,
@@ -6,11 +7,13 @@ import {
   PublicKey,
   SystemProgram,
   Transaction,
+  TransactionInstruction,
 } from "@solana/web3.js";
 import type { WalletContextState } from "@solana/wallet-adapter-react";
 import { Fuin, GoalPredicate, GoalPredicateData } from "@fuin-labs/sdk-v2";
 
 const JUPITER = new PublicKey("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4");
+const SPL_TOKEN_PROGRAM_ID = new PublicKey("TokenkegQfeZyiNwAJbNbGKPFXCWuBvf9Ss623VQ5DA");
 import { FUIN_IDL } from "./idl";
 import type { StepEvent, SwarmRunResult } from "./types";
 
@@ -103,6 +106,24 @@ async function deriveChild(args: {
     expiresAt: args.expiresAt,
     nonce: args.nonce,
   });
+}
+
+const EXPECTED_REJECTION_MARKERS = [
+  "predicate",
+  "Predicate",
+  "DexNotAllowed",
+  "OutOfBounds",
+  "ScopeViolation",
+];
+
+function isExpectedRejection(e: unknown): boolean {
+  const msg = (e as { message?: string })?.message ?? String(e);
+  return EXPECTED_REJECTION_MARKERS.some((m) => msg.includes(m));
+}
+
+function firstLineOf(e: unknown): string {
+  const msg = (e as { message?: string })?.message ?? String(e);
+  return (msg.split("\n")[0] ?? msg).slice(0, 120);
 }
 
 export async function* runSwarmDemo(args: {
@@ -234,6 +255,69 @@ export async function* runSwarmDemo(args: {
     throw e;
   }
 
-  // ── Step 4 (rogue attempt) added in next task ───────────────────────────
-  throw new Error("flow not yet implemented past derive-children");
+  // ── Step 4: rogue boundary attempt ──────────────────────────────────────
+  yield { id: "rogue-reject", status: "running" };
+  try {
+    const fuinAsSubUser = makeFuin(args.connection, roles.subUser);
+    const subRoot = await fuinAsSubUser.signRootIntent({
+      user: roles.subUser,
+      agent: roles.subOrch.publicKey,
+      predicate: GoalPredicate.composite().onlyOnDexes([JUPITER]).build(),
+      budget: 100_000_000n,
+      expiresAt: BigInt(now + 3600),
+      nonce: Date.now() + 1,
+    });
+
+    const rogueChild = await deriveChild({
+      connection: args.connection,
+      parentAgent: roles.subOrch,
+      parent: subRoot.pda,
+      childAgent: roles.rogue.publicKey,
+      predicate: GoalPredicate.empty(),
+      budgetMicros: 50_000_000n,
+      expiresAt: BigInt(now + 1800),
+      nonce: 1,
+    });
+
+    const fakeSrc = Keypair.generate().publicKey;
+    const fakeDst = Keypair.generate().publicKey;
+    const splIx = new TransactionInstruction({
+      programId: SPL_TOKEN_PROGRAM_ID,
+      keys: [
+        { pubkey: fakeSrc, isSigner: false, isWritable: true },
+        { pubkey: fakeDst, isSigner: false, isWritable: true },
+        { pubkey: roles.rogue.publicKey, isSigner: true, isWritable: false },
+      ],
+      data: Buffer.concat([Buffer.from([3]), new (BN as any)(1).toArrayLike(Buffer, "le", 8)]),
+    });
+
+    const fuinAsRogue = makeFuin(args.connection, roles.rogue);
+    try {
+      await fuinAsRogue.sendVerifiedAction({
+        agent: roles.rogue,
+        intent: rogueChild.pda,
+        ancestors: [subRoot.pda],
+        actionIx: splIx,
+      });
+      yield {
+        id: "rogue-reject",
+        status: "failed",
+        error: "unexpected success — verify_authorizes did not reject the out-of-scope ix",
+      };
+    } catch (inner) {
+      if (isExpectedRejection(inner)) {
+        yield { id: "rogue-reject", status: "ok", reason: firstLineOf(inner) };
+      } else {
+        yield {
+          id: "rogue-reject",
+          status: "failed",
+          error: firstLineOf(inner),
+        };
+      }
+    }
+  } catch (e: any) {
+    yield { id: "rogue-reject", status: "failed", error: firstLineOf(e) };
+  }
+
+  return { rootPda: rootPda.toBase58() };
 }
