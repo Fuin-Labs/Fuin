@@ -61,8 +61,9 @@ export function SwarmRunner() {
         setEvents((prev) => ({ ...prev, [ev.id]: ev }));
       }
       if (result) setRootPda(result.rootPda);
-    } catch (e: any) {
-      setFatal(e?.message ?? String(e));
+    } catch (e) {
+      const msg = (e as { message?: string })?.message ?? String(e);
+      setFatal(msg);
     } finally {
       setRunning(false);
     }
