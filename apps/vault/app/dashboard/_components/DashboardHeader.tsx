@@ -2,7 +2,6 @@
 import React from "react";
 
 import { Menu } from "lucide-react";
-import { COLORS } from "../_lib/constants";
 import { WalletButton } from "./WalletButton";
 import { usePathname } from "next/navigation";
 import { useIsMobile } from "../_hooks/useMediaQuery";
@@ -28,25 +27,25 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps): 
     defaultTitle = "Vaults";
     defaultSubtitle = "Manage your delegated vaults.";
   } else if (pathname === "/dashboard/vaults/create") {
-    defaultTitle = "Deploy Vault";
-    defaultSubtitle = "Create a new smart account vault.";
+    defaultTitle = "Deploy vault";
+    defaultSubtitle = "Create a new smart-account vault.";
   } else if (pathname === "/dashboard/agent") {
-    defaultTitle = "Agent View";
+    defaultTitle = "Agent view";
     defaultSubtitle = "Delegate keys issued to your wallet.";
   } else if (pathname.startsWith("/dashboard/vaults/")) {
     const parts = pathname.split("/");
     const nonce = parts[3];
     if (parts[4] === "audit") {
-      defaultTitle = `Audit Logs`;
+      defaultTitle = "Audit logs";
       defaultSubtitle = `Vault #${nonce}`;
     } else if (parts[4] === "delegate" && parts[5] === "create") {
-      defaultTitle = `New Delegate`;
+      defaultTitle = "New delegate";
       defaultSubtitle = `Vault #${nonce}`;
     } else if (parts[4] === "delegate" && parts[5] === "openclaw") {
-      defaultTitle = `AI Agent Policy`;
+      defaultTitle = "AI agent policy";
       defaultSubtitle = `Vault #${nonce}`;
     } else if (parts[4] === "delegate" && parts[5] === "kid") {
-      defaultTitle = `Kid Policy`;
+      defaultTitle = "Kid policy";
       defaultSubtitle = `Vault #${nonce}`;
     } else {
       defaultTitle = `Vault #${nonce}`;
@@ -54,60 +53,95 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps): 
   }
 
   const displayTitle = headerCtx.title || title || defaultTitle;
-  const displaySubtitle = headerCtx.subtitle !== null ? headerCtx.subtitle : defaultSubtitle;
+  const displaySubtitle =
+    headerCtx.subtitle !== null ? headerCtx.subtitle : defaultSubtitle;
 
   return (
     <header
       style={{
-        height: "72px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "space-between",
-        padding: isMobile ? "0 16px" : "0 32px",
-        backgroundColor: "rgba(5, 5, 5, 0.6)",
-        backdropFilter: "blur(12px)",
-        WebkitBackdropFilter: "blur(12px)",
         position: "sticky",
         top: 0,
         zIndex: 40,
+        background: "color-mix(in oklch, var(--paper) 96%, transparent)",
+        backdropFilter: "blur(10px)",
+        WebkitBackdropFilter: "blur(10px)",
+        borderBottom: "1px solid var(--ink-black)",
       }}
     >
-      <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
-        {isMobile && onMenuToggle && (
-          <button
-            type="button"
-            onClick={onMenuToggle}
-            aria-label="Toggle navigation menu"
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              padding: "6px",
-              display: "flex",
-              alignItems: "center",
-            }}
-          >
-            <Menu size={22} color={COLORS.text} />
-          </button>
-        )}
-        {displayTitle && (
-          <div style={{ display: "flex", flexDirection: "column" }}>
-            <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-              <h1 style={{ color: COLORS.text, fontSize: isMobile ? "1rem" : "1.2rem", fontWeight: 700, margin: 0 }}>
+      {/* Hairline rule above — matches landing masthead */}
+      <div
+        aria-hidden
+        style={{
+          height: "1px",
+          background: "var(--ink-black)",
+          opacity: 0.35,
+        }}
+      />
+      <div
+        style={{
+          height: "76px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: isMobile ? "0 16px" : "0 32px",
+          gap: "24px",
+        }}
+      >
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          {isMobile && onMenuToggle && (
+            <button
+              type="button"
+              onClick={onMenuToggle}
+              aria-label="Toggle navigation menu"
+              style={{
+                background: "none",
+                border: "none",
+                cursor: "pointer",
+                padding: "6px",
+                display: "flex",
+                alignItems: "center",
+                color: "var(--ink-black)",
+              }}
+            >
+              <Menu size={22} />
+            </button>
+          )}
+          {displayTitle && (
+            <div style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+              <h1
+                style={{
+                  color: "var(--ink-black)",
+                  fontFamily: "var(--font-display), Georgia, serif",
+                  fontSize: isMobile ? "1.15rem" : "1.5rem",
+                  fontWeight: 500,
+                  letterSpacing: "-0.012em",
+                  lineHeight: 1,
+                  margin: 0,
+                }}
+              >
                 {displayTitle}
               </h1>
+              {!isMobile && displaySubtitle && (
+                <span
+                  style={{
+                    color: "var(--ink-mute)",
+                    fontFamily: "var(--font-mono-v2), monospace",
+                    fontSize: "0.64rem",
+                    letterSpacing: "0.22em",
+                    textTransform: "uppercase",
+                    lineHeight: 1,
+                  }}
+                >
+                  {displaySubtitle}
+                </span>
+              )}
             </div>
-            {!isMobile && displaySubtitle && (
-              <span style={{ color: COLORS.textDim, fontSize: "0.75rem", marginTop: "2px" }}>
-                {displaySubtitle}
-              </span>
-            )}
-          </div>
-        )}
-      </div>
-      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-        {headerCtx.action}
-        <WalletButton />
+          )}
+        </div>
+        <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+          {headerCtx.action}
+          <WalletButton />
+        </div>
       </div>
     </header>
   );

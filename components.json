@@ -1,0 +1,24 @@
+{
+  "$schema": "https://ui.shadcn.com/schema.json",
+  "style": "new-york",
+  "rsc": true,
+  "tsx": true,
+  "tailwind": {
+    "config": "",
+    "css": "apps/vault/app/globals.css",
+    "baseColor": "neutral",
+    "cssVariables": true,
+    "prefix": ""
+  },
+  "aliases": {
+    "components": "apps/vault/app/components",
+    "utils": "apps/vault/app/lib/utils",
+    "ui": "apps/vault/app/components/ui",
+    "lib": "apps/vault/app/lib",
+    "hooks": "apps/vault/app/hooks"
+  },
+  "iconLibrary": "lucide",
+  "registries": {
+    "@cult-ui": "https://cult-ui.com/r/{name}.json"
+  }
+}

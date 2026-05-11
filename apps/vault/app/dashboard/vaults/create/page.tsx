@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowLeft, ChevronDown, ChevronRight, Plus, Trash2 } from "lucide-react";
@@ -20,7 +20,7 @@ import { saveVault } from "../../_actions/vaults";
 export default function CreateVaultPage(): React.JSX.Element {
   const router = useRouter();
   const { client, connected, publicKey } = useFuinClient();
-  const { nextNonce } = useAutoNonce();
+  const { nextNonce, loading: nonceLoading } = useAutoNonce();
   const isMobile = useIsMobile();
 
   const { addToast } = useToast();
@@ -31,8 +31,14 @@ export default function CreateVaultPage(): React.JSX.Element {
   const [programInput, setProgramInput] = useState("");
   const [programsExpanded, setProgramsExpanded] = useState(false);
 
-  // Use auto-discovered nonce as default
-  const effectiveNonce = nonce === "" ? String(nextNonce) : nonce;
+  // Seed the input with the auto-discovered nonce once, then let the user edit freely.
+  const nonceSeededRef = useRef(false);
+  useEffect(() => {
+    if (!nonceSeededRef.current && !nonceLoading) {
+      setNonce(String(nextNonce));
+      nonceSeededRef.current = true;
+    }
+  }, [nextNonce, nonceLoading]);
 
   if (!connected) {
     return (
@@ -71,7 +77,7 @@ export default function CreateVaultPage(): React.JSX.Element {
     if (!client || !publicKey) throw new Error("Client not ready");
     const programKeys = allowedPrograms.map((a) => new PublicKey(a));
     const result = await client.createVault(
-      Number(effectiveNonce),
+      Number(nonce),
       Number(dailyCap),
       Number(perTxCap),
       programKeys
@@ -81,7 +87,7 @@ export default function CreateVaultPage(): React.JSX.Element {
     saveVault({
       pda: result.vault.toBase58(),
       guardian: publicKey.toBase58(),
-      nonce: Number(effectiveNonce),
+      nonce: Number(nonce),
     }).catch(() => {});
 
     return result.signature;
@@ -106,7 +112,7 @@ export default function CreateVaultPage(): React.JSX.Element {
         <div style={{ display: "flex", flexDirection: "column", gap: "20px" }}>
           <Input
             label="Vault Nonce"
-            value={effectiveNonce}
+            value={nonce}
             onChange={setNonce}
             type="number"
             hint="Unique identifier for this vault. Auto-filled with next available."
@@ -236,7 +242,7 @@ export default function CreateVaultPage(): React.JSX.Element {
             label="Create Vault"
             loadingLabel="Creating..."
             onClick={handleCreate}
-            onSuccess={() => router.push(`/dashboard/vaults/${effectiveNonce}`)}
+            onSuccess={() => router.push(`/dashboard/vaults/${nonce}`)}
             fullWidth
           />
         </div>

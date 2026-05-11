@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "lenis/dist/lenis.css";
 
 @theme {
   /* Fuin core tokens */
@@ -116,8 +117,9 @@
     --radius-full: 999px;
   }
 
-  /* ── Manifesto landing light mode — scoped via body.fuin-manifesto ── */
+  /* ── Bone-paper light theme — applies to any route via body.fuin-manifesto ── */
   body.fuin-manifesto {
+    /* Manifesto-native tokens (used by landing) */
     --paper:        oklch(0.93 0.018 80);
     --paper-rise:   oklch(0.90 0.020 80);
     --ink-black:    oklch(0.14 0.005 80);
@@ -126,6 +128,58 @@
     --rule-paper:   oklch(0.74 0.015 80);
     --crimson:      oklch(0.46 0.18 25);
     --crimson-low:  oklch(0.46 0.18 25 / 0.10);
+    --prussian:     oklch(0.38 0.13 252);
+    --prussian-low: oklch(0.38 0.13 252 / 0.10);
+    --prussian-soft:oklch(0.38 0.13 252 / 0.18);
+
+    /* Flip the dark-mode tokens so existing pages (audit, dashboard, docs)
+       inherit the light theme without any code changes */
+    --ink:          oklch(0.93 0.018 80);          /* page bg → paper */
+    --ink-deep:     oklch(0.90 0.020 80);          /* deeper bg → paper-rise */
+    --ink-rise:     oklch(0.96 0.012 80);          /* elevated surface → lighter paper */
+    --cream:        oklch(0.14 0.005 80);          /* primary text → ink-black */
+    --cream-soft:   oklch(0.32 0.010 80);          /* body text → ink-soft */
+    --mute:         oklch(0.55 0.010 80);          /* label text → ink-mute */
+    --rule:         oklch(0.62 0.020 80);          /* hairline strong → darker paper rule */
+    --rule-soft:    oklch(0.74 0.015 80);          /* hairline soft → paper rule */
+    --ledger:       oklch(0.46 0.18 25);           /* primary accent → crimson */
+    --ledger-low:   oklch(0.46 0.18 25 / 0.10);
+    --neon:         oklch(0.50 0.20 152);          /* secondary accent → deeper green for paper */
+    --neon-low:     oklch(0.50 0.20 152 / 0.10);
+    --oxide:        oklch(0.50 0.20 25);           /* danger → richer red for paper */
+    --lichen:       oklch(0.50 0.14 145);          /* ok-status → paper-friendly green */
+    --lichen-low:   oklch(0.50 0.14 145 / 0.10);
+
+    /* Flip the v1 legacy tokens (used by dashboard inline styles) */
+    --background:    #f0eadc;
+    --foreground:    #0a0a0a;
+    --bg-card:       rgba(10, 10, 10, 0.035);
+    --bg-card-hover: rgba(10, 10, 10, 0.07);
+    --bg-input:      rgba(10, 10, 10, 0.05);
+    --bg-elevated:   #e8e1cf;
+    --bg-sunken:     #d8d2c1;
+    --accent:        oklch(0.46 0.18 25);
+    --accent-glow:   oklch(0.46 0.18 25 / 0.18);
+    --accent-subtle: oklch(0.46 0.18 25 / 0.08);
+    --accent-border: oklch(0.46 0.18 25 / 0.22);
+    --text-primary:  #0a0a0a;
+    --text-secondary: rgba(10, 10, 10, 0.78);
+    --text-muted:    rgba(10, 10, 10, 0.55);
+    --text-dim:      rgba(10, 10, 10, 0.40);
+    --border:        rgba(10, 10, 10, 0.12);
+    --border-light:  rgba(10, 10, 10, 0.18);
+    --green:         oklch(0.50 0.20 145);
+    --green-subtle:  oklch(0.50 0.20 145 / 0.10);
+    --green-border:  oklch(0.50 0.20 145 / 0.25);
+    --red:           oklch(0.50 0.20 25);
+    --red-subtle:    oklch(0.50 0.20 25 / 0.10);
+    --red-border:    oklch(0.50 0.20 25 / 0.25);
+    --amber:         oklch(0.65 0.15 80);
+    --blue:          oklch(0.45 0.18 250);
+    --blue-subtle:   oklch(0.45 0.18 250 / 0.10);
+    --purple:        oklch(0.46 0.18 25);          /* collapse purple onto crimson */
+    --purple-subtle: oklch(0.46 0.18 25 / 0.10);
+
     background: var(--paper);
     color: var(--ink-black);
     font-family: var(--font-display), Georgia, serif;
@@ -141,22 +195,13 @@
     outline-offset: 3px;
   }
 
-  html:has(body.fuin-manifesto) {
-    scroll-snap-type: y proximity;
-    scroll-behavior: smooth;
-  }
-
-  @media (min-width: 1024px) {
-    body.fuin-manifesto .section-indicator {
-      display: flex !important;
-    }
-  }
+  /* Lenis owns smooth scroll on the manifesto page — no native smooth or snap here. */
 
   body.fuin-manifesto .receipt-row {
     transition: background 0.15s, padding-left 0.15s;
   }
   body.fuin-manifesto .receipt-row:hover {
-    background: var(--crimson-low);
+    background: var(--prussian-low);
     padding-left: 8px !important;
   }
 
@@ -189,6 +234,50 @@
     -webkit-font-smoothing: antialiased;
     text-rendering: optimizeLegibility;
   }
+}
+
+/* ── manifesto-specific motion + responsive ── */
+@keyframes fuin-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50%      { transform: scale(1.55); opacity: 0.45; }
+}
+
+@keyframes caret-blink {
+  0%, 70%, 100% { opacity: 1; }
+  20%, 50%      { opacity: 0; }
+}
+.animate-caret-blink {
+  animation: caret-blink 1.25s ease-in-out infinite;
+  /* Fallback bg so the cursor is visible regardless of bg-muted-foreground token */
+  background: rgb(212 212 212);
+}
+
+.manifesto-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(0, 0.85fr);
+  gap: clamp(40px, 5vw, 96px);
+  align-items: start;
+}
+.intent-ledger {
+  position: relative;
+}
+.intent-ledger::before,
+.intent-ledger::after {
+  content: "";
+  position: absolute;
+  width: 14px;
+  height: 14px;
+  border: 1px solid var(--ink-black);
+  background: var(--paper);
+}
+.intent-ledger::before { top: -8px;    left: -8px;    border-right: none; border-bottom: none; }
+.intent-ledger::after  { bottom: -8px; right: -8px;   border-left: none;  border-top: none; }
+
+@media (max-width: 900px) {
+  .manifesto-hero { grid-template-columns: 1fr; }
+}
+@media (max-width: 640px) {
+  .masthead-status-text { display: none; }
 }
 
 /* ── v2 typography utilities ── */

@@ -112,19 +112,18 @@ export default function VaultDetailPage({ params }: { params: Promise<{ nonce: s
               value={editValue}
               onChange={(e) => setEditValue(e.target.value)}
               onKeyDown={(e) => { if (e.key === "Enter") handleSaveLabel(); if (e.key === "Escape") setEditing(false); }}
-              placeholder="Vault name..."
+              placeholder="Vault name…"
               style={{
-                background: "transparent",
-                border: `1px solid ${COLORS.emeraldBorder}`,
-                borderRadius: "8px",
+                background: "var(--paper-rise)",
+                border: "1px solid var(--crimson)",
                 padding: "6px 12px",
-                color: COLORS.text,
-                fontSize: "1.8rem",
-                fontWeight: 800,
-                fontFamily: "inherit",
+                color: "var(--ink-black)",
+                fontFamily: "var(--font-display), Georgia, serif",
+                fontSize: "1.6rem",
+                fontWeight: 500,
+                letterSpacing: "-0.018em",
                 outline: "none",
-                letterSpacing: "-0.025em",
-                width: "300px",
+                width: "320px",
               }}
             />
             <button type="button" onClick={handleSaveLabel} style={{ background: "none", border: "none", cursor: "pointer", padding: "4px" }}>

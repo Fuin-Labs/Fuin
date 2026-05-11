@@ -217,27 +217,37 @@ export default function OpenClawDelegatePage({ params }: { params: Promise<{ non
             <div style={{
               marginTop: "10px",
               padding: "12px 14px",
-              borderRadius: "10px",
-              backgroundColor: "rgba(168, 85, 247, 0.06)",
-              border: "1px solid rgba(168, 85, 247, 0.15)",
-              fontSize: "0.8rem",
-              color: COLORS.textMuted,
-              lineHeight: 1.6,
+              background: "var(--paper-rise)",
+              border: "1px solid var(--ink-black)",
+              fontSize: "0.86rem",
+              fontFamily: "var(--font-display), Georgia, serif",
+              fontStyle: "italic",
+              color: "var(--ink-soft)",
+              lineHeight: 1.5,
             }}>
               Generate a new keypair from your terminal and paste the public key above:
               <pre style={{
-                margin: "8px 0 4px",
-                padding: "8px 10px",
-                borderRadius: "6px",
-                backgroundColor: "rgba(0, 0, 0, 0.3)",
-                fontFamily: "var(--font-geist-mono), monospace",
-                fontSize: "0.75rem",
-                color: COLORS.textSecondary,
+                margin: "10px 0 6px",
+                padding: "10px 12px",
+                background: "color-mix(in oklch, var(--ink-black) 5%, var(--paper))",
+                border: "1px solid var(--ink-black)",
+                fontFamily: "var(--font-mono-v2), monospace",
+                fontSize: "0.78rem",
+                letterSpacing: "0.01em",
+                color: "var(--ink-black)",
+                fontStyle: "normal",
                 overflowX: "auto",
                 whiteSpace: "pre",
               }}>solana-keygen new --outfile agent-key.json</pre>
-              <span style={{ fontSize: "0.75rem", color: COLORS.textDim }}>
-                Save the private key securely — your agent will need it to sign transactions.
+              <span style={{
+                fontFamily: "var(--font-mono-v2), monospace",
+                fontSize: "0.62rem",
+                letterSpacing: "0.2em",
+                textTransform: "uppercase",
+                color: "var(--ink-mute)",
+                fontStyle: "normal",
+              }}>
+                Save the private key securely — your agent will need it to sign.
               </span>
             </div>
           </div>
@@ -447,14 +457,14 @@ function CodeBlock({ children }: { children: string }) {
   return (
     <pre
       style={{
-        backgroundColor: "rgba(0, 0, 0, 0.4)",
-        border: `1px solid ${COLORS.border}`,
-        borderRadius: "10px",
+        background: "color-mix(in oklch, var(--ink-black) 5%, var(--paper))",
+        border: "1px solid var(--ink-black)",
         padding: "14px 16px",
         margin: "8px 0",
         fontSize: "0.8rem",
-        fontFamily: "var(--font-geist-mono), monospace",
-        color: COLORS.textSecondary,
+        fontFamily: "var(--font-mono-v2), monospace",
+        letterSpacing: "0.01em",
+        color: "var(--ink-black)",
         overflowX: "auto",
         lineHeight: 1.6,
         whiteSpace: "pre-wrap",

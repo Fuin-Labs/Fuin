@@ -163,8 +163,19 @@ export default function SessionDelegatePage({ params }: { params: Promise<{ nonc
 
   if (created) {
     const perms = parsePermissions(created.permissions);
-    const mcpSnippet = `"DELEGATE_PRIVATE_KEY": "${created.sessionSecret}",
-"FUIN_RELAYER_URL": "http://127.0.0.1:8788"`;
+    const mcpSnippet = `{
+  "mcpServers": {
+    "fuin": {
+      "command": "npx",
+      "args": ["tsx", "/home/jayant/Desktop/fuin/packages/mcp-server/src/index.ts"],
+      "env": {
+        "DELEGATE_PRIVATE_KEY": "${created.sessionSecret}",
+        "SOLANA_RPC_URL": "https://api.devnet.solana.com",
+        "FUIN_RELAYER_URL": "http://127.0.0.1:8788"
+      }
+    }
+  }
+}`;
     const explorerBase = "https://explorer.solana.com";
     const delegateExplorer = `${explorerBase}/address/${created.pda}?cluster=devnet`;
     const txExplorer = `${explorerBase}/tx/${created.txSignature}?cluster=devnet`;
@@ -207,15 +218,28 @@ export default function SessionDelegatePage({ params }: { params: Promise<{ nonc
           <CodeBlock value={created.sessionSecret} onCopy={() => handleCopy(created.sessionSecret, "Secret")} />
         </div>
 
-        {/* Block 2 — MCP env snippet */}
+        {/* Block 2 — Full MCP server config */}
         <GlassCard>
           <h3 style={{ color: COLORS.text, fontSize: "0.95rem", fontWeight: 700, margin: "0 0 6px" }}>
-            Paste into <code style={{ color: COLORS.emerald, fontFamily: "var(--font-geist-mono), monospace", fontSize: "0.85rem" }}>.mcp.json</code> env block
+            Add the <code style={{ color: COLORS.emerald, fontFamily: "var(--font-geist-mono), monospace", fontSize: "0.85rem" }}>fuin</code> server to <code style={{ color: COLORS.emerald, fontFamily: "var(--font-geist-mono), monospace", fontSize: "0.85rem" }}>.mcp.json</code>
           </h3>
-          <p style={{ color: COLORS.textMuted, fontSize: "0.82rem", margin: "0 0 12px", lineHeight: 1.5 }}>
-            Replace the existing <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>env</code> block in your Claude config, then restart Claude.
+          <p style={{ color: COLORS.textMuted, fontSize: "0.82rem", margin: "0 0 6px", lineHeight: 1.5 }}>
+            Open <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>.mcp.json</code> at your project root (Claude Code reads it from there).
+            If the file doesn&apos;t exist yet, create it — Claude Code will pick it up on next launch.
           </p>
-          <CodeBlock value={mcpSnippet} onCopy={() => handleCopy(mcpSnippet, "MCP snippet")} />
+          <p style={{ color: COLORS.textMuted, fontSize: "0.82rem", margin: "0 0 6px", lineHeight: 1.5 }}>
+            If you already have other MCP servers in <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>mcpServers</code> (e.g.{" "}
+            <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>shadcn</code>), keep them as-is — only merge the
+            {" "}<code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>fuin</code> entry below into the same block.
+          </p>
+          <p style={{ color: COLORS.textMuted, fontSize: "0.82rem", margin: "0 0 12px", lineHeight: 1.5 }}>
+            The snippet uses the free public devnet RPC at{" "}
+            <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>api.devnet.solana.com</code>{" "}
+            — fine for testing but rate-limited. For real use, swap{" "}
+            <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>SOLANA_RPC_URL</code>{" "}
+            with your own Helius / QuickNode / Triton endpoint.
+          </p>
+          <CodeBlock value={mcpSnippet} onCopy={() => handleCopy(mcpSnippet, "MCP config")} />
         </GlassCard>
 
         {/* Block 3 — Session summary */}
@@ -262,11 +286,27 @@ export default function SessionDelegatePage({ params }: { params: Promise<{ nonc
               Next Steps
             </h3>
             <ol style={{ color: COLORS.textMuted, fontSize: "0.88rem", lineHeight: 1.8, margin: 0, paddingLeft: "22px" }}>
-              <li>Copy the MCP env snippet above</li>
               <li>
-                Replace the existing <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>env</code> block in <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>.mcp.json</code> (project root)
+                Copy the JSON above and open{" "}
+                <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>.mcp.json</code>{" "}
+                at your project root (create the file if it doesn&apos;t exist)
               </li>
-              <li>Restart Claude Code</li>
+              <li>
+                Merge the{" "}
+                <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>fuin</code>{" "}
+                entry into{" "}
+                <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>mcpServers</code>{" "}
+                — leave any other servers (e.g.{" "}
+                <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>shadcn</code>) in place
+              </li>
+              <li>Restart Claude Code so it picks up the new server</li>
+              <li>
+                Run{" "}
+                <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>/mcp</code>{" "}
+                in Claude Code — you should see{" "}
+                <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>fuin</code>{" "}
+                listed as connected
+              </li>
               <li>
                 Ask the agent: <em>&ldquo;Send 0.01 SOL via transfer-sol from vault nonce {created.vaultNonce} to &lt;some address&gt;&rdquo;</em>
               </li>
@@ -454,16 +494,16 @@ function CodeBlock({ value, onCopy }: { value: string; onCopy: () => void }) {
     <div style={{ position: "relative" }}>
       <pre
         style={{
-          backgroundColor: "rgba(0, 0, 0, 0.45)",
-          border: `1px solid ${COLORS.border}`,
-          borderRadius: "2px",
-          padding: "14px 44px 14px 14px",
+          background: "color-mix(in oklch, var(--ink-black) 5%, var(--paper))",
+          border: "1px solid var(--ink-black)",
+          padding: "14px 48px 14px 14px",
           margin: 0,
-          fontSize: "0.78rem",
-          fontFamily: "var(--font-geist-mono), monospace",
-          color: COLORS.textSecondary,
+          fontSize: "0.8rem",
+          fontFamily: "var(--font-mono-v2), monospace",
+          letterSpacing: "0.01em",
+          color: "var(--ink-black)",
           overflowX: "auto",
-          lineHeight: 1.55,
+          lineHeight: 1.6,
           whiteSpace: "pre-wrap",
           wordBreak: "break-all",
         }}
@@ -477,15 +517,23 @@ function CodeBlock({ value, onCopy }: { value: string; onCopy: () => void }) {
           position: "absolute",
           top: "8px",
           right: "8px",
-          background: "rgba(0, 0, 0, 0.6)",
-          border: `1px solid ${COLORS.border}`,
-          borderRadius: "2px",
-          padding: "6px",
+          background: "var(--paper)",
+          border: "1px solid var(--ink-black)",
+          padding: "6px 8px",
           cursor: "pointer",
-          display: "flex",
+          display: "inline-flex",
           alignItems: "center",
           justifyContent: "center",
-          color: COLORS.textMuted,
+          color: "var(--ink-black)",
+          transition: "color 0.18s ease, border-color 0.18s ease, background-color 0.18s ease",
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.color = "var(--crimson)";
+          e.currentTarget.style.borderColor = "var(--crimson)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.color = "var(--ink-black)";
+          e.currentTarget.style.borderColor = "var(--ink-black)";
         }}
         aria-label="Copy"
       >
