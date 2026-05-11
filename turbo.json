@@ -5,7 +5,8 @@
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["$TURBO_DEFAULT$", ".env*"],
-      "outputs": [".next/**", "dist/**", "build/**", "target/idl/**", "target/deploy/**", "node_modules/.prisma/**"]
+      "outputs": [".next/**", "dist/**", "build/**", "target/idl/**", "target/deploy/**", "node_modules/.prisma/**"],
+      "env": ["NODE_ENV"]
     },
     "lint": {
       "dependsOn": ["^lint"]

@@ -1,0 +1,52 @@
+
+> fuin-swarm-demo@0.1.0 demo:devnet /home/jayant/Desktop/fuin/apps/swarm-demo
+> tsx src/run.ts devnet
+
+
+────────────────────────────────────────────────────────────
+  Fuin v2 swarm demo — devnet
+────────────────────────────────────────────────────────────
+  program           → E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy
+  fund user         → Cf6zcZJ3MD8hwfLVHzQrzfXGq2DQpq5QBsUbf9UxyQds
+  fund orchestrator → Erz9empW4s7pQVvMmbKjFLV9BgjuomBiuhhhTAEjWb9p
+  fund research     → 7csQtTimP28DyLWCD8rqMaTSzjEBdQSaixZDBkG5B7sz
+  fund executeAgent → 5mvob4oGTo3EwCa9YfpU7KfUnPjrphJSoZmwAbgRRdJX
+  fund audit        → DXeob3vQid7YSjCtTDhM9MMn1uoEgRJy6VFVEpLQtYMx
+
+────────────────────────────────────────────────────────────
+  Step 1 — User signs ROOT intent
+────────────────────────────────────────────────────────────
+  root pda          → HXLvvDgLdoa849EZ9TuBosJKZjxtLDR2UeJF6CcgWwB8
+  root sig          → 3ovfe3FXdsn3VrcqgqRc13T5HqAcMgbzT2aU9HQSmNcXJftBuzjXvxVfQY8Fb6kV92o4ZtB4eacGR9bR9j2w8tQF
+  budget            → 500 USDC
+  scope             → DEX=Jupiter, time-windowed 24h
+
+────────────────────────────────────────────────────────────
+  Step 2 — Orchestrator spawns 3 sub-agents
+────────────────────────────────────────────────────────────
+  research pda      → FuoucNLSZ2AkBY8GKdtXhUEGhMTmA5Ay77EMaoAmAS31
+  research sig      → 36ujm28He8qo3xXPuEsAHGiWNkUDus2DcDnwYSyVPkpVWdaZNJfEmzbXFNsy9vTvZ64Tty6HDtHVTNkAYYxh72bT
+  scope             → read-only, $50
+  execute pda       → 7sYWhQLsxD8qthiGMNVB7WBkpygfvTBS2a1FqLHNFzjb
+  execute sig       → 5kQHrgqj9F6o5gPL8UtB5LyWuy88ohY2XqW8MtfWYTNa6pk18zs9AcbzakQgDSbASFojNKm3TX8YjEtZg4kdRpwQ
+  scope             → Jupiter only, $400
+  audit pda         → 124Yot7MMa8LKQcTE1tM154X1gJXWtxTcL9Q1RfdKZyX
+  audit sig         → 4pe7ruLxHM9Kd2HXsyX8wMUG1PMMFMboixUKEdA9FWnaYmdUFN1UmmzvC8CPo2e1iLPrMhYBtYTFTAKHHwA4xGPA
+  scope             → read-only, $50
+  root remaining    → 0 (carved-out)
+
+────────────────────────────────────────────────────────────
+  Step 3 — Boundary attempt: 4th sub-agent on Raydium
+────────────────────────────────────────────────────────────
+  Orchestrator tries to derive a child whose predicate would
+  allow Raydium. Derive succeeds (parent attests by signing tx),
+  but at action time, parent's DEX=Jupiter rejects Raydium.
+  rogue child pda   → ADjWyYD9YHUz3MkNXgwpD2qtd66Tya9KSfVVu9aVqN1A
+  verify            → REJECTED ✓
+  reason            → Simulation failed. 
+
+────────────────────────────────────────────────────────────
+  Done
+────────────────────────────────────────────────────────────
+  explorer          → https://explorer.solana.com/address/HXLvvDgLdoa849EZ9TuBosJKZjxtLDR2UeJF6CcgWwB8?cluster=devnet
+

@@ -1,0 +1,2064 @@
+{
+  "address": "E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy",
+  "metadata": {
+    "name": "fuin",
+    "version": "0.1.0",
+    "spec": "0.1.0",
+    "description": "Created with Anchor"
+  },
+  "instructions": [
+    {
+      "name": "delegate_control",
+      "discriminator": [
+        229,
+        33,
+        220,
+        233,
+        130,
+        77,
+        101,
+        155
+      ],
+      "accounts": [
+        {
+          "name": "guardian",
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_vault"
+              }
+            ]
+          },
+          "relations": [
+            "delegate"
+          ]
+        },
+        {
+          "name": "delegate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_delegate"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce_vault",
+          "type": "u64"
+        },
+        {
+          "name": "nonce_delegate",
+          "type": "u64"
+        },
+        {
+          "name": "status",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "derive_child_intent",
+      "discriminator": [
+        214,
+        159,
+        195,
+        42,
+        231,
+        51,
+        224,
+        20
+      ],
+      "accounts": [
+        {
+          "name": "parent_agent",
+          "docs": [
+            "Parent agent attests by signing this transaction. Spec §3.4 hackathon shortcut:",
+            "tx-level signature on the derive_child_intent ix == parent attestation that",
+            "the proposed child predicate is a valid subset of the parent's authority."
+          ],
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "parent_intent",
+          "writable": true
+        },
+        {
+          "name": "child_agent"
+        },
+        {
+          "name": "child_intent",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  116,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "parent_intent.user",
+                "account": "Intent"
+              },
+              {
+                "kind": "account",
+                "path": "child_agent"
+              },
+              {
+                "kind": "arg",
+                "path": "child_nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "child_nonce",
+          "type": "u64"
+        },
+        {
+          "name": "child_predicate",
+          "type": {
+            "defined": {
+              "name": "GoalPredicate"
+            }
+          }
+        },
+        {
+          "name": "child_budget",
+          "type": "u64"
+        },
+        {
+          "name": "child_expires_at",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "execute_spl_transfer",
+      "discriminator": [
+        217,
+        43,
+        41,
+        90,
+        186,
+        51,
+        242,
+        30
+      ],
+      "accounts": [
+        {
+          "name": "relayer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "delegate_key",
+          "signer": true
+        },
+        {
+          "name": "guardian"
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "delegate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_delegate"
+              }
+            ]
+          }
+        },
+        {
+          "name": "vault_token_account",
+          "writable": true
+        },
+        {
+          "name": "destination_token_account",
+          "writable": true
+        },
+        {
+          "name": "mint"
+        },
+        {
+          "name": "token_program"
+        },
+        {
+          "name": "price_update"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce_vault",
+          "type": "u64"
+        },
+        {
+          "name": "nonce_delegate",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        },
+        {
+          "name": "feed_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "execute_swap",
+      "discriminator": [
+        56,
+        182,
+        124,
+        215,
+        155,
+        140,
+        157,
+        102
+      ],
+      "accounts": [
+        {
+          "name": "relayer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "delegate_key",
+          "signer": true
+        },
+        {
+          "name": "guardian"
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "delegate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_delegate"
+              }
+            ]
+          }
+        },
+        {
+          "name": "price_update"
+        },
+        {
+          "name": "lb_pair",
+          "writable": true
+        },
+        {
+          "name": "bin_array_bitmap_extension",
+          "optional": true
+        },
+        {
+          "name": "reserve_x",
+          "writable": true
+        },
+        {
+          "name": "reserve_y",
+          "writable": true
+        },
+        {
+          "name": "user_token_in",
+          "docs": [
+            "Vault's token account for the input token"
+          ],
+          "writable": true
+        },
+        {
+          "name": "user_token_out",
+          "docs": [
+            "Vault's token account for the output token"
+          ],
+          "writable": true
+        },
+        {
+          "name": "token_x_mint"
+        },
+        {
+          "name": "token_y_mint"
+        },
+        {
+          "name": "oracle",
+          "writable": true
+        },
+        {
+          "name": "host_fee_in",
+          "writable": true,
+          "optional": true
+        },
+        {
+          "name": "token_in_mint",
+          "docs": [
+            "Mint of the input token (for decimals in USD conversion)"
+          ]
+        },
+        {
+          "name": "token_x_program"
+        },
+        {
+          "name": "token_y_program"
+        },
+        {
+          "name": "event_authority"
+        },
+        {
+          "name": "dlmm_program",
+          "address": "LBUZKhRxPF3XUpBCjp4YzTKgLccjZhTSDM9YuVaPwxo"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce_vault",
+          "type": "u64"
+        },
+        {
+          "name": "nonce_delegate",
+          "type": "u64"
+        },
+        {
+          "name": "amount_in",
+          "type": "u64"
+        },
+        {
+          "name": "min_amount_out",
+          "type": "u64"
+        },
+        {
+          "name": "feed_id",
+          "type": "string"
+        }
+      ]
+    },
+    {
+      "name": "execute_transfer",
+      "discriminator": [
+        233,
+        126,
+        160,
+        184,
+        235,
+        206,
+        31,
+        119
+      ],
+      "accounts": [
+        {
+          "name": "relayer",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "delegate_key",
+          "signer": true
+        },
+        {
+          "name": "guardian"
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_vault"
+              }
+            ]
+          }
+        },
+        {
+          "name": "delegate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce_delegate"
+              }
+            ]
+          }
+        },
+        {
+          "name": "destination",
+          "writable": true
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce_vault",
+          "type": "u64"
+        },
+        {
+          "name": "nonce_delegate",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "freeze_vault",
+      "discriminator": [
+        144,
+        211,
+        63,
+        236,
+        97,
+        31,
+        170,
+        175
+      ],
+      "accounts": [
+        {
+          "name": "guardian",
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "init_vault",
+      "discriminator": [
+        77,
+        79,
+        85,
+        150,
+        33,
+        217,
+        52,
+        106
+      ],
+      "accounts": [
+        {
+          "name": "guardian",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        },
+        {
+          "name": "daily_cap",
+          "type": "u64"
+        },
+        {
+          "name": "per_tx_cap",
+          "type": "u64"
+        },
+        {
+          "name": "allowed_programs",
+          "type": {
+            "vec": "pubkey"
+          }
+        }
+      ]
+    },
+    {
+      "name": "issue_delegate",
+      "discriminator": [
+        92,
+        118,
+        198,
+        58,
+        211,
+        45,
+        226,
+        120
+      ],
+      "accounts": [
+        {
+          "name": "guardian",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "vault_nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "delegate",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  100,
+                  101,
+                  108,
+                  101,
+                  103,
+                  97,
+                  116,
+                  101
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "vault"
+              },
+              {
+                "kind": "arg",
+                "path": "delegate_nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "vault_nonce",
+          "type": "u64"
+        },
+        {
+          "name": "delegate_nonce",
+          "type": "u64"
+        },
+        {
+          "name": "delegate_key",
+          "type": "pubkey"
+        },
+        {
+          "name": "permissions",
+          "type": "u16"
+        },
+        {
+          "name": "daily_limit",
+          "type": "u64"
+        },
+        {
+          "name": "max_uses",
+          "type": "u32"
+        },
+        {
+          "name": "validity_in_secs",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "revoke_intent",
+      "discriminator": [
+        42,
+        248,
+        79,
+        132,
+        107,
+        96,
+        193,
+        153
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "signer": true
+        },
+        {
+          "name": "intent",
+          "writable": true
+        }
+      ],
+      "args": []
+    },
+    {
+      "name": "sign_root_intent",
+      "discriminator": [
+        30,
+        107,
+        127,
+        79,
+        167,
+        210,
+        56,
+        249
+      ],
+      "accounts": [
+        {
+          "name": "user",
+          "writable": true,
+          "signer": true
+        },
+        {
+          "name": "agent"
+        },
+        {
+          "name": "intent",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  105,
+                  110,
+                  116,
+                  101,
+                  110,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "user"
+              },
+              {
+                "kind": "account",
+                "path": "agent"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        },
+        {
+          "name": "goal_predicate",
+          "type": {
+            "defined": {
+              "name": "GoalPredicate"
+            }
+          }
+        },
+        {
+          "name": "budget",
+          "type": "u64"
+        },
+        {
+          "name": "expires_at",
+          "type": "i64"
+        }
+      ]
+    },
+    {
+      "name": "unfreeze_vault",
+      "discriminator": [
+        145,
+        244,
+        206,
+        234,
+        251,
+        250,
+        116,
+        183
+      ],
+      "accounts": [
+        {
+          "name": "guardian",
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        }
+      ]
+    },
+    {
+      "name": "update_vault",
+      "discriminator": [
+        67,
+        229,
+        185,
+        188,
+        226,
+        11,
+        210,
+        60
+      ],
+      "accounts": [
+        {
+          "name": "guardian",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        },
+        {
+          "name": "new_daily_cap",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "new_per_tx_cap",
+          "type": {
+            "option": "u64"
+          }
+        },
+        {
+          "name": "new_allow_list",
+          "type": {
+            "option": {
+              "vec": "pubkey"
+            }
+          }
+        },
+        {
+          "name": "new_deny_list",
+          "type": {
+            "option": {
+              "vec": "pubkey"
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "verify_authorizes",
+      "discriminator": [
+        43,
+        3,
+        63,
+        82,
+        209,
+        23,
+        92,
+        78
+      ],
+      "accounts": [
+        {
+          "name": "agent",
+          "signer": true
+        },
+        {
+          "name": "intent",
+          "writable": true
+        },
+        {
+          "name": "instructions_sysvar",
+          "address": "Sysvar1nstructions1111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "target_ix_index",
+          "type": "u8"
+        }
+      ]
+    },
+    {
+      "name": "withdraw",
+      "discriminator": [
+        183,
+        18,
+        70,
+        156,
+        148,
+        109,
+        161,
+        34
+      ],
+      "accounts": [
+        {
+          "name": "guardian",
+          "writable": true,
+          "signer": true,
+          "relations": [
+            "vault"
+          ]
+        },
+        {
+          "name": "vault",
+          "writable": true,
+          "pda": {
+            "seeds": [
+              {
+                "kind": "const",
+                "value": [
+                  118,
+                  97,
+                  117,
+                  108,
+                  116
+                ]
+              },
+              {
+                "kind": "account",
+                "path": "guardian"
+              },
+              {
+                "kind": "arg",
+                "path": "nonce"
+              }
+            ]
+          }
+        },
+        {
+          "name": "system_program",
+          "address": "11111111111111111111111111111111"
+        }
+      ],
+      "args": [
+        {
+          "name": "nonce",
+          "type": "u64"
+        },
+        {
+          "name": "amount",
+          "type": "u64"
+        }
+      ]
+    }
+  ],
+  "accounts": [
+    {
+      "name": "Delegate",
+      "discriminator": [
+        92,
+        145,
+        166,
+        111,
+        11,
+        38,
+        38,
+        247
+      ]
+    },
+    {
+      "name": "Intent",
+      "discriminator": [
+        247,
+        162,
+        35,
+        165,
+        254,
+        111,
+        129,
+        109
+      ]
+    },
+    {
+      "name": "PriceUpdateV2",
+      "discriminator": [
+        34,
+        241,
+        35,
+        99,
+        157,
+        126,
+        244,
+        205
+      ]
+    },
+    {
+      "name": "Vault",
+      "discriminator": [
+        211,
+        8,
+        232,
+        43,
+        2,
+        152,
+        117,
+        119
+      ]
+    }
+  ],
+  "events": [
+    {
+      "name": "AuthorizeEvent",
+      "discriminator": [
+        16,
+        209,
+        196,
+        11,
+        81,
+        13,
+        7,
+        226
+      ]
+    },
+    {
+      "name": "IntentRevoked",
+      "discriminator": [
+        230,
+        39,
+        243,
+        207,
+        194,
+        93,
+        78,
+        136
+      ]
+    },
+    {
+      "name": "IntentSigned",
+      "discriminator": [
+        162,
+        221,
+        142,
+        204,
+        198,
+        234,
+        97,
+        188
+      ]
+    }
+  ],
+  "errors": [
+    {
+      "code": 6000,
+      "name": "SessionInactive",
+      "msg": "Session is inactive or revoked."
+    },
+    {
+      "code": 6001,
+      "name": "InvalidSession",
+      "msg": "Session does not belong to this vault."
+    },
+    {
+      "code": 6002,
+      "name": "SessionExpired",
+      "msg": "Session has expired."
+    },
+    {
+      "code": 6003,
+      "name": "AddressNotWhitelisted",
+      "msg": "Destination address is not in the whitelist."
+    },
+    {
+      "code": 6004,
+      "name": "DailyLimitExceeded",
+      "msg": "Daily spending limit exceeded."
+    },
+    {
+      "code": 6005,
+      "name": "SessionLimitExceeded",
+      "msg": "Session Spending limit exceeded."
+    },
+    {
+      "code": 6006,
+      "name": "TxLimitExceeded",
+      "msg": "Transaction limit exceeded."
+    },
+    {
+      "code": 6007,
+      "name": "Overflow",
+      "msg": "Math Overflow."
+    },
+    {
+      "code": 6008,
+      "name": "WhitelistAccountsAreNotProvided",
+      "msg": "Whitelist Account are not provided"
+    },
+    {
+      "code": 6009,
+      "name": "MintMismatch",
+      "msg": "MintMismatch"
+    },
+    {
+      "code": 6010,
+      "name": "VaultOwnerMismatch",
+      "msg": "Vault Owner Mismatch"
+    },
+    {
+      "code": 6011,
+      "name": "InvalidPrice",
+      "msg": "Oracle price is invalid or negative."
+    },
+    {
+      "code": 6012,
+      "name": "PricingOverflow",
+      "msg": "Math overflow during pricing."
+    },
+    {
+      "code": 6013,
+      "name": "WhitelistFull",
+      "msg": "Max length reached"
+    },
+    {
+      "code": 6014,
+      "name": "InvalidAction",
+      "msg": "Invalid Action for Session Control"
+    },
+    {
+      "code": 6015,
+      "name": "VaultFrozen",
+      "msg": "Vault is frozen, no operations allowed"
+    },
+    {
+      "code": 6016,
+      "name": "PerTxLimitExceeded",
+      "msg": "Per-transaction limit exceeded"
+    },
+    {
+      "code": 6017,
+      "name": "ProgramNotAllowed",
+      "msg": "Program is not allowed by policy"
+    },
+    {
+      "code": 6018,
+      "name": "OutsideAllowedTime",
+      "msg": "Operation is outside allowed time window"
+    },
+    {
+      "code": 6019,
+      "name": "RequiresGuardianCosign",
+      "msg": "Transaction requires guardian co-signature"
+    },
+    {
+      "code": 6020,
+      "name": "PermissionDenied",
+      "msg": "Permission denied"
+    },
+    {
+      "code": 6021,
+      "name": "MaxUsesExceeded",
+      "msg": "Maximum uses exceeded"
+    },
+    {
+      "code": 6022,
+      "name": "DelegateExpired",
+      "msg": "Delegate has expired"
+    },
+    {
+      "code": 6023,
+      "name": "DelegateInactive",
+      "msg": "Delegate is inactive"
+    },
+    {
+      "code": 6024,
+      "name": "SwapFailed",
+      "msg": "Swap execution failed"
+    },
+    {
+      "code": 6025,
+      "name": "IntentRevoked",
+      "msg": "Intent has been revoked"
+    },
+    {
+      "code": 6026,
+      "name": "IntentExpired",
+      "msg": "Intent has expired"
+    },
+    {
+      "code": 6027,
+      "name": "IntentBudgetExceeded",
+      "msg": "Intent budget exceeded"
+    },
+    {
+      "code": 6028,
+      "name": "ChildBudgetTooLarge",
+      "msg": "Child intent budget exceeds parent remaining budget"
+    },
+    {
+      "code": 6029,
+      "name": "ChildExpiresAfterParent",
+      "msg": "Child intent expires after parent"
+    },
+    {
+      "code": 6030,
+      "name": "PolicyVersionMismatch",
+      "msg": "Child policy version mismatch with parent"
+    },
+    {
+      "code": 6031,
+      "name": "PredicateNotSubset",
+      "msg": "Child predicate is not a subset of parent predicate"
+    },
+    {
+      "code": 6032,
+      "name": "WrongParentReference",
+      "msg": "Wrong parent intent reference"
+    },
+    {
+      "code": 6033,
+      "name": "ActionExceedsScope",
+      "msg": "Action exceeds intent scope"
+    },
+    {
+      "code": 6034,
+      "name": "InvalidActionIndex",
+      "msg": "Action target index is invalid"
+    },
+    {
+      "code": 6035,
+      "name": "ActionParseFailed",
+      "msg": "Failed to parse action instruction"
+    },
+    {
+      "code": 6036,
+      "name": "ActionUnsupported",
+      "msg": "Action target is not a supported program"
+    },
+    {
+      "code": 6037,
+      "name": "DepthLimitExceeded",
+      "msg": "Intent depth limit exceeded"
+    },
+    {
+      "code": 6038,
+      "name": "UserMismatch",
+      "msg": "Mismatched user across intent chain"
+    },
+    {
+      "code": 6039,
+      "name": "AgentMismatch",
+      "msg": "Agent does not match intent"
+    },
+    {
+      "code": 6040,
+      "name": "BrokenAncestorChain",
+      "msg": "Ancestor chain in remaining_accounts is malformed"
+    },
+    {
+      "code": 6041,
+      "name": "ReadOnlyViolation",
+      "msg": "Read-only intent cannot spend"
+    },
+    {
+      "code": 6042,
+      "name": "StalePolicyVersion",
+      "msg": "Current policy version does not match intent"
+    }
+  ],
+  "types": [
+    {
+      "name": "AuthorizeEvent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "intent",
+            "type": "pubkey"
+          },
+          {
+            "name": "agent",
+            "type": "pubkey"
+          },
+          {
+            "name": "target_program",
+            "type": "pubkey"
+          },
+          {
+            "name": "spend",
+            "type": "u64"
+          },
+          {
+            "name": "ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Delegate",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "vault",
+            "type": "pubkey"
+          },
+          {
+            "name": "authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "permissions",
+            "type": "u16"
+          },
+          {
+            "name": "daily_limit",
+            "type": "u64"
+          },
+          {
+            "name": "daily_spent",
+            "type": "u64"
+          },
+          {
+            "name": "last_reset_epoch",
+            "type": "u64"
+          },
+          {
+            "name": "max_uses",
+            "type": "u32"
+          },
+          {
+            "name": "uses",
+            "type": "u32"
+          },
+          {
+            "name": "expiry",
+            "type": "i64"
+          },
+          {
+            "name": "is_active",
+            "type": "bool"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "GoalPredicate",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "flags",
+            "type": "u8"
+          },
+          {
+            "name": "price_token",
+            "type": "pubkey"
+          },
+          {
+            "name": "price_threshold_usd_micros",
+            "type": "u64"
+          },
+          {
+            "name": "price_oracle",
+            "type": "pubkey"
+          },
+          {
+            "name": "allowed_dexes",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "time_start_ts",
+            "type": "i64"
+          },
+          {
+            "name": "time_end_ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Intent",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "agent",
+            "type": "pubkey"
+          },
+          {
+            "name": "parent_intent",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "goal_predicate",
+            "type": {
+              "defined": {
+                "name": "GoalPredicate"
+              }
+            }
+          },
+          {
+            "name": "budget",
+            "type": "u64"
+          },
+          {
+            "name": "remaining_budget",
+            "type": "u64"
+          },
+          {
+            "name": "expires_at",
+            "type": "i64"
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "policy_version",
+            "type": "u32"
+          },
+          {
+            "name": "created_at",
+            "type": "i64"
+          },
+          {
+            "name": "revoked",
+            "type": "bool"
+          },
+          {
+            "name": "depth",
+            "type": "u8"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "IntentRevoked",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "intent",
+            "type": "pubkey"
+          },
+          {
+            "name": "by",
+            "type": "pubkey"
+          },
+          {
+            "name": "ts",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "IntentSigned",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "intent",
+            "type": "pubkey"
+          },
+          {
+            "name": "user",
+            "type": "pubkey"
+          },
+          {
+            "name": "agent",
+            "type": "pubkey"
+          },
+          {
+            "name": "parent",
+            "type": {
+              "option": "pubkey"
+            }
+          },
+          {
+            "name": "budget",
+            "type": "u64"
+          },
+          {
+            "name": "expires_at",
+            "type": "i64"
+          },
+          {
+            "name": "depth",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PolicySet",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "spending",
+            "type": {
+              "defined": {
+                "name": "SpendingPolicy"
+              }
+            }
+          },
+          {
+            "name": "programs",
+            "type": {
+              "defined": {
+                "name": "ProgramPolicy"
+              }
+            }
+          },
+          {
+            "name": "time",
+            "type": {
+              "defined": {
+                "name": "TimePolicy"
+              }
+            }
+          },
+          {
+            "name": "risk",
+            "type": {
+              "defined": {
+                "name": "RiskPolicy"
+              }
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceFeedMessage",
+      "repr": {
+        "kind": "c"
+      },
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "feed_id",
+            "docs": [
+              "`FeedId` but avoid the type alias because of compatibility issues with Anchor's `idl-build` feature."
+            ],
+            "type": {
+              "array": [
+                "u8",
+                32
+              ]
+            }
+          },
+          {
+            "name": "price",
+            "type": "i64"
+          },
+          {
+            "name": "conf",
+            "type": "u64"
+          },
+          {
+            "name": "exponent",
+            "type": "i32"
+          },
+          {
+            "name": "publish_time",
+            "docs": [
+              "The timestamp of this price update in seconds"
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "prev_publish_time",
+            "docs": [
+              "The timestamp of the previous price update. This field is intended to allow users to",
+              "identify the single unique price update for any moment in time:",
+              "for any time t, the unique update is the one such that prev_publish_time < t <= publish_time.",
+              "",
+              "Note that there may not be such an update while we are migrating to the new message-sending logic,",
+              "as some price updates on pythnet may not be sent to other chains (because the message-sending",
+              "logic may not have triggered). We can solve this problem by making the message-sending mandatory",
+              "(which we can do once publishers have migrated over).",
+              "",
+              "Additionally, this field may be equal to publish_time if the message is sent on a slot where",
+              "where the aggregation was unsuccesful. This problem will go away once all publishers have",
+              "migrated over to a recent version of pyth-agent."
+            ],
+            "type": "i64"
+          },
+          {
+            "name": "ema_price",
+            "type": "i64"
+          },
+          {
+            "name": "ema_conf",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "PriceUpdateV2",
+      "docs": [
+        "A price update account. This account is used by the Pyth Receiver program to store a verified price update from a Pyth price feed.",
+        "It contains:",
+        "- `write_authority`: The write authority for this account. This authority can close this account to reclaim rent or update the account to contain a different price update.",
+        "- `verification_level`: The [`VerificationLevel`] of this price update. This represents how many Wormhole guardian signatures have been verified for this price update.",
+        "- `price_message`: The actual price update.",
+        "- `posted_slot`: The slot at which this price update was posted."
+      ],
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "write_authority",
+            "type": "pubkey"
+          },
+          {
+            "name": "verification_level",
+            "type": {
+              "defined": {
+                "name": "VerificationLevel"
+              }
+            }
+          },
+          {
+            "name": "price_message",
+            "type": {
+              "defined": {
+                "name": "PriceFeedMessage"
+              }
+            }
+          },
+          {
+            "name": "posted_slot",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "ProgramPolicy",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "allow_list",
+            "type": {
+              "vec": "pubkey"
+            }
+          },
+          {
+            "name": "deny_list",
+            "type": {
+              "vec": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "RecoveryConfig",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "timeout_seconds",
+            "type": "i64"
+          },
+          {
+            "name": "last_guardian_activity",
+            "type": "i64"
+          },
+          {
+            "name": "backup_guardian",
+            "type": {
+              "option": "pubkey"
+            }
+          }
+        ]
+      }
+    },
+    {
+      "name": "RiskPolicy",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "max_slippage_bps",
+            "type": "u16"
+          },
+          {
+            "name": "require_cosign_above",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "SpendingPolicy",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "daily_cap",
+            "type": "u64"
+          },
+          {
+            "name": "per_tx_cap",
+            "type": "u64"
+          },
+          {
+            "name": "daily_spent",
+            "type": "u64"
+          },
+          {
+            "name": "last_reset_epoch",
+            "type": "u64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "TimePolicy",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "allowed_after",
+            "type": "i64"
+          },
+          {
+            "name": "allowed_before",
+            "type": "i64"
+          }
+        ]
+      }
+    },
+    {
+      "name": "Vault",
+      "type": {
+        "kind": "struct",
+        "fields": [
+          {
+            "name": "version",
+            "type": "u8"
+          },
+          {
+            "name": "state",
+            "type": {
+              "defined": {
+                "name": "VaultState"
+              }
+            }
+          },
+          {
+            "name": "guardian",
+            "type": "pubkey"
+          },
+          {
+            "name": "policies",
+            "type": {
+              "defined": {
+                "name": "PolicySet"
+              }
+            }
+          },
+          {
+            "name": "recovery",
+            "type": {
+              "defined": {
+                "name": "RecoveryConfig"
+              }
+            }
+          },
+          {
+            "name": "nonce",
+            "type": "u64"
+          },
+          {
+            "name": "bump",
+            "type": "u8"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VaultState",
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Active"
+          },
+          {
+            "name": "Frozen"
+          },
+          {
+            "name": "Draining"
+          }
+        ]
+      }
+    },
+    {
+      "name": "VerificationLevel",
+      "docs": [
+        "Pyth price updates are bridged to all blockchains via Wormhole.",
+        "Using the price updates on another chain requires verifying the signatures of the Wormhole guardians.",
+        "The usual process is to check the signatures for two thirds of the total number of guardians, but this can be cumbersome on Solana because of the transaction size limits,",
+        "so we also allow for partial verification.",
+        "",
+        "This enum represents how much a price update has been verified:",
+        "- If `Full`, we have verified the signatures for two thirds of the current guardians.",
+        "- If `Partial`, only `num_signatures` guardian signatures have been checked.",
+        "",
+        "# Warning",
+        "Using partially verified price updates is dangerous, as it lowers the threshold of guardians that need to collude to produce a malicious price update."
+      ],
+      "type": {
+        "kind": "enum",
+        "variants": [
+          {
+            "name": "Partial",
+            "fields": [
+              {
+                "name": "num_signatures",
+                "type": "u8"
+              }
+            ]
+          },
+          {
+            "name": "Full"
+          }
+        ]
+      }
+    }
+  ]
+}

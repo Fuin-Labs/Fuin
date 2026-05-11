@@ -12,6 +12,7 @@ import {
   predicateSummary,
   FUIN_V2_PROGRAM_ID,
 } from "../../lib/fuin-rpc";
+import { labelFor } from "../../lib/known-programs";
 
 const EXPLORER = (addr: string) =>
   `https://explorer.solana.com/address/${addr}?cluster=devnet`;
@@ -123,7 +124,14 @@ function Header({ pda }: { pda: string }) {
     >
       <div className="max-w-[1280px] mx-auto px-6 lg:px-10 h-14 flex items-center justify-between">
         <div className="flex items-baseline gap-4">
-          <Link href="/" className="font-display text-[1.05rem]" style={{ color: "var(--cream)" }}>
+          <Link
+            href="/"
+            className="font-display text-[1.05rem] inline-flex items-baseline gap-2"
+            style={{ color: "var(--cream)" }}
+          >
+            <span className="font-mono" style={{ color: "var(--mute)", fontSize: "0.8rem" }}>
+              ←
+            </span>
             Fuin
           </Link>
           <span className="t-eyebrow" style={{ fontSize: "0.7rem" }}>
@@ -319,12 +327,13 @@ function NodeRow({
         className="t-eyebrow"
         style={{
           color: accent,
-          fontSize: "0.7rem",
+          fontSize: "0.66rem",
           letterSpacing: "0.18em",
-          minWidth: "40px",
+          minWidth: "72px",
+          whiteSpace: "nowrap",
         }}
       >
-        d{node.depth}
+        depth · {node.depth}
       </span>
       <div>
         <div className="flex items-baseline gap-3">
@@ -410,18 +419,28 @@ function Detail({ node }: { node: IntentNode }) {
         </ul>
         {node.goalPredicate.allowedDexes.length > 0 && (
           <div className="mt-4 space-y-1">
-            {node.goalPredicate.allowedDexes.map((d) => (
-              <a
-                key={d}
-                href={EXPLORER(d)}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="block font-mono text-[0.78rem] hover:underline"
-                style={{ color: "var(--mute)" }}
-              >
-                {shortAddr(d, 8, 6)}
-              </a>
-            ))}
+            {node.goalPredicate.allowedDexes.map((d) => {
+              const known = labelFor(d);
+              return (
+                <a
+                  key={d}
+                  href={EXPLORER(d)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="block text-[0.82rem] hover:underline"
+                  style={{ color: "var(--cream-soft)" }}
+                >
+                  {known && (
+                    <span style={{ color: "var(--ledger)", marginRight: "8px" }}>
+                      {known}
+                    </span>
+                  )}
+                  <span className="font-mono" style={{ color: "var(--mute)" }}>
+                    {shortAddr(d, 8, 6)}
+                  </span>
+                </a>
+              );
+            })}
           </div>
         )}
       </div>
@@ -546,16 +565,20 @@ function ErrorPanel({ msg, pda }: { msg: string; pda: string }) {
       <div className="mt-6 t-small">
         Confirm the PDA is on devnet (program{" "}
         <code className="font-mono">{shortAddr(FUIN_V2_PROGRAM_ID.toBase58(), 6, 6)}</code>).
-        Try the demo root from the homepage:{" "}
-        <Link
-          href="/audit/4BH2MJwZ5oHSY3u4eEGNuVXCdK3zWMa1YBXWxCEqGdAn"
-          className="underline"
-          style={{ color: "var(--ledger)" }}
-        >
-          open demo
-        </Link>
-        .
       </div>
+      <Link
+        href="/audit/4BH2MJwZ5oHSY3u4eEGNuVXCdK3zWMa1YBXWxCEqGdAn"
+        className="inline-flex items-center gap-2 mt-6 font-mono text-[0.9rem]"
+        style={{
+          background: "var(--ledger)",
+          color: "var(--ink)",
+          padding: "12px 20px",
+          letterSpacing: "0.03em",
+        }}
+      >
+        Open the demo tree
+        <span aria-hidden>→</span>
+      </Link>
     </div>
   );
 }

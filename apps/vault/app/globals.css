@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 @theme {
-  /* v2 (swarm) tokens */
+  /* Fuin core tokens */
   --color-ink: var(--ink);
   --color-ink-deep: var(--ink-deep);
   --color-ink-rise: var(--ink-rise);
@@ -12,6 +12,8 @@
   --color-mute: var(--mute);
   --color-ledger: var(--ledger);
   --color-ledger-low: var(--ledger-low);
+  --color-neon: var(--neon);
+  --color-neon-low: var(--neon-low);
   --color-oxide: var(--oxide);
   --color-lichen: var(--lichen);
   --color-lichen-low: var(--lichen-low);
@@ -39,20 +41,27 @@
 
 @layer base {
   :root {
-    /* ── v2 palette (OKLCH, ink-blue-black + cream + ledger-yellow accent) ── */
-    --ink: oklch(0.16 0.014 230);
-    --ink-deep: oklch(0.13 0.012 230);
-    --ink-rise: oklch(0.20 0.012 230);
-    --rule: oklch(0.30 0.014 230);
-    --rule-soft: oklch(0.24 0.012 230);
-    --cream: oklch(0.95 0.008 80);
-    --cream-soft: oklch(0.86 0.008 80);
-    --mute: oklch(0.66 0.012 230);
-    --ledger: oklch(0.83 0.165 92);
-    --ledger-low: oklch(0.83 0.165 92 / 0.14);
-    --oxide: oklch(0.55 0.18 30);
+    /* ── Solana-coded palette (purple primary, green secondary, near-black base) ── */
+    --ink: oklch(0.10 0.014 280);
+    --ink-deep: oklch(0.07 0.010 280);
+    --ink-rise: oklch(0.14 0.016 280);
+    --rule: oklch(0.28 0.020 280);
+    --rule-soft: oklch(0.20 0.015 280);
+    --cream: oklch(0.97 0 0);
+    --cream-soft: oklch(0.85 0.006 280);
+    --mute: oklch(0.55 0.020 280);
+    --ledger: oklch(0.62 0.27 295);            /* Solana purple #9945FF */
+    --ledger-low: oklch(0.62 0.27 295 / 0.14);
+    --neon: oklch(0.85 0.27 152);              /* Solana green #14F195 */
+    --neon-low: oklch(0.85 0.27 152 / 0.14);
+    --oxide: oklch(0.62 0.22 25);
     --lichen: oklch(0.70 0.10 145);
     --lichen-low: oklch(0.70 0.10 145 / 0.14);
+
+    /* Gradient (Solana purple → green) for big type + CTAs */
+    --accent-grad: linear-gradient(135deg, oklch(0.62 0.27 295) 0%, oklch(0.85 0.27 152) 100%);
+    --accent-grad-soft: linear-gradient(135deg, oklch(0.62 0.27 295 / 0.18) 0%, oklch(0.85 0.27 152 / 0.18) 100%);
+    --accent-glow: radial-gradient(ellipse 80% 60% at 50% 0%, oklch(0.62 0.27 295 / 0.18), transparent 70%);
 
     /* ── v1 tokens (kept) ── */
     --background: #000000;
@@ -105,6 +114,50 @@
     --radius-lg: 16px;
     --radius-xl: 24px;
     --radius-full: 999px;
+  }
+
+  /* ── Manifesto landing light mode — scoped via body.fuin-manifesto ── */
+  body.fuin-manifesto {
+    --paper:        oklch(0.93 0.018 80);
+    --paper-rise:   oklch(0.90 0.020 80);
+    --ink-black:    oklch(0.14 0.005 80);
+    --ink-soft:     oklch(0.32 0.010 80);
+    --ink-mute:     oklch(0.55 0.010 80);
+    --rule-paper:   oklch(0.74 0.015 80);
+    --crimson:      oklch(0.46 0.18 25);
+    --crimson-low:  oklch(0.46 0.18 25 / 0.10);
+    background: var(--paper);
+    color: var(--ink-black);
+    font-family: var(--font-display), Georgia, serif;
+  }
+
+  body.fuin-manifesto ::selection {
+    background: var(--crimson);
+    color: var(--paper);
+  }
+
+  body.fuin-manifesto a:focus-visible {
+    outline: 1px solid var(--crimson);
+    outline-offset: 3px;
+  }
+
+  html:has(body.fuin-manifesto) {
+    scroll-snap-type: y proximity;
+    scroll-behavior: smooth;
+  }
+
+  @media (min-width: 1024px) {
+    body.fuin-manifesto .section-indicator {
+      display: flex !important;
+    }
+  }
+
+  body.fuin-manifesto .receipt-row {
+    transition: background 0.15s, padding-left 0.15s;
+  }
+  body.fuin-manifesto .receipt-row:hover {
+    background: var(--crimson-low);
+    padding-left: 8px !important;
   }
 
   html, body { max-width: 100vw; }
@@ -245,11 +298,11 @@
   border-radius: 12px !important;
   color: #ffffff !important;
 }
-.wallet-adapter-button:hover { background-color: rgba(250, 204, 21, 0.1) !important; }
+.wallet-adapter-button:hover { background-color: oklch(0.62 0.27 295 / 0.18) !important; }
 .wallet-adapter-modal-list li { border-radius: 12px !important; }
 .wallet-adapter-button-trigger {
-  background-color: #FACC15 !important;
-  color: #050505 !important;
+  background: var(--accent-grad) !important;
+  color: oklch(0.10 0.014 280) !important;
   border-radius: 10px !important;
   font-weight: 700 !important;
 }

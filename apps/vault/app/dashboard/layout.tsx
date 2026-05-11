@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { WalletProviders } from "../_providers/WalletProviders";
 import { FuinProvider } from "../_providers/FuinProvider";
 import { ToastProvider } from "./_providers/ToastProvider";
@@ -17,14 +17,15 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isMobile = useIsMobile();
 
+  useEffect(() => {
+    document.body.classList.add("v2");
+    return () => document.body.classList.remove("v2");
+  }, []);
+
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: COLORS.bg, fontFamily: "'Geist', sans-serif" }}>
+    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: COLORS.bg }}>
       <DashboardSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} isCollapsed={isCollapsed} onToggleCollapse={() => setIsCollapsed(!isCollapsed)} />
       <div style={{ flex: 1, marginLeft: isMobile ? 0 : (isCollapsed ? "80px" : "260px"), transition: "margin-left 0.2s ease", display: "flex", flexDirection: "column", position: "relative" }}>
-        {/* Decorative elements */}
-        <div style={{ position: "fixed", inset: 0, zIndex: 0, pointerEvents: "none", backgroundImage: "linear-gradient(to right, rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 1px, transparent 1px)", backgroundSize: "32px 32px", WebkitMaskImage: "radial-gradient(circle at center top, black 10%, transparent 80%)" }} />
-        <div style={{ position: "fixed", top: 0, right: 0, width: "600px", height: "600px", background: "radial-gradient(circle, rgba(52,211,153,0.05) 0%, transparent 60%)", pointerEvents: "none", zIndex: 0 }} />
-
         <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", flex: 1 }}>
           <DashboardHeader onMenuToggle={() => setSidebarOpen(true)} />
           <main style={{ flex: 1, padding: isMobile ? "16px" : "32px" }}>
