@@ -6,6 +6,7 @@ import { Keystore } from "./keystore.js";
 import { demoRoutes } from "./routes/demo.js";
 import { intentsRoutes } from "./routes/intents.js";
 import { actionsRoutes } from "./routes/actions.js";
+import { paymasterRoutes } from "./routes/paymaster.js";
 
 const config = loadConfig();
 const idl = loadFuinIdl();
@@ -27,6 +28,7 @@ app.get("/", (c) =>
 app.route("/demo", demoRoutes(config, keystore));
 app.route("/intents", intentsRoutes(config, keystore, idl));
 app.route("/actions", actionsRoutes(config, keystore, idl));
+app.route("/paymaster", paymasterRoutes(config));
 
 serve(
   { fetch: app.fetch, port: config.port, hostname: config.host },
