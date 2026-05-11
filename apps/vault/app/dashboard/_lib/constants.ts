@@ -1,46 +1,44 @@
-
-
+// v1 keys preserved; values rewired to v2 OKLCH tokens.
+// All values are CSS expressions consumed as inline style strings.
 export const COLORS = {
-  bg: "#000000",
-  bgCard: "rgba(255, 255, 255, 0.04)",
-  bgCardHover: "rgba(255, 255, 255, 0.08)",
-  bgInput: "rgba(255, 255, 255, 0.05)",
-  emerald: "#34d399",
-  emeraldGlow: "rgba(52, 211, 153, 0.4)",
-  emeraldSubtle: "rgba(52, 211, 153, 0.1)",
-  emeraldBorder: "rgba(52, 211, 153, 0.2)",
-  text: "#ffffff",
-  textSecondary: "rgba(255, 255, 255, 0.8)",
-  textMuted: "rgba(255, 255, 255, 0.5)",
-  textDim: "rgba(255, 255, 255, 0.35)",
-  border: "rgba(255, 255, 255, 0.1)",
-  borderLight: "rgba(255, 255, 255, 0.15)",
-  green: "#22c55e",
-  greenSubtle: "rgba(34, 197, 94, 0.1)",
-  greenBorder: "rgba(34, 197, 94, 0.3)",
-  red: "#ef4444",
-  redSubtle: "rgba(239, 68, 68, 0.1)",
-  redBorder: "rgba(239, 68, 68, 0.3)",
-  blue: "#3b82f6",
-  blueSubtle: "rgba(59, 130, 246, 0.1)",
-  amber: "#f59e0b",
-  purple: "#a855f7",
-  purpleSubtle: "rgba(168, 85, 247, 0.1)",
+  bg: "var(--ink)",
+  bgCard: "var(--ink-rise)",
+  bgCardHover:
+    "color-mix(in oklch, var(--ink-rise), var(--cream) 4%)",
+  bgInput: "var(--ink-deep)",
+  emerald: "var(--ledger)",
+  emeraldGlow: "transparent",
+  emeraldSubtle: "var(--ledger-low)",
+  emeraldBorder: "var(--ledger)",
+  text: "var(--cream)",
+  textSecondary: "var(--cream-soft)",
+  textMuted: "var(--mute)",
+  textDim: "var(--rule)",
+  border: "var(--rule-soft)",
+  borderLight: "var(--rule)",
+  green: "var(--lichen)",
+  greenSubtle: "var(--lichen-low)",
+  greenBorder: "var(--lichen)",
+  red: "var(--oxide)",
+  redSubtle: "color-mix(in oklch, var(--oxide), transparent 80%)",
+  redBorder: "var(--oxide)",
+  blue: "var(--mute)",
+  blueSubtle: "var(--ink-rise)",
+  amber: "var(--ledger)",
+  purple: "var(--mute)",
+  purpleSubtle: "var(--ink-rise)",
 };
 
 export const GLASS_STYLE = {
   backgroundColor: COLORS.bgCard,
   border: `1px solid ${COLORS.border}`,
-  borderRadius: "24px",
-  backdropFilter: "blur(12px)",
-  WebkitBackdropFilter: "blur(12px)",
-  boxShadow: "inset 0 1px 1px rgba(255, 255, 255, 0.05), 0 4px 6px -1px rgba(0, 0, 0, 0.5)",
+  borderRadius: "2px",
+  // blur and box-shadow intentionally removed for v2 flat surfaces
 };
 
 export const GLASS_CARD_HOVER = {
-  y: -4,
-  boxShadow: `0 20px 40px rgba(0,0,0,0.5), inset 0 0 0 1px ${COLORS.emeraldBorder}`,
   backgroundColor: COLORS.bgCardHover,
+  // y-lift and emerald-glow shadow intentionally removed
 };
 
 export const MOTION_FADE_IN = {
