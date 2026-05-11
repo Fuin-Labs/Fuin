@@ -2,8 +2,8 @@
 import React from "react";
 
 import { useState } from "react";
-import { WalletProviders } from "./_providers/WalletProviders";
-import { FuinProvider } from "./_providers/FuinProvider";
+import { WalletProviders } from "../_providers/WalletProviders";
+import { FuinProvider } from "../_providers/FuinProvider";
 import { ToastProvider } from "./_providers/ToastProvider";
 import { DashboardSidebar } from "./_components/DashboardSidebar";
 import { DashboardHeader } from "./_components/DashboardHeader";
