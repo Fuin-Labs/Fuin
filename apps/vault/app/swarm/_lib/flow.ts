@@ -137,8 +137,8 @@ export async function* runSwarmDemo(args: {
   let fundSig: string;
   try {
     fundSig = await fundAllInOneTx(args.connection, args.funder, roles);
-  } catch (e: any) {
-    yield { id: "fund", status: "failed", error: e?.message ?? String(e) };
+  } catch (e) {
+    yield { id: "fund", status: "failed", error: firstLineOf(e) };
     throw e;
   }
   yield { id: "fund", status: "ok", sig: fundSig };
@@ -166,8 +166,8 @@ export async function* runSwarmDemo(args: {
     });
     rootPda = out.pda;
     rootSig = out.sig;
-  } catch (e: any) {
-    yield { id: "sign-root", status: "failed", error: e?.message ?? String(e) };
+  } catch (e) {
+    yield { id: "sign-root", status: "failed", error: firstLineOf(e) };
     throw e;
   }
   yield {
@@ -200,8 +200,8 @@ export async function* runSwarmDemo(args: {
       sig: r.sig,
       scope: "read-only · $50",
     };
-  } catch (e: any) {
-    yield { id: "derive-research", status: "failed", error: e?.message ?? String(e) };
+  } catch (e) {
+    yield { id: "derive-research", status: "failed", error: firstLineOf(e) };
     throw e;
   }
 
@@ -225,8 +225,8 @@ export async function* runSwarmDemo(args: {
       sig: r.sig,
       scope: "Jupiter only · $400",
     };
-  } catch (e: any) {
-    yield { id: "derive-execute", status: "failed", error: e?.message ?? String(e) };
+  } catch (e) {
+    yield { id: "derive-execute", status: "failed", error: firstLineOf(e) };
     throw e;
   }
 
@@ -250,8 +250,8 @@ export async function* runSwarmDemo(args: {
       sig: r.sig,
       scope: "read-only · $50",
     };
-  } catch (e: any) {
-    yield { id: "derive-audit", status: "failed", error: e?.message ?? String(e) };
+  } catch (e) {
+    yield { id: "derive-audit", status: "failed", error: firstLineOf(e) };
     throw e;
   }
 
@@ -288,7 +288,7 @@ export async function* runSwarmDemo(args: {
         { pubkey: fakeDst, isSigner: false, isWritable: true },
         { pubkey: roles.rogue.publicKey, isSigner: true, isWritable: false },
       ],
-      data: Buffer.concat([Buffer.from([3]), new (BN as any)(1).toArrayLike(Buffer, "le", 8)]),
+      data: Buffer.concat([Buffer.from([3]), new BN(1).toArrayLike(Buffer, "le", 8)]),
     });
 
     const fuinAsRogue = makeFuin(args.connection, roles.rogue);
@@ -315,7 +315,7 @@ export async function* runSwarmDemo(args: {
         };
       }
     }
-  } catch (e: any) {
+  } catch (e) {
     yield { id: "rogue-reject", status: "failed", error: firstLineOf(e) };
   }
 
