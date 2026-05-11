@@ -8,7 +8,9 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import type { WalletContextState } from "@solana/wallet-adapter-react";
-import { Fuin } from "@fuin-labs/sdk-v2";
+import { Fuin, GoalPredicate } from "@fuin-labs/sdk-v2";
+
+const JUPITER = new PublicKey("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4");
 import { FUIN_IDL } from "./idl";
 import type { StepEvent, SwarmRunResult } from "./types";
 
@@ -98,6 +100,41 @@ export async function* runSwarmDemo(args: {
   }
   yield { id: "fund", status: "ok", sig: fundSig };
 
-  // ── Steps 2–4 are added in subsequent tasks ─────────────────────────────
-  throw new Error("flow not yet implemented past funding");
+  const now = Math.floor(Date.now() / 1000);
+
+  // ── Step 2: user signs root intent ──────────────────────────────────────
+  yield { id: "sign-root", status: "running" };
+  let rootPda: PublicKey;
+  let rootSig: string;
+  try {
+    const fuinAsUser = makeFuin(args.connection, roles.user);
+    const rootPredicate = GoalPredicate.composite()
+      .onlyOnDexes([JUPITER])
+      .withinTimeWindow(now - 3600, now + 24 * 3600)
+      .build();
+    const rootNonce = Date.now();
+    const out = await fuinAsUser.signRootIntent({
+      user: roles.user,
+      agent: roles.orchestrator.publicKey,
+      predicate: rootPredicate,
+      budget: 500_000_000n,
+      expiresAt: BigInt(now + 24 * 3600),
+      nonce: rootNonce,
+    });
+    rootPda = out.pda;
+    rootSig = out.sig;
+  } catch (e: any) {
+    yield { id: "sign-root", status: "failed", error: e?.message ?? String(e) };
+    throw e;
+  }
+  yield {
+    id: "sign-root",
+    status: "ok",
+    pda: rootPda.toBase58(),
+    sig: rootSig,
+    scope: "Jupiter · 24h · 500 USDC",
+  };
+
+  // ── Step 3 (children) added in next task ────────────────────────────────
+  throw new Error("flow not yet implemented past sign-root");
 }
