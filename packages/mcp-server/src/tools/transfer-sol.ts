@@ -1,7 +1,15 @@
 import { z } from "zod";
-import { PublicKey } from "@solana/web3.js";
+import { PublicKey, SystemProgram, Transaction } from "@solana/web3.js";
+import { BN } from "bn.js";
+import { findDelegatePda, findVaultPda } from "@fuin-labs/sdk";
 import type { Config } from "../config.js";
 import { resolveContext } from "../resolve.js";
+import {
+  relayerGet,
+  relayerPost,
+  formatRelayerError,
+  RelayerHttpError,
+} from "../relayer-client.js";
 
 export const transferSolSchema = {
   guardian: z.string().optional().describe("Guardian wallet public key (base58). Auto-resolved if omitted."),
@@ -59,6 +67,23 @@ function parseAnchorError(error: any): string {
   return msg;
 }
 
+interface PaymasterInfo {
+  feePayer: string;
+  programId: string;
+  cluster: "devnet" | "mainnet-beta" | "custom";
+}
+
+// Module-level cache: the paymaster pubkey is fixed for the relayer's lifetime,
+// so we fetch it once on first use.
+let cachedPaymaster: PublicKey | null = null;
+
+async function getPaymaster(config: Config): Promise<PublicKey> {
+  if (cachedPaymaster) return cachedPaymaster;
+  const info = await relayerGet<PaymasterInfo>(config.relayerUrl, "/paymaster/info");
+  cachedPaymaster = new PublicKey(info.feePayer);
+  return cachedPaymaster;
+}
+
 export async function transferSol(
   config: Config,
   args: {
@@ -78,14 +103,59 @@ export async function transferSol(
     return { content: [{ type: "text" as const, text: error.message }], isError: true };
   }
 
+  let paymaster: PublicKey;
   try {
-    const txSig = await config.client.transferSol(
+    paymaster = await getPaymaster(config);
+  } catch (error: any) {
+    const text = `Failed to fetch paymaster info from relayer: ${formatRelayerError(error)}`;
+    return { content: [{ type: "text" as const, text }], isError: true };
+  }
+
+  try {
+    const bnVaultNonce = new BN(ctx.vaultNonce);
+    const bnDelegateNonce = new BN(ctx.delegateNonce);
+    const [vaultPda] = findVaultPda(
       ctx.guardian,
-      ctx.vaultNonce,
-      ctx.delegateNonce,
-      destination,
-      args.amount_sol,
-      config.keypair
+      bnVaultNonce,
+      config.client.program.programId
+    );
+    const [delegatePda] = findDelegatePda(
+      vaultPda,
+      bnDelegateNonce,
+      config.client.program.programId
+    );
+
+    const amountLamports = new BN(Math.round(args.amount_sol * 1_000_000_000));
+
+    const ix = await config.client.program.methods
+      .executeTransfer!(bnVaultNonce, bnDelegateNonce, amountLamports)
+      .accounts({
+        relayer: paymaster,
+        delegateKey: config.keypair.publicKey,
+        guardian: ctx.guardian,
+        vault: vaultPda,
+        delegate: delegatePda,
+        destination,
+        systemProgram: SystemProgram.programId,
+      })
+      .instruction();
+
+    const tx = new Transaction().add(ix);
+    tx.feePayer = paymaster;
+    const { blockhash } = await config.connection.getLatestBlockhash("confirmed");
+    tx.recentBlockhash = blockhash;
+
+    // Session key partial-signs; relayer will add the paymaster signature.
+    tx.partialSign(config.keypair);
+
+    const serializedTx = tx
+      .serialize({ requireAllSignatures: false })
+      .toString("base64");
+
+    const { sig: txSig } = await relayerPost<{ sig: string }>(
+      config.relayerUrl,
+      "/paymaster/sign-and-submit",
+      { serializedTx }
     );
 
     const cluster = config.connection.rpcEndpoint.includes("devnet")
@@ -104,13 +174,20 @@ export async function transferSol(
       ``,
       `Amount: ${args.amount_sol} SOL`,
       `Destination: ${args.destination}`,
+      `Fee payer (paymaster): ${paymaster.toBase58()}`,
+      `Session key: ${config.keypair.publicKey.toBase58()}`,
       `Transaction: ${txSig}`,
       `Explorer: ${explorerUrl}`,
     ].join("\n");
 
     return { content: [{ type: "text" as const, text }] };
   } catch (error: any) {
-    const explanation = parseAnchorError(error);
+    // Surface relayer-side rejections distinctly from anchor errors.
+    const explanation =
+      error instanceof RelayerHttpError
+        ? formatRelayerError(error)
+        : parseAnchorError(error);
+
     const text = [
       `Transfer failed: ${explanation}`,
       ``,
@@ -120,6 +197,8 @@ export async function transferSol(
       `  Delegate Nonce: ${ctx.delegateNonce}`,
       `  Destination: ${args.destination}`,
       `  Amount: ${args.amount_sol} SOL`,
+      `  Fee payer (paymaster): ${paymaster.toBase58()}`,
+      `  Session key: ${config.keypair.publicKey.toBase58()}`,
     ].join("\n");
 
     return { content: [{ type: "text" as const, text }], isError: true };
