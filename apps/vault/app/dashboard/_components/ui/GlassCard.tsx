@@ -14,10 +14,17 @@ interface GlassCardProps {
   style?: CSSProperties;
 }
 
-export function GlassCard({ children, padding = "32px", hover = false, accent, onClick, style }: GlassCardProps): React.JSX.Element {
+export function GlassCard({
+  children,
+  padding = "24px",
+  hover = false,
+  accent,
+  onClick,
+  style,
+}: GlassCardProps): React.JSX.Element {
   return (
     <motion.div
-      initial={{ opacity: 0, y: 20 }}
+      initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
       whileHover={hover ? GLASS_CARD_HOVER : undefined}

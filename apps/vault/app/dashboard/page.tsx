@@ -68,8 +68,6 @@ export default function DashboardPage(): React.JSX.Element {
       animate={{ opacity: 1 }}
       style={{ width: "100%", maxWidth: "1200px", margin: "0 auto" }}
     >
-      
-
       {/* Stat Cards */}
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: "16px", marginBottom: "32px" }}>
         <GlassCard>
@@ -78,19 +76,27 @@ export default function DashboardPage(): React.JSX.Element {
               style={{
                 width: "36px",
                 height: "36px",
-                borderRadius: "10px",
+                borderRadius: "2px",
                 backgroundColor: COLORS.emeraldSubtle,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid ${COLORS.emeraldBorder}`,
+                border: `1px solid ${COLORS.border}`,
               }}
             >
               <Database size={18} color={COLORS.emerald} />
             </div>
-            <span style={{ fontSize: "0.8rem", color: COLORS.textDim }}>Total Vaults</span>
+            <span
+              className="t-eyebrow"
+              style={{ fontSize: "0.72rem" }}
+            >
+              vaults
+            </span>
           </div>
-          <span style={{ fontSize: "2rem", fontWeight: 800, color: COLORS.text }}>
+          <span
+            className="font-display"
+            style={{ fontSize: "2.4rem", color: COLORS.text, letterSpacing: "-0.01em", lineHeight: 1 }}
+          >
             {vaults.length}
           </span>
         </GlassCard>
@@ -101,22 +107,25 @@ export default function DashboardPage(): React.JSX.Element {
               style={{
                 width: "36px",
                 height: "36px",
-                borderRadius: "10px",
-                backgroundColor: COLORS.greenSubtle,
+                borderRadius: "2px",
+                backgroundColor: COLORS.emeraldSubtle,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid ${COLORS.greenBorder}`,
+                border: `1px solid ${COLORS.border}`,
               }}
             >
-              <Wallet size={18} color={COLORS.green} />
+              <Wallet size={18} color={COLORS.emerald} />
             </div>
-            <span style={{ fontSize: "0.8rem", color: COLORS.textDim }}>Total Balance</span>
+            <span className="t-eyebrow" style={{ fontSize: "0.72rem" }}>balance</span>
           </div>
-          <span style={{ fontSize: "2rem", fontWeight: 800, color: COLORS.text }}>
+          <span
+            className="font-display"
+            style={{ fontSize: "2.4rem", color: COLORS.text, letterSpacing: "-0.01em", lineHeight: 1 }}
+          >
             {formatSol(totalBalance)}
           </span>
-          <span style={{ fontSize: "0.85rem", color: COLORS.textDim, marginLeft: "6px" }}>SOL</span>
+          <span className="t-small" style={{ marginLeft: "8px", color: COLORS.textMuted }}>SOL</span>
         </GlassCard>
 
         <GlassCard>
@@ -125,38 +134,39 @@ export default function DashboardPage(): React.JSX.Element {
               style={{
                 width: "36px",
                 height: "36px",
-                borderRadius: "10px",
-                backgroundColor: COLORS.purpleSubtle,
+                borderRadius: "2px",
+                backgroundColor: COLORS.emeraldSubtle,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid rgba(168, 85, 247, 0.3)`,
+                border: `1px solid ${COLORS.border}`,
               }}
             >
-              <Bot size={18} color={COLORS.purple} />
+              <Bot size={18} color={COLORS.emerald} />
             </div>
-            <span style={{ fontSize: "0.8rem", color: COLORS.textDim }}>Active Delegates</span>
+            <span className="t-eyebrow" style={{ fontSize: "0.72rem" }}>active delegates</span>
           </div>
-          <span style={{ fontSize: "2rem", fontWeight: 800, color: COLORS.text }}>
-            {delegatesLoading ? "\u2014" : activeDelegates}
+          <span
+            className="font-display"
+            style={{ fontSize: "2.4rem", color: COLORS.text, letterSpacing: "-0.01em", lineHeight: 1 }}
+          >
+            {delegatesLoading ? "—" : activeDelegates}
           </span>
         </GlassCard>
       </div>
 
       {/* Quick Actions */}
-      <div style={{ marginBottom: "16px" }}>
-        <span style={{ fontSize: "0.8rem", fontWeight: 600, color: COLORS.textDim, textTransform: "uppercase", letterSpacing: "0.1em" }}>
-          Quick Actions
-        </span>
+      <div style={{ marginBottom: "16px", marginTop: "32px" }}>
+        <span className="t-eyebrow">quick actions</span>
       </div>
       <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "12px" }}>
         <Link href="/dashboard/vaults" style={{ textDecoration: "none" }}>
           <motion.div
-            whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.05)", y: -2 }}
+            whileHover={{ backgroundColor: COLORS.bgCardHover }}
             style={{
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
+              backgroundColor: COLORS.bgCard,
               border: `1px solid ${COLORS.border}`,
-              borderRadius: "16px",
+              borderRadius: "2px",
               padding: "20px",
               cursor: "pointer",
               display: "flex",
@@ -169,22 +179,22 @@ export default function DashboardPage(): React.JSX.Element {
               style={{
                 width: "40px",
                 height: "40px",
-                borderRadius: "10px",
+                borderRadius: "2px",
                 backgroundColor: COLORS.emeraldSubtle,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid ${COLORS.emeraldBorder}`,
+                border: `1px solid ${COLORS.border}`,
               }}
             >
               <Plus size={18} color={COLORS.emerald} />
             </div>
             <div>
-              <span style={{ fontSize: "0.95rem", fontWeight: 600, color: COLORS.text, display: "block" }}>
-                Manage Vaults
+              <span className="font-display" style={{ fontSize: "1.05rem", color: COLORS.text, display: "block", letterSpacing: "-0.005em" }}>
+                Manage vaults
               </span>
-              <span style={{ fontSize: "0.8rem", color: COLORS.textDim }}>
-                Create or manage your vaults
+              <span className="t-small" style={{ color: COLORS.textMuted }}>
+                create or manage your vaults
               </span>
             </div>
           </motion.div>
@@ -192,11 +202,11 @@ export default function DashboardPage(): React.JSX.Element {
 
         <Link href="/dashboard/agent" style={{ textDecoration: "none" }}>
           <motion.div
-            whileHover={{ backgroundColor: "rgba(255, 255, 255, 0.05)", y: -2 }}
+            whileHover={{ backgroundColor: COLORS.bgCardHover }}
             style={{
-              backgroundColor: "rgba(255, 255, 255, 0.02)",
+              backgroundColor: COLORS.bgCard,
               border: `1px solid ${COLORS.border}`,
-              borderRadius: "16px",
+              borderRadius: "2px",
               padding: "20px",
               cursor: "pointer",
               display: "flex",
@@ -209,22 +219,22 @@ export default function DashboardPage(): React.JSX.Element {
               style={{
                 width: "40px",
                 height: "40px",
-                borderRadius: "10px",
-                backgroundColor: COLORS.purpleSubtle,
+                borderRadius: "2px",
+                backgroundColor: COLORS.emeraldSubtle,
                 display: "flex",
                 alignItems: "center",
                 justifyContent: "center",
-                border: `1px solid rgba(168, 85, 247, 0.3)`,
+                border: `1px solid ${COLORS.border}`,
               }}
             >
-              <Bot size={18} color={COLORS.purple} />
+              <Bot size={18} color={COLORS.emerald} />
             </div>
             <div>
-              <span style={{ fontSize: "0.95rem", fontWeight: 600, color: COLORS.text, display: "block" }}>
-                Agent View
+              <span className="font-display" style={{ fontSize: "1.05rem", color: COLORS.text, display: "block", letterSpacing: "-0.005em" }}>
+                Agent view
               </span>
-              <span style={{ fontSize: "0.8rem", color: COLORS.textDim }}>
-                View and use delegate keys
+              <span className="t-small" style={{ color: COLORS.textMuted }}>
+                view and use delegate keys
               </span>
             </div>
           </motion.div>
