@@ -31,7 +31,11 @@ function initialEvents(): Record<StepId, StepEvent> {
 export function SwarmRunner() {
   useEffect(() => {
     document.body.classList.add("v2");
-    return () => document.body.classList.remove("v2");
+    document.body.classList.remove("fuin-manifesto");
+    return () => {
+      document.body.classList.remove("v2");
+      document.body.classList.add("fuin-manifesto");
+    };
   }, []);
 
   const { connection } = useConnection();

@@ -1,8 +1,82 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React from "react";
 import Link from "next/link";
 import { motion, useInView } from "framer-motion";
+import { LenisProvider } from "./components/LenisProvider";
+import { Button } from "./components/ui/button";
+import { cn } from "./lib/utils";
+import {
+  TerminalAnimationBlinkingCursor,
+  TerminalAnimationCommandBar,
+  TerminalAnimationContainer,
+  TerminalAnimationContent,
+  TerminalAnimationOutput,
+  TerminalAnimationRoot,
+  TerminalAnimationTabList,
+  TerminalAnimationTabTrigger,
+  TerminalAnimationTrailingPrompt,
+  TerminalAnimationWindow,
+  type TabContent,
+  type TerminalLine,
+} from "./components/ui/terminal-animation";
+
+const TERM_OK = "text-[#7fe5b9]";
+const TERM_BAD = "text-[#e08a72]";
+const TERM_DIM = "text-neutral-500";
+const TERM_MID = "text-neutral-300";
+const TERM_HIGHLIGHT = "text-[#e9d6a8]";
+
+const SWARM_TABS: TabContent[] = [
+  {
+    label: "sign",
+    command: "fuin sign-root --budget 400 --dex jupiter --hours 24",
+    lines: [
+      { text: "", delay: 80 },
+      { text: "  authorizing root intent ...", color: TERM_DIM, delay: 350 },
+      { text: "  ✓ root intent landed on devnet", color: TERM_OK, delay: 300 },
+      { text: "", delay: 60 },
+      { text: "    pda      4BH2…GdAn", color: TERM_MID, delay: 120 },
+      { text: "    budget   400 USDC", color: TERM_HIGHLIGHT, delay: 120 },
+      { text: "    scope    jupiter aggregator only", color: TERM_MID, delay: 120 },
+      { text: "    expires  in 24h", color: TERM_MID, delay: 120 },
+      { text: "", delay: 80 },
+      { text: "  signed by you · cost 0.000005 SOL", color: TERM_DIM, delay: 200 },
+    ],
+  },
+  {
+    label: "spawn",
+    command: "fuin derive-children --parent 4BH2…GdAn",
+    lines: [
+      { text: "", delay: 80 },
+      { text: "  deriving sub-intents ...", color: TERM_DIM, delay: 280 },
+      { text: "", delay: 60 },
+      { text: "  ✓ research agent   read-only            AyJC…iMvZ", color: TERM_OK, delay: 200 },
+      { text: "  ✓ execute agent    jupiter, 400 USDC    2KuK…7XMJ", color: TERM_OK, delay: 200 },
+      { text: "  ✓ audit agent      read-only            8BHT…EUGN", color: TERM_OK, delay: 200 },
+      { text: "", delay: 80 },
+      { text: "  3 sub-intents derived · every scope strictly narrower", color: TERM_MID, delay: 220 },
+      { text: "  ancestor-walk verified in 421ms", color: TERM_DIM, delay: 200 },
+    ],
+  },
+  {
+    label: "rogue",
+    command: "fuin attempt-rogue --dex raydium --from execute",
+    lines: [
+      { text: "", delay: 80 },
+      { text: "  rogue agent: attempting transfer via raydium ...", color: TERM_DIM, delay: 400 },
+      { text: "", delay: 80 },
+      { text: "  ✗ DENIED · scope violation", color: TERM_BAD, delay: 350 },
+      { text: "", delay: 80 },
+      { text: "    parent     4BH2…GdAn", color: TERM_MID, delay: 120 },
+      { text: "    authorized jupiter only", color: TERM_MID, delay: 120 },
+      { text: "    rogue tx   tried raydium", color: TERM_BAD, delay: 150 },
+      { text: "", delay: 80 },
+      { text: "  chain refused the instruction before it landed", color: TERM_BAD, delay: 220 },
+      { text: "  ancestor-walk: 2ms", color: TERM_DIM, delay: 180 },
+    ],
+  },
+];
 
 const PROGRAM_ID = "E6GkTAh6m3DacsKuUKQ64gn85mZof4D96dTNPLQAoSiy";
 const DEMO_ROOT_PDA = "4BH2MJwZ5oHSY3u4eEGNuVXCdK3zWMa1YBXWxCEqGdAn";
@@ -12,65 +86,154 @@ const AUDIT_PDA = "8BHTWBRnz8n7dwiuXue4YonAu7nC1xrg7tMrds2wEUGN";
 const EXPLORER = (addr: string) =>
   `https://explorer.solana.com/address/${addr}?cluster=devnet`;
 
-function useManifestoBodyClass() {
-  useEffect(() => {
-    document.body.classList.add("fuin-manifesto");
-    document.body.classList.remove("v2");
-    return () => {
-      document.body.classList.remove("fuin-manifesto");
-    };
-  }, []);
-}
-
-/* ── Header strip ──────────────────────────────────────────────────────── */
-function HeaderStrip() {
+/* ── Masthead ──────────────────────────────────────────────────────────── */
+function Masthead() {
   return (
     <header
       style={{
-        borderBottom: "1px solid var(--rule-paper)",
-        background: "var(--paper)",
         position: "sticky",
         top: 0,
         zIndex: 30,
+        background: "color-mix(in oklch, var(--paper) 94%, transparent)",
+        backdropFilter: "blur(10px) saturate(140%)",
+        WebkitBackdropFilter: "blur(10px) saturate(140%)",
+        borderBottom: "1px solid var(--ink-black)",
       }}
     >
+      {/* Hairline rule above the bar — a publication nameplate ornament */}
       <div
+        style={{
+          height: "1px",
+          background: "var(--ink-black)",
+          opacity: 0.35,
+          maxWidth: "1180px",
+          margin: "0 auto",
+        }}
+      />
+      <div
+        className="masthead-grid"
         style={{
           maxWidth: "1180px",
           margin: "0 auto",
           padding: "0 24px",
-          height: "56px",
+          height: "76px",
           display: "flex",
           alignItems: "center",
           justifyContent: "space-between",
+          gap: "24px",
         }}
       >
+        {/* Wordmark — serif logotype with a small crimson colophon mark */}
         <Link
           href="/"
+          aria-label="Fuin"
           style={{
-            fontFamily: "var(--font-display), Georgia, serif",
-            fontSize: "1.15rem",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "12px",
             color: "var(--ink-black)",
-            letterSpacing: "0.01em",
+            textDecoration: "none",
           }}
         >
-          Fuin
+          <span
+            aria-hidden
+            style={{
+              width: "10px",
+              height: "10px",
+              background: "var(--crimson)",
+              transform: "rotate(45deg)",
+              transformOrigin: "center",
+              display: "inline-block",
+            }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--font-display), Georgia, serif",
+              fontSize: "1.7rem",
+              fontWeight: 500,
+              letterSpacing: "-0.014em",
+              lineHeight: 1,
+            }}
+          >
+            Fuin
+          </span>
         </Link>
-        <Link
-          href={`/audit/${DEMO_ROOT_PDA}`}
-          style={{
-            fontFamily: "var(--font-mono-v2), monospace",
-            fontSize: "0.78rem",
-            background: "var(--ink-black)",
-            color: "var(--paper)",
-            padding: "8px 14px",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            fontWeight: 600,
-          }}
-        >
-          Open audit →
-        </Link>
+
+        {/* Status + nav entries */}
+        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+          <span
+            className="masthead-status-text"
+            style={{
+              fontFamily: "var(--font-mono-v2), monospace",
+              fontSize: "0.68rem",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--ink-soft)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "9px",
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                display: "inline-block",
+                width: "7px",
+                height: "7px",
+                borderRadius: "999px",
+                background: "var(--crimson)",
+                animation: "fuin-pulse 2.4s ease-in-out infinite",
+              }}
+            />
+            devnet · live
+          </span>
+          <Link
+            href="/dashboard"
+            style={{
+              fontFamily: "var(--font-mono-v2), monospace",
+              fontSize: "0.7rem",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--ink-black)",
+              borderBottom: "1px solid var(--ink-black)",
+              paddingBottom: "3px",
+              transition: "color 0.2s ease, border-color 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--crimson)";
+              e.currentTarget.style.borderColor = "var(--crimson)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--ink-black)";
+              e.currentTarget.style.borderColor = "var(--ink-black)";
+            }}
+          >
+            Dashboard
+          </Link>
+          <Link
+            href={`/audit/${DEMO_ROOT_PDA}`}
+            style={{
+              fontFamily: "var(--font-mono-v2), monospace",
+              fontSize: "0.7rem",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--prussian)",
+              borderBottom: "1px solid var(--prussian)",
+              paddingBottom: "3px",
+              transition: "color 0.2s ease, border-color 0.2s ease",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--ink-black)";
+              e.currentTarget.style.borderColor = "var(--ink-black)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--prussian)";
+              e.currentTarget.style.borderColor = "var(--prussian)";
+            }}
+          >
+            Open audit ↗
+          </Link>
+        </div>
       </div>
     </header>
   );
@@ -161,36 +324,447 @@ function Panel({ id, num, eyebrow, footer, children }: PanelProps) {
 }
 
 /* ── Panel content (Group 2) ───────────────────────────────────────────── */
+type LedgerRow = {
+  key: string;
+  kind: "root" | "child";
+  label: string;
+  desc: string;
+  pda: string | null;
+  budget: string;
+  denied?: boolean;
+};
+
+const LEDGER_ROWS: LedgerRow[] = [
+  {
+    key: "root",
+    kind: "root",
+    label: "Root intent",
+    desc: "Authorize Jupiter swaps, up to $400, for the next 24 hours.",
+    pda: DEMO_ROOT_PDA,
+    budget: "$400",
+  },
+  {
+    key: "research",
+    kind: "child",
+    label: "Research agent",
+    desc: "Reads market prices. Cannot move funds.",
+    pda: RESEARCH_PDA,
+    budget: "no spend",
+  },
+  {
+    key: "execute",
+    kind: "child",
+    label: "Execute agent",
+    desc: "Swaps on Jupiter. Up to the root cap.",
+    pda: EXECUTE_PDA,
+    budget: "$400",
+  },
+  {
+    key: "audit",
+    kind: "child",
+    label: "Audit agent",
+    desc: "Verifies every action. Cannot move funds.",
+    pda: AUDIT_PDA,
+    budget: "no spend",
+  },
+  {
+    key: "rogue",
+    kind: "child",
+    label: "Rogue agent",
+    desc: "Tried Raydium — outside what you authorized.",
+    pda: null,
+    budget: "blocked",
+    denied: true,
+  },
+];
+
+const STAGGER = 0.14;
+const DELAY_CHILDREN = 0.35;
+const ROGUE_STRIKE_DELAY =
+  DELAY_CHILDREN + LEDGER_ROWS.length * STAGGER + 0.5;
+
+function IntentLedger() {
+  const ref = React.useRef<HTMLDivElement>(null);
+  const inView = useInView(ref, { once: true, margin: "-12% 0px" });
+  const short = (s: string) => `${s.slice(0, 4)}…${s.slice(-4)}`;
+  const lastIdx = LEDGER_ROWS.length - 1;
+
+  return (
+    <motion.aside
+      ref={ref}
+      className="intent-ledger"
+      aria-label="Live intent tree on Solana devnet"
+      initial="hidden"
+      animate={inView ? "show" : "hidden"}
+      variants={{
+        hidden: {},
+        show: { transition: { staggerChildren: STAGGER, delayChildren: DELAY_CHILDREN } },
+      }}
+      style={{
+        position: "relative",
+        padding: "22px 22px 16px",
+        background: "color-mix(in oklch, var(--paper-rise) 65%, var(--paper))",
+        border: "1px solid var(--ink-black)",
+        color: "var(--ink-black)",
+        maxWidth: "44ch",
+      }}
+    >
+      {/* Header */}
+      <motion.header
+        variants={{
+          hidden: { opacity: 0, y: -6 },
+          show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: [0.16, 1, 0.3, 1] } },
+        }}
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "baseline",
+          paddingBottom: "12px",
+          borderBottom: "1px solid var(--ink-black)",
+        }}
+      >
+        <h3
+          style={{
+            fontFamily: "var(--font-display), Georgia, serif",
+            fontSize: "1.15rem",
+            fontWeight: 500,
+            margin: 0,
+            letterSpacing: "-0.01em",
+          }}
+        >
+          Live intent tree
+        </h3>
+        <span
+          style={{
+            fontFamily: "var(--font-mono-v2), monospace",
+            fontSize: "0.58rem",
+            letterSpacing: "0.22em",
+            textTransform: "uppercase",
+            color: "var(--ink-soft)",
+            display: "inline-flex",
+            alignItems: "center",
+            gap: "7px",
+          }}
+        >
+          <span
+            aria-hidden
+            style={{
+              width: "6px",
+              height: "6px",
+              borderRadius: "999px",
+              background: "var(--crimson)",
+              animation: "fuin-pulse 2.4s ease-in-out infinite",
+            }}
+          />
+          devnet
+        </span>
+      </motion.header>
+
+      {/* Caption */}
+      <motion.p
+        variants={{
+          hidden: { opacity: 0 },
+          show: { opacity: 1, transition: { duration: 0.6 } },
+        }}
+        style={{
+          fontFamily: "var(--font-display), Georgia, serif",
+          fontStyle: "italic",
+          fontSize: "0.95rem",
+          color: "var(--ink-mute)",
+          margin: "14px 0 14px",
+          lineHeight: 1.4,
+        }}
+      >
+        One signature. Three derived scopes. One rogue rejected.
+      </motion.p>
+
+      {/* Tree */}
+      <div>
+        {LEDGER_ROWS.map((r, i) => {
+          const isLast = i === lastIdx;
+          const isRoot = r.kind === "root";
+
+          return (
+            <motion.div
+              key={r.key}
+              variants={{
+                hidden: { opacity: 0, x: -10 },
+                show: {
+                  opacity: 1,
+                  x: 0,
+                  transition: { duration: 0.55, ease: [0.16, 1, 0.3, 1] },
+                },
+              }}
+              style={{
+                position: "relative",
+                paddingLeft: "36px",
+                paddingTop: "14px",
+                paddingBottom: "14px",
+                minHeight: "74px",
+              }}
+            >
+              {/* Connector — diamond for root, L-shape for children */}
+              {isRoot ? (
+                <>
+                  {/* Crimson rotated square as root marker */}
+                  <span
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      left: 9,
+                      top: 22,
+                      width: 11,
+                      height: 11,
+                      background: "var(--crimson)",
+                      transform: "rotate(45deg)",
+                    }}
+                  />
+                  {/* Vertical spine descending below the diamond */}
+                  <span
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      left: 14,
+                      top: 36,
+                      bottom: 0,
+                      width: 1,
+                      background: "var(--ink-black)",
+                    }}
+                  />
+                </>
+              ) : (
+                <>
+                  {/* Vertical: full-height for middle children, top-to-middle for last */}
+                  <span
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      left: 14,
+                      top: 0,
+                      height: isLast ? "50%" : "100%",
+                      width: 1,
+                      background: "var(--ink-black)",
+                    }}
+                  />
+                  {/* Horizontal tick from spine to row content */}
+                  <span
+                    aria-hidden
+                    style={{
+                      position: "absolute",
+                      left: 14,
+                      top: "50%",
+                      width: 17,
+                      height: 1,
+                      background: "var(--ink-black)",
+                    }}
+                  />
+                </>
+              )}
+
+              {/* Row content */}
+              <div
+                style={{
+                  display: "flex",
+                  justifyContent: "space-between",
+                  alignItems: "baseline",
+                  gap: "12px",
+                  marginBottom: "5px",
+                }}
+              >
+                <span
+                  style={{
+                    position: "relative",
+                    fontFamily: "var(--font-mono-v2), monospace",
+                    fontSize: "0.78rem",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.16em",
+                    fontWeight: 600,
+                    color: r.denied ? "var(--crimson)" : "var(--ink-black)",
+                    display: "inline-block",
+                  }}
+                >
+                  {r.label}
+                  {r.denied && (
+                    <motion.span
+                      aria-hidden
+                      initial={{ scaleX: 0 }}
+                      animate={inView ? { scaleX: 1 } : {}}
+                      transition={{
+                        duration: 0.55,
+                        delay: ROGUE_STRIKE_DELAY,
+                        ease: [0.65, 0, 0.35, 1],
+                      }}
+                      style={{
+                        position: "absolute",
+                        left: -2,
+                        right: -2,
+                        top: "calc(50% - 1px)",
+                        height: "1.5px",
+                        background: "var(--crimson)",
+                        transformOrigin: "left",
+                      }}
+                    />
+                  )}
+                </span>
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono-v2), monospace",
+                    fontSize: "0.72rem",
+                    letterSpacing: "0.05em",
+                    fontWeight: isRoot || r.denied ? 600 : 500,
+                    color: r.denied ? "var(--crimson)" : "var(--ink-black)",
+                    whiteSpace: "nowrap",
+                  }}
+                >
+                  {r.denied && (
+                    <motion.span
+                      initial={{ opacity: 0 }}
+                      animate={inView ? { opacity: 1 } : {}}
+                      transition={{
+                        duration: 0.4,
+                        delay: ROGUE_STRIKE_DELAY + 0.45,
+                      }}
+                      style={{ marginRight: 4 }}
+                    >
+                      ✗
+                    </motion.span>
+                  )}
+                  {r.budget}
+                </span>
+              </div>
+              <p
+                style={{
+                  fontFamily: "var(--font-display), Georgia, serif",
+                  fontSize: "0.94rem",
+                  lineHeight: 1.4,
+                  color: r.denied ? "var(--crimson)" : "var(--ink-soft)",
+                  margin: "0 0 4px 0",
+                  fontStyle: r.denied ? "italic" : "normal",
+                }}
+              >
+                {r.desc}
+              </p>
+              {r.pda && (
+                <span
+                  style={{
+                    fontFamily: "var(--font-mono-v2), monospace",
+                    fontSize: "0.66rem",
+                    letterSpacing: "0.04em",
+                    color: "var(--prussian)",
+                    display: "inline-flex",
+                    alignItems: "center",
+                    gap: "8px",
+                  }}
+                >
+                  <span>{short(r.pda)}</span>
+                  {isRoot && (
+                    <span style={{ color: "var(--prussian)", display: "inline-flex", alignItems: "center", gap: "4px" }}>
+                      <span aria-hidden style={{ fontSize: "0.7rem", lineHeight: 1 }}>✓</span>
+                      <span>signed by you</span>
+                    </span>
+                  )}
+                </span>
+              )}
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Footer */}
+      <motion.footer
+        variants={{
+          hidden: { opacity: 0 },
+          show: { opacity: 1, transition: { duration: 0.5 } },
+        }}
+        style={{
+          marginTop: "16px",
+          paddingTop: "12px",
+          borderTop: "1px solid var(--ink-black)",
+          display: "flex",
+          justifyContent: "space-between",
+          fontFamily: "var(--font-mono-v2), monospace",
+          fontSize: "0.58rem",
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: "var(--ink-mute)",
+        }}
+      >
+        <span>verified · solana devnet</span>
+        <span>1 sig · 4 PDAs</span>
+      </motion.footer>
+    </motion.aside>
+  );
+}
+
 function PanelOne() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "clamp(20px, 3vh, 36px)", maxWidth: "20ch" }}>
-      <h1
-        style={{
-          fontFamily: "var(--font-display), Georgia, serif",
-          fontSize: "clamp(3rem, 8vw, 9rem)",
-          lineHeight: 0.88,
-          letterSpacing: "-0.035em",
-          fontWeight: 500,
-          color: "var(--ink-black)",
-          margin: 0,
-        }}
-      >
-        We built the{" "}
-        <span style={{ fontStyle: "italic", color: "var(--crimson)" }}>proof layer</span>{" "}
-        for autonomous capital.
-      </h1>
-      <p
-        style={{
-          fontFamily: "var(--font-display), Georgia, serif",
-          fontSize: "clamp(1.05rem, 1.3vw, 1.35rem)",
-          lineHeight: 1.5,
-          color: "var(--ink-soft)",
-          maxWidth: "52ch",
-          margin: 0,
-        }}
-      >
-        Hierarchical proof-of-intent for AI agent swarms. Live on Solana.
-      </p>
+    <div className="manifesto-hero">
+      {/* Left column — editorial copy */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "clamp(24px, 3.5vh, 40px)" }}>
+        <h1
+          style={{
+            fontFamily: "var(--font-display), Georgia, serif",
+            fontSize: "clamp(2.7rem, 6.8vw, 7.25rem)",
+            lineHeight: 0.92,
+            letterSpacing: "-0.034em",
+            fontWeight: 500,
+            color: "var(--ink-black)",
+            margin: 0,
+            maxWidth: "16ch",
+          }}
+        >
+          We built the{" "}
+          <span style={{ fontStyle: "italic", color: "var(--crimson)" }}>proof layer</span>{" "}
+          for autonomous capital.
+        </h1>
+
+        <p
+          style={{
+            fontFamily: "var(--font-display), Georgia, serif",
+            fontSize: "clamp(1.1rem, 1.35vw, 1.4rem)",
+            lineHeight: 1.5,
+            color: "var(--ink-soft)",
+            maxWidth: "44ch",
+            margin: 0,
+          }}
+        >
+          Hierarchical proof-of-intent for AI agent swarms. One human signature
+          anchors a tree of cryptographically-derived scopes — every child
+          strictly narrower than its parent. The chain is the boundary.
+        </p>
+
+        {/* CTA — one primary action, editorial restraint */}
+        <div
+          style={{
+            display: "flex",
+            alignItems: "center",
+            gap: "clamp(20px, 2.4vw, 32px)",
+            flexWrap: "wrap",
+            marginTop: "clamp(4px, 1vh, 12px)",
+          }}
+        >
+          <Link href="/dashboard" aria-label="Open the Fuin guardian dashboard">
+            <Button size="lg" variant="crimson">
+              Open the dashboard →
+            </Button>
+          </Link>
+          <span
+            style={{
+              fontFamily: "var(--font-display), Georgia, serif",
+              fontStyle: "italic",
+              fontSize: "clamp(0.92rem, 1vw, 1.04rem)",
+              color: "var(--ink-mute)",
+              maxWidth: "32ch",
+              lineHeight: 1.4,
+            }}
+          >
+            Connect a devnet wallet, sign one intent, watch the tree settle on-chain.
+          </span>
+        </div>
+      </div>
+
+      {/* Right column — the protocol made visible */}
+      <IntentLedger />
     </div>
   );
 }
@@ -237,12 +811,12 @@ function PanelThree() {
       <h2
         style={{
           fontFamily: "var(--font-display), Georgia, serif",
-          fontSize: "clamp(3rem, 7.5vw, 8.5rem)",
-          lineHeight: 0.9,
-          letterSpacing: "-0.035em",
+          fontSize: "clamp(2.4rem, 5.5vw, 5.5rem)",
+          lineHeight: 0.95,
+          letterSpacing: "-0.03em",
           fontWeight: 500,
           color: "var(--ink-black)",
-          maxWidth: "16ch",
+          maxWidth: "20ch",
           margin: 0,
         }}
       >
@@ -269,17 +843,87 @@ function PanelThree() {
     </div>
   );
 }
-function PanelFour() {
-  const rows: { indent: number; label: string; budget: string; scope: string; status: "ok" | "denied" }[] = [
-    { indent: 0, label: "root · orchestrator", budget: "500 USDC", scope: "Jupiter · 24h", status: "ok" },
-    { indent: 1, label: "research", budget: "50 USDC", scope: "read-only", status: "ok" },
-    { indent: 1, label: "execute", budget: "400 USDC", scope: "jupiter", status: "ok" },
-    { indent: 1, label: "audit", budget: "50 USDC", scope: "read-only", status: "ok" },
-    { indent: 1, label: "rogue", budget: "—", scope: "raydium", status: "denied" },
-  ];
-
+function SwarmTerminal() {
   return (
-    <div style={{ display: "flex", flexDirection: "column", gap: "clamp(24px, 4vh, 48px)" }}>
+    <TerminalAnimationRoot
+      alwaysDark
+      tabs={SWARM_TABS}
+      defaultActiveTab={0}
+      hideCursorOnComplete={false}
+      className="relative w-full"
+    >
+      <TerminalAnimationContainer className="max-w-full px-0 pt-0">
+        <TerminalAnimationWindow
+          backgroundColor="oklch(0.14 0.012 270)"
+          minHeight="26rem"
+          animateOnVisible={true}
+          className="rounded-md border border-neutral-800 shadow-[0_18px_50px_-12px_rgba(0,0,0,0.35)]"
+        >
+          {/* Title bar */}
+          <div className="flex items-center justify-between px-4 py-2.5 border-b border-neutral-800/80 bg-[oklch(0.18_0.012_270)]">
+            <div className="flex items-center gap-2">
+              <span aria-hidden className="block h-2.5 w-2.5 rounded-full bg-[#e08a72]" />
+              <span aria-hidden className="block h-2.5 w-2.5 rounded-full bg-[#e9d6a8]" />
+              <span aria-hidden className="block h-2.5 w-2.5 rounded-full bg-[#7fe5b9]" />
+            </div>
+            <span className="font-mono text-[10px] uppercase tracking-[0.22em] text-neutral-500">
+              devnet · fuin v2
+            </span>
+            <span className="w-12" aria-hidden />
+          </div>
+
+          <TerminalAnimationContent className="min-h-[20rem]">
+            <div className="flex items-center gap-2 leading-relaxed">
+              <span className="select-none font-mono text-neutral-500 text-sm">$</span>
+              <TerminalAnimationCommandBar
+                className="font-mono text-neutral-100 text-sm"
+                cursor={<TerminalAnimationBlinkingCursor />}
+              />
+            </div>
+
+            <TerminalAnimationOutput
+              className="mt-2"
+              renderLine={(line: TerminalLine, _i: number, visible: boolean) => {
+                if (!visible) return null;
+                return (
+                  <div className="leading-relaxed">
+                    <span className={cn("font-mono text-sm whitespace-pre", line.color ?? "text-neutral-300")}>
+                      {line.text || " "}
+                    </span>
+                  </div>
+                );
+              }}
+            />
+
+            <TerminalAnimationTrailingPrompt className="mt-2 flex items-center gap-2 leading-relaxed">
+              <span className="select-none font-mono text-neutral-500 text-sm">$</span>
+              <TerminalAnimationBlinkingCursor />
+            </TerminalAnimationTrailingPrompt>
+          </TerminalAnimationContent>
+
+          {/* Tab bar at the bottom */}
+          <div className="flex justify-start border-t border-neutral-800/80 px-4 py-3">
+            <TerminalAnimationTabList className="inline-flex items-center gap-1 rounded-md border border-neutral-800 bg-[oklch(0.18_0.012_270)] px-1 py-1">
+              {SWARM_TABS.map((tab, i) => (
+                <TerminalAnimationTabTrigger
+                  key={tab.label}
+                  index={i}
+                  className="cursor-pointer rounded px-3 py-1 font-mono text-[11px] uppercase tracking-[0.18em] transition-colors data-[state=active]:bg-neutral-700 data-[state=active]:text-neutral-100 data-[state=inactive]:text-neutral-500 data-[state=inactive]:hover:text-neutral-300"
+                >
+                  {tab.label}
+                </TerminalAnimationTabTrigger>
+              ))}
+            </TerminalAnimationTabList>
+          </div>
+        </TerminalAnimationWindow>
+      </TerminalAnimationContainer>
+    </TerminalAnimationRoot>
+  );
+}
+
+function PanelFour() {
+  return (
+    <div style={{ display: "flex", flexDirection: "column", gap: "clamp(28px, 4vh, 56px)" }}>
       <h2
         style={{
           fontFamily: "var(--font-display), Georgia, serif",
@@ -293,42 +937,24 @@ function PanelFour() {
         }}
       >
         One signature. Five agents. Twenty-four hours.{" "}
-        <span style={{ fontStyle: "italic", color: "var(--crimson)" }}>$500 of budget.</span>
+        <span style={{ fontStyle: "italic", color: "var(--crimson)" }}>$400 of budget.</span>
       </h2>
 
-      <div
+      <p
         style={{
-          fontFamily: "var(--font-mono-v2), monospace",
-          fontSize: "clamp(0.9rem, 1.1vw, 1.05rem)",
-          lineHeight: 1.85,
-          color: "var(--ink-black)",
-          borderLeft: "1px solid var(--ink-mute)",
-          paddingLeft: "20px",
-          maxWidth: "60ch",
+          fontFamily: "var(--font-display), Georgia, serif",
+          fontStyle: "italic",
+          fontSize: "clamp(1rem, 1.2vw, 1.2rem)",
+          color: "var(--ink-mute)",
+          maxWidth: "52ch",
+          margin: 0,
+          lineHeight: 1.5,
         }}
       >
-        {rows.map((r, i) => (
-          <div
-            key={i}
-            style={{
-              paddingLeft: `${r.indent * 20}px`,
-              opacity: r.status === "denied" ? 0.55 : 1,
-              color: r.status === "denied" ? "var(--crimson)" : "var(--ink-black)",
-              display: "grid",
-              gridTemplateColumns: "1fr auto auto",
-              gap: "12px",
-              alignItems: "baseline",
-              textDecoration: r.status === "denied" ? "line-through" : "none",
-            }}
-          >
-            <span>{r.indent > 0 ? "└ " : ""}{r.label}</span>
-            <span style={{ color: "var(--ink-mute)" }}>{r.scope}</span>
-            <span style={{ color: r.status === "denied" ? "var(--crimson)" : "var(--ink-soft)" }}>
-              {r.budget} {r.status === "ok" ? "✓" : "✗"}
-            </span>
-          </div>
-        ))}
-      </div>
+        The real swarm-demo CLI, recorded against devnet. Click any tab.
+      </p>
+
+      <SwarmTerminal />
     </div>
   );
 }
@@ -347,12 +973,12 @@ function PanelFive() {
       <h2
         style={{
           fontFamily: "var(--font-display), Georgia, serif",
-          fontSize: "clamp(3rem, 8vw, 9rem)",
-          lineHeight: 0.9,
-          letterSpacing: "-0.035em",
+          fontSize: "clamp(2.4rem, 5.5vw, 5.5rem)",
+          lineHeight: 0.95,
+          letterSpacing: "-0.03em",
           fontWeight: 500,
           color: "var(--ink-black)",
-          maxWidth: "12ch",
+          maxWidth: "16ch",
           margin: 0,
         }}
       >
@@ -384,144 +1010,35 @@ function PanelFive() {
             <span style={{ color: "var(--ink-mute)", fontSize: "0.72rem", letterSpacing: "0.16em" }}>
               {r.label}
             </span>
-            <span style={{ color: "var(--ink-black)" }}>{short(r.pda)}</span>
-            <span style={{ color: "var(--crimson)" }}>↗</span>
+            <span style={{ color: "var(--prussian)" }}>{short(r.pda)}</span>
+            <span style={{ color: "var(--prussian)" }}>↗</span>
           </a>
         ))}
       </div>
 
       <div style={{ display: "flex", flexWrap: "wrap", gap: "16px", marginTop: "clamp(16px, 3vh, 32px)" }}>
-        <Link
-          href={`/audit/${DEMO_ROOT_PDA}`}
-          style={{
-            fontFamily: "var(--font-mono-v2), monospace",
-            fontSize: "0.85rem",
-            background: "var(--ink-black)",
-            color: "var(--paper)",
-            padding: "14px 22px",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            fontWeight: 600,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "10px",
-          }}
-        >
-          Open the audit tree →
+        <Link href={`/audit/${DEMO_ROOT_PDA}`}>
+          <Button size="lg" variant="default">
+            Open the audit tree →
+          </Button>
         </Link>
-        <a
-          href="https://github.com/Fuin-Labs/Fuin"
-          target="_blank"
-          rel="noopener noreferrer"
-          style={{
-            fontFamily: "var(--font-mono-v2), monospace",
-            fontSize: "0.85rem",
-            color: "var(--ink-black)",
-            border: "1px solid var(--ink-black)",
-            padding: "13px 22px",
-            letterSpacing: "0.12em",
-            textTransform: "uppercase",
-            fontWeight: 600,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "10px",
-          }}
-        >
-          Read the SDK →
+        <a href="https://github.com/Fuin-Labs/Fuin" target="_blank" rel="noopener noreferrer">
+          <Button size="lg" variant="outline">
+            Read the SDK →
+          </Button>
         </a>
       </div>
     </div>
   );
 }
 
-/* ── Section indicator (filled in Task 8) ──────────────────────────────── */
-const PANELS: { id: string; num: string }[] = [
-  { id: "one", num: "ONE" },
-  { id: "two", num: "TWO" },
-  { id: "three", num: "THREE" },
-  { id: "four", num: "FOUR" },
-  { id: "five", num: "FIVE" },
-];
-
-function SectionIndicator() {
-  const [active, setActive] = useState<string>("one");
-
-  useEffect(() => {
-    const els = PANELS.map((p) => document.getElementById(p.id)).filter((el): el is HTMLElement => el !== null);
-    const io = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            setActive(entry.target.id);
-          }
-        });
-      },
-      { rootMargin: "-40% 0px -40% 0px", threshold: 0 }
-    );
-    els.forEach((el) => io.observe(el));
-    return () => io.disconnect();
-  }, []);
-
-  return (
-    <nav
-      aria-label="manifesto sections"
-      style={{
-        position: "fixed",
-        right: "32px",
-        top: "50%",
-        transform: "translateY(-50%)",
-        display: "none",
-        flexDirection: "column",
-        gap: "20px",
-        zIndex: 20,
-      }}
-      className="section-indicator"
-    >
-      {PANELS.map((p) => (
-        <a
-          key={p.id}
-          href={`#${p.id}`}
-          aria-current={active === p.id ? "true" : undefined}
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "12px",
-            fontFamily: "var(--font-mono-v2), monospace",
-            fontSize: "0.7rem",
-            letterSpacing: "0.18em",
-            textTransform: "uppercase",
-            color: active === p.id ? "var(--crimson)" : "var(--ink-mute)",
-            transition: "color 0.3s",
-          }}
-        >
-          <span
-            aria-hidden
-            style={{
-              width: "8px",
-              height: "8px",
-              borderRadius: "999px",
-              background: active === p.id ? "var(--crimson)" : "transparent",
-              border: `1px solid ${active === p.id ? "var(--crimson)" : "var(--ink-mute)"}`,
-              transition: "background 0.3s, border-color 0.3s",
-            }}
-          />
-          <span style={{ opacity: active === p.id ? 1 : 0, transition: "opacity 0.3s" }}>
-            {p.num}
-          </span>
-        </a>
-      ))}
-    </nav>
-  );
-}
-
 /* ── Page ──────────────────────────────────────────────────────────────── */
 export default function Home(): React.JSX.Element {
-  useManifestoBodyClass();
   return (
+    <LenisProvider>
     <main style={{ background: "var(--paper)", minHeight: "100vh", position: "relative" }}>
-      <HeaderStrip />
-      <SectionIndicator />
-      <Panel id="one" num="ONE" eyebrow="A note from the founder" footer="Fuin · live on devnet · scroll ↓">
+      <Masthead />
+      <Panel id="one" num="ONE" eyebrow="The thesis" footer="Fuin · live on devnet · scroll ↓">
         <PanelOne />
       </Panel>
       <Panel id="two" num="TWO" eyebrow="The problem" footer="§ third option ↓">
@@ -533,9 +1050,10 @@ export default function Home(): React.JSX.Element {
       <Panel id="four" num="FOUR" eyebrow="A real swarm" footer="§ the boundary held ↓">
         <PanelFour />
       </Panel>
-      <Panel id="five" num="FIVE" eyebrow="Don't take our word" footer="apache-2.0 · built by fuin labs · solana foundation grant">
+      <Panel id="five" num="FIVE" eyebrow="Don't take our word" footer="apache-2.0 · built by fuin labs">
         <PanelFive />
       </Panel>
     </main>
+    </LenisProvider>
   );
 }

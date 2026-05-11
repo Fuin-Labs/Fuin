@@ -1,7 +1,7 @@
 "use client";
 import React from "react";
 
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { WalletProviders } from "../_providers/WalletProviders";
 import { FuinProvider } from "../_providers/FuinProvider";
 import { ToastProvider } from "./_providers/ToastProvider";
@@ -16,11 +16,6 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [isCollapsed, setIsCollapsed] = useState(false);
   const isMobile = useIsMobile();
-
-  useEffect(() => {
-    document.body.classList.add("v2");
-    return () => document.body.classList.remove("v2");
-  }, []);
 
   return (
     <div style={{ display: "flex", minHeight: "100vh", backgroundColor: COLORS.bg }}>

@@ -107,18 +107,28 @@ export default function VaultsPage(): React.JSX.Element {
           <input
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            placeholder="Search by name or nonce..."
+            placeholder="Search by name or nonce…"
             style={{
               width: "100%",
-              padding: "12px 14px 12px 40px",
-              borderRadius: "12px",
-              border: `1px solid ${COLORS.border}`,
-              backgroundColor: COLORS.bgInput,
-              color: COLORS.text,
-              fontSize: "0.9rem",
-              fontFamily: "inherit",
+              padding: "11px 14px 11px 40px",
+              border: "1px solid var(--ink-black)",
+              background: "var(--paper)",
+              color: "var(--ink-black)",
+              fontFamily: "var(--font-mono-v2), monospace",
+              fontSize: "0.88rem",
+              letterSpacing: "0.02em",
+              lineHeight: 1.4,
               outline: "none",
               boxSizing: "border-box",
+              transition: "border-color 0.18s ease, background-color 0.18s ease",
+            }}
+            onFocus={(e) => {
+              e.currentTarget.style.borderColor = "var(--crimson)";
+              e.currentTarget.style.background = "var(--paper-rise)";
+            }}
+            onBlur={(e) => {
+              e.currentTarget.style.borderColor = "var(--ink-black)";
+              e.currentTarget.style.background = "var(--paper)";
             }}
           />
         </div>

@@ -39,9 +39,9 @@ const fragmentMono = Fragment_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Fuin — open trust layer for AI agent swarms on Solana",
+  title: "Fuin — the proof layer for autonomous capital",
   description:
-    "One human signature authorizes a hierarchical tree of AI agents. Every action attributable, every scope cryptographically derived from the root.",
+    "Hierarchical proof-of-intent for AI agent swarms. One signature anchors a tree of cryptographically-derived scopes — every child strictly narrower than its parent. Live on Solana.",
 };
 
 export default function RootLayout({
@@ -53,7 +53,7 @@ export default function RootLayout({
     <html lang="en">
       <head />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${GeistPixelSquare.variable} ${vollkorn.variable} ${schibsted.variable} ${fragmentMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} ${GeistPixelSquare.variable} ${vollkorn.variable} ${schibsted.variable} ${fragmentMono.variable} antialiased fuin-manifesto`}
       >
         {children}
         <Script

@@ -15,6 +15,8 @@
     "@fuin-labs/db": "workspace:^",
     "@fuin-labs/sdk": "workspace:^",
     "@fuin-labs/sdk-v2": "workspace:*",
+    "@radix-ui/react-slot": "^1.2.4",
+    "@radix-ui/react-use-controllable-state": "^1.2.2",
     "@repo/ui": "workspace:*",
     "@solana/wallet-adapter-base": "^0.9.27",
     "@solana/wallet-adapter-react": "^0.15.39",
@@ -23,12 +25,17 @@
     "@solana/web3.js": "^1.98.4",
     "@vercel/analytics": "^1.6.1",
     "bn.js": "^5.2.1",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
     "framer-motion": "^12.34.3",
     "geist": "^1.7.0",
+    "lenis": "^1.3.23",
     "lucide-react": "^0.575.0",
+    "motion": "^12.38.0",
     "next": "16.1.5",
     "react": "^19.2.0",
-    "react-dom": "^19.2.0"
+    "react-dom": "^19.2.0",
+    "tailwind-merge": "^3.6.0"
   },
   "devDependencies": {
     "@repo/eslint-config": "workspace:*",

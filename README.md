@@ -1,6 +1,10 @@
 # Fuin
 
-Fuin is a programmable Identity Access Management (IAM) layer and restrictive wallet protocol on Solana. Guardians create on-chain vaults and issue scoped delegate keys — with bitmask permissions, spending caps, and policy constraints — to AI agents or human users. Delegates can transact within strict boundaries without ever gaining custody of the vault.
+**One signature. Infinite agents. Fixed downside.**
+
+Fuin is the policy layer for AI agent swarms on Solana. A user signs one structured intent on-chain — agent, predicate, budget, expiry — and any agent operating under it can derive a strictly tighter intent for a sub-agent. Every action is verified by an on-chain ancestor walk at execution time. No layer can widen scope. Ever. The result: existing agent infrastructure on Solana has two trust failure modes — key compromise and over-approval. Fuin reduces them to one.
+
+The v1 layer ships alongside as a programmable IAM / restrictive wallet — guardians create on-chain vaults and issue scoped delegate keys with bitmask permissions, spending caps, and policy constraints. v1 is the immediate-use surface; v2 is the swarm-native primitive.
 
 ## How It Works
 

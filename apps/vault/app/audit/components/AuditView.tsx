@@ -24,11 +24,6 @@ export function AuditView({ initialPda }: { initialPda: string }): React.JSX.Ele
   const [selected, setSelected] = useState<string | null>(null);
 
   useEffect(() => {
-    document.body.classList.add("v2");
-    return () => document.body.classList.remove("v2");
-  }, []);
-
-  useEffect(() => {
     let alive = true;
     const conn = makeConnection();
     setLoading(true);
@@ -112,51 +107,157 @@ export function AuditView({ initialPda }: { initialPda: string }): React.JSX.Ele
   );
 }
 
-/* ── Header strip ───────────────────────────────────────────────────────── */
+/* ── Masthead (matches landing) ─────────────────────────────────────────── */
 function Header({ pda }: { pda: string }) {
   return (
-    <div
+    <header
       style={{
-        borderBottom: "1px solid var(--rule-soft)",
-        background: "color-mix(in oklch, var(--ink) 88%, transparent)",
+        position: "sticky",
+        top: 0,
+        zIndex: 30,
+        background: "color-mix(in oklch, var(--paper) 94%, transparent)",
+        backdropFilter: "blur(10px) saturate(140%)",
+        WebkitBackdropFilter: "blur(10px) saturate(140%)",
+        borderBottom: "1px solid var(--ink-black)",
       }}
-      className="sticky top-0 z-30 backdrop-blur"
     >
-      <div className="max-w-[1280px] mx-auto px-6 lg:px-10 h-14 flex items-center justify-between">
-        <div className="flex items-baseline gap-4">
+      <div
+        style={{
+          height: "1px",
+          background: "var(--ink-black)",
+          opacity: 0.35,
+          maxWidth: "1280px",
+          margin: "0 auto",
+        }}
+      />
+      <div
+        style={{
+          maxWidth: "1280px",
+          margin: "0 auto",
+          padding: "0 24px",
+          height: "76px",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          gap: "24px",
+        }}
+      >
+        {/* Wordmark + section label */}
+        <div style={{ display: "flex", alignItems: "center", gap: "20px" }}>
           <Link
             href="/"
-            className="font-display text-[1.05rem] inline-flex items-baseline gap-2"
-            style={{ color: "var(--cream)" }}
+            aria-label="Fuin"
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "12px",
+              color: "var(--ink-black)",
+              textDecoration: "none",
+            }}
           >
-            <span className="font-mono" style={{ color: "var(--mute)", fontSize: "0.8rem" }}>
-              ←
+            <span
+              aria-hidden
+              style={{
+                width: "10px",
+                height: "10px",
+                background: "var(--crimson)",
+                transform: "rotate(45deg)",
+                display: "inline-block",
+              }}
+            />
+            <span
+              style={{
+                fontFamily: "var(--font-display), Georgia, serif",
+                fontSize: "1.7rem",
+                fontWeight: 500,
+                letterSpacing: "-0.014em",
+                lineHeight: 1,
+              }}
+            >
+              Fuin
             </span>
-            Fuin
           </Link>
-          <span className="t-eyebrow" style={{ fontSize: "0.7rem" }}>
-            audit · devnet
+          <span
+            aria-hidden
+            style={{
+              width: 1,
+              height: 18,
+              background: "var(--ink-mute)",
+              opacity: 0.6,
+            }}
+          />
+          <span
+            style={{
+              fontFamily: "var(--font-mono-v2), monospace",
+              fontSize: "0.68rem",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--ink-mute)",
+            }}
+          >
+            audit
           </span>
         </div>
-        <div className="flex items-center gap-4 t-small font-mono">
-          <span style={{ color: "var(--mute)" }}>{shortAddr(pda, 6, 6)}</span>
+
+        {/* Status + explorer entry */}
+        <div style={{ display: "flex", alignItems: "center", gap: "24px" }}>
+          <span
+            className="masthead-status-text"
+            style={{
+              fontFamily: "var(--font-mono-v2), monospace",
+              fontSize: "0.68rem",
+              letterSpacing: "0.22em",
+              textTransform: "uppercase",
+              color: "var(--ink-soft)",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "9px",
+            }}
+          >
+            <span
+              aria-hidden
+              style={{
+                display: "inline-block",
+                width: "7px",
+                height: "7px",
+                borderRadius: "999px",
+                background: "var(--crimson)",
+                animation: "fuin-pulse 2.4s ease-in-out infinite",
+              }}
+            />
+            devnet · live
+          </span>
           <a
             href={EXPLORER(pda)}
             target="_blank"
             rel="noopener noreferrer"
             style={{
-              color: "var(--ink)",
-              background: "var(--ledger)",
-              padding: "6px 12px",
-              fontSize: "0.78rem",
-              letterSpacing: "0.04em",
+              fontFamily: "var(--font-mono-v2), monospace",
+              fontSize: "0.7rem",
+              letterSpacing: "0.18em",
+              color: "var(--prussian)",
+              borderBottom: "1px solid var(--prussian)",
+              paddingBottom: "3px",
+              transition: "color 0.2s ease, border-color 0.2s ease",
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "8px",
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.color = "var(--ink-black)";
+              e.currentTarget.style.borderColor = "var(--ink-black)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.color = "var(--prussian)";
+              e.currentTarget.style.borderColor = "var(--prussian)";
             }}
           >
-            on explorer ↗
+            <span>{shortAddr(pda, 4, 4)}</span>
+            <span aria-hidden>↗</span>
           </a>
         </div>
       </div>
-    </div>
+    </header>
   );
 }
 
@@ -307,6 +408,7 @@ function NodeRow({
       ? "var(--ledger)"
       : "var(--cream-soft)";
   const summary = predicateSummary(node.goalPredicate).join(" · ");
+  const isReadOnly = summary.toLowerCase().includes("read-only");
   return (
     <button
       onClick={onClick}
@@ -321,6 +423,7 @@ function NodeRow({
         gridTemplateColumns: "auto 1fr auto",
         alignItems: "center",
         columnGap: "16px",
+        cursor: "pointer",
       }}
     >
       <span
@@ -356,9 +459,19 @@ function NodeRow({
         </div>
       </div>
       <div className="text-right">
-        <div className="font-mono text-[0.86rem]" style={{ color: "var(--cream)" }}>
-          {formatUsdcMicros(node.remainingBudget)} <span style={{ color: "var(--mute)" }}>/ {formatUsdcMicros(node.budget)}</span>
-        </div>
+        {isReadOnly ? (
+          <div
+            className="font-mono text-[0.86rem]"
+            style={{ color: "var(--mute)", fontStyle: "italic" }}
+          >
+            no spend
+          </div>
+        ) : (
+          <div className="font-mono text-[0.86rem]" style={{ color: "var(--cream)" }}>
+            {formatUsdcMicros(node.remainingBudget)}{" "}
+            <span style={{ color: "var(--mute)" }}>/ {formatUsdcMicros(node.budget)}</span>
+          </div>
+        )}
         <div className="t-eyebrow mt-1" style={{ color: accent, fontSize: "0.66rem" }}>
           {status}
         </div>
@@ -371,6 +484,7 @@ function NodeRow({
 function Detail({ node }: { node: IntentNode }) {
   const status = node.revoked ? "revoked" : isExpired(node) ? "expired" : "active";
   const lines = predicateSummary(node.goalPredicate);
+  const isReadOnly = lines.some((l) => l.toLowerCase().includes("read-only"));
   return (
     <div
       style={{
@@ -394,7 +508,11 @@ function Detail({ node }: { node: IntentNode }) {
       )}
       <DetailRow
         label="budget"
-        value={`${formatUsdcMicros(node.remainingBudget)} / ${formatUsdcMicros(node.budget)}`}
+        value={
+          isReadOnly
+            ? `no spend · ${formatUsdcMicros(node.budget)} cap unused (read-only)`
+            : `${formatUsdcMicros(node.remainingBudget)} / ${formatUsdcMicros(node.budget)}`
+        }
       />
       <DetailRow
         label="expires"

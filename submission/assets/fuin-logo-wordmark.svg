@@ -1,0 +1,12 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="480" height="120" viewBox="0 0 480 120">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Vollkorn:wght@500&amp;display=swap');
+      .wordmark { font-family: 'Vollkorn', Georgia, serif; font-weight: 500; font-size: 72px; letter-spacing: -1px; fill: #1F1B16; }
+    </style>
+  </defs>
+  <!-- crimson diamond (the colophon mark) -->
+  <rect x="40" y="50" width="22" height="22" fill="#AB4528" transform="rotate(45 51 61)"/>
+  <!-- Fuin wordmark -->
+  <text x="92" y="78" class="wordmark">Fuin</text>
+</svg>

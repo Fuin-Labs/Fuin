@@ -4,11 +4,25 @@ import React from "react";
 import { useWallet } from "@solana/wallet-adapter-react";
 import { useWalletModal } from "@solana/wallet-adapter-react-ui";
 import { motion } from "framer-motion";
-import { COLORS } from "../_lib/constants";
 import { formatAddress, formatSolShort } from "../_lib/format";
 import { useWalletBalance } from "../_hooks/useWalletBalance";
 import { useIsMobile } from "../_hooks/useMediaQuery";
-import { Wallet, LogOut } from "lucide-react";
+import { LogOut } from "lucide-react";
+
+const PILL_BASE: React.CSSProperties = {
+  display: "inline-flex",
+  alignItems: "center",
+  fontFamily: "var(--font-mono-v2), monospace",
+  fontSize: "0.72rem",
+  letterSpacing: "0.06em",
+  height: "36px",
+  padding: "0 14px",
+  border: "1px solid var(--ink-black)",
+  background: "transparent",
+  color: "var(--ink-black)",
+  cursor: "pointer",
+  whiteSpace: "nowrap",
+};
 
 export function WalletButton(): React.JSX.Element {
   const { publicKey, disconnect, connected } = useWallet();
@@ -19,87 +33,71 @@ export function WalletButton(): React.JSX.Element {
   if (!connected || !publicKey) {
     return (
       <motion.button
-        whileHover={{ scale: 1.02 }}
+        whileHover={{ background: "var(--ink-black)", color: "var(--paper)" }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setVisible(true)}
         style={{
-          backgroundColor: COLORS.emerald,
-          color: COLORS.bg,
-          border: "none",
-          padding: isMobile ? "8px 14px" : "10px 20px",
-          borderRadius: "10px",
-          fontSize: isMobile ? "0.8rem" : "0.9rem",
-          fontWeight: 700,
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
-          gap: "8px",
-          fontFamily: "inherit",
-          boxShadow: `0 0 15px ${COLORS.emeraldGlow}`,
+          ...PILL_BASE,
+          height: "40px",
+          padding: isMobile ? "0 14px" : "0 18px",
+          fontSize: isMobile ? "0.7rem" : "0.74rem",
+          textTransform: "uppercase",
+          letterSpacing: "0.18em",
+          fontWeight: 600,
         }}
       >
-        <Wallet size={16} />
-        {isMobile ? "Connect" : "Connect Wallet"}
+        {isMobile ? "Connect ↗" : "Connect wallet ↗"}
       </motion.button>
     );
   }
 
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
       {balance !== null && (
         <div
+          aria-label="Wallet balance"
           style={{
-            backgroundColor: COLORS.emeraldSubtle,
-            border: `1px solid ${COLORS.emeraldBorder}`,
-            borderRadius: "10px",
-            padding: isMobile ? "8px 10px" : "10px 14px",
-            color: COLORS.emerald,
-            fontSize: "0.85rem",
-            fontWeight: 600,
-            whiteSpace: "nowrap",
+            ...PILL_BASE,
+            background: "var(--paper-rise)",
+            color: "var(--ink-black)",
+            fontWeight: 500,
           }}
         >
-          {formatSolShort(balance)} SOL
+          <span aria-hidden style={{ color: "var(--prussian)", marginRight: 6 }}>◇</span>
+          <span>{formatSolShort(balance)}</span>
+          <span style={{ color: "var(--ink-mute)", marginLeft: 4 }}>SOL</span>
         </div>
       )}
       {!isMobile && (
-        <motion.div
-          whileHover={{ scale: 1.02, backgroundColor: COLORS.bgCardHover }}
+        <motion.button
+          whileHover={{ background: "var(--paper-rise)" }}
           whileTap={{ scale: 0.98 }}
           onClick={() => {
             navigator.clipboard.writeText(publicKey.toBase58());
           }}
           style={{
-            backgroundColor: COLORS.bgInput,
-            border: `1px solid ${COLORS.border}`,
-            borderRadius: "10px",
-            padding: "10px 16px",
-            color: COLORS.text,
-            fontSize: "0.85rem",
-            fontWeight: 500,
-            cursor: "pointer",
+            ...PILL_BASE,
+            color: "var(--prussian)",
           }}
-          title="Copy Address"
+          title="Copy address"
         >
           {formatAddress(publicKey)}
-        </motion.div>
+        </motion.button>
       )}
       <motion.button
-        whileHover={{ scale: 1.05 }}
-        whileTap={{ scale: 0.95 }}
+        whileHover={{ background: "var(--ink-black)", color: "var(--paper)" }}
+        whileTap={{ scale: 0.96 }}
         onClick={() => disconnect()}
+        aria-label="Disconnect wallet"
         style={{
-          backgroundColor: "transparent",
-          border: `1px solid ${COLORS.border}`,
-          borderRadius: "10px",
-          padding: "10px",
-          color: COLORS.textMuted,
-          cursor: "pointer",
-          display: "flex",
-          alignItems: "center",
+          ...PILL_BASE,
+          width: "36px",
+          padding: 0,
+          justifyContent: "center",
+          color: "var(--ink-mute)",
         }}
       >
-        <LogOut size={16} />
+        <LogOut size={14} />
       </motion.button>
     </div>
   );

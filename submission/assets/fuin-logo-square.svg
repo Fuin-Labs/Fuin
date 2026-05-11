@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Vollkorn:wght@500&amp;display=swap');
+      .wordmark { font-family: 'Vollkorn', Georgia, serif; font-weight: 500; font-size: 124px; letter-spacing: -2px; fill: #1F1B16; text-anchor: middle; }
+    </style>
+  </defs>
+  <!-- bone-paper background (matches landing) -->
+  <rect width="512" height="512" fill="#EEE5D2"/>
+  <!-- crimson diamond, centered above wordmark -->
+  <rect x="240" y="180" width="32" height="32" fill="#AB4528" transform="rotate(45 256 196)"/>
+  <!-- Fuin wordmark, centered -->
+  <text x="256" y="320" class="wordmark">Fuin</text>
+  <!-- subtle subtitle -->
+  <text x="256" y="360" style="font-family: 'Vollkorn', Georgia, serif; font-style: italic; font-size: 22px; fill: #5A5043; text-anchor: middle;">policy layer for AI agents on Solana</text>
+</svg>
