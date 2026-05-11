@@ -8,7 +8,7 @@ import {
   Transaction,
 } from "@solana/web3.js";
 import type { WalletContextState } from "@solana/wallet-adapter-react";
-import { Fuin, GoalPredicate } from "@fuin-labs/sdk-v2";
+import { Fuin, GoalPredicate, GoalPredicateData } from "@fuin-labs/sdk-v2";
 
 const JUPITER = new PublicKey("JUP6LkbZbjS1jKKwapdHNy74zcZ3tLUZoi5QNyVTaV4");
 import { FUIN_IDL } from "./idl";
@@ -83,6 +83,28 @@ async function fundAllInOneTx(
   return sig;
 }
 
+async function deriveChild(args: {
+  connection: Connection;
+  parentAgent: Keypair;
+  parent: PublicKey;
+  childAgent: PublicKey;
+  predicate: GoalPredicateData;
+  budgetMicros: bigint;
+  expiresAt: bigint;
+  nonce: number;
+}): Promise<{ pda: PublicKey; sig: string }> {
+  const fuin = makeFuin(args.connection, args.parentAgent);
+  return fuin.deriveChildIntent({
+    parentAgent: args.parentAgent,
+    parent: args.parent,
+    childAgent: args.childAgent,
+    predicate: args.predicate,
+    budget: args.budgetMicros,
+    expiresAt: args.expiresAt,
+    nonce: args.nonce,
+  });
+}
+
 export async function* runSwarmDemo(args: {
   connection: Connection;
   funder: WalletContextState;
@@ -135,6 +157,83 @@ export async function* runSwarmDemo(args: {
     scope: "Jupiter · 24h · 500 USDC",
   };
 
-  // ── Step 3 (children) added in next task ────────────────────────────────
-  throw new Error("flow not yet implemented past sign-root");
+  const childExp = BigInt(now + 23 * 3600);
+
+  // ── Step 3a: research (read-only, $50) ──────────────────────────────────
+  yield { id: "derive-research", status: "running" };
+  try {
+    const r = await deriveChild({
+      connection: args.connection,
+      parentAgent: roles.orchestrator,
+      parent: rootPda,
+      childAgent: roles.research.publicKey,
+      predicate: GoalPredicate.readOnly(),
+      budgetMicros: 50_000_000n,
+      expiresAt: childExp,
+      nonce: 1,
+    });
+    yield {
+      id: "derive-research",
+      status: "ok",
+      pda: r.pda.toBase58(),
+      sig: r.sig,
+      scope: "read-only · $50",
+    };
+  } catch (e: any) {
+    yield { id: "derive-research", status: "failed", error: e?.message ?? String(e) };
+    throw e;
+  }
+
+  // ── Step 3b: execute (Jupiter, $400) ────────────────────────────────────
+  yield { id: "derive-execute", status: "running" };
+  try {
+    const r = await deriveChild({
+      connection: args.connection,
+      parentAgent: roles.orchestrator,
+      parent: rootPda,
+      childAgent: roles.executeAgent.publicKey,
+      predicate: GoalPredicate.composite().onlyOnDexes([JUPITER]).build(),
+      budgetMicros: 400_000_000n,
+      expiresAt: childExp,
+      nonce: 2,
+    });
+    yield {
+      id: "derive-execute",
+      status: "ok",
+      pda: r.pda.toBase58(),
+      sig: r.sig,
+      scope: "Jupiter only · $400",
+    };
+  } catch (e: any) {
+    yield { id: "derive-execute", status: "failed", error: e?.message ?? String(e) };
+    throw e;
+  }
+
+  // ── Step 3c: audit (read-only, $50) ─────────────────────────────────────
+  yield { id: "derive-audit", status: "running" };
+  try {
+    const r = await deriveChild({
+      connection: args.connection,
+      parentAgent: roles.orchestrator,
+      parent: rootPda,
+      childAgent: roles.audit.publicKey,
+      predicate: GoalPredicate.readOnly(),
+      budgetMicros: 50_000_000n,
+      expiresAt: childExp,
+      nonce: 3,
+    });
+    yield {
+      id: "derive-audit",
+      status: "ok",
+      pda: r.pda.toBase58(),
+      sig: r.sig,
+      scope: "read-only · $50",
+    };
+  } catch (e: any) {
+    yield { id: "derive-audit", status: "failed", error: e?.message ?? String(e) };
+    throw e;
+  }
+
+  // ── Step 4 (rogue attempt) added in next task ───────────────────────────
+  throw new Error("flow not yet implemented past derive-children");
 }
