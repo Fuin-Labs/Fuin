@@ -3,7 +3,7 @@ import React from "react";
 
 import { use } from "react";
 import { motion } from "framer-motion";
-import { ArrowLeft, UserRound, Bot } from "lucide-react";
+import { ArrowLeft, UserRound, Bot, KeyRound } from "lucide-react";
 import Link from "next/link";
 import { GlassCard } from "../../../../_components/ui/GlassCard";
 import { COLORS } from "../../../../_lib/constants";
@@ -32,7 +32,36 @@ export default function CreateDelegatePage({ params }: { params: Promise<{ nonce
         Choose who you want to authorize with scoped permissions and spending limits.
       </p>
 
-      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr", gap: "16px" }}>
+      <div style={{ display: "grid", gridTemplateColumns: isMobile ? "1fr" : "1fr 1fr 1fr", gap: "16px" }}>
+        <Link href={`/dashboard/vaults/${vaultNonce}/delegate/session`} style={{ textDecoration: "none", cursor: "pointer" }}>
+          <GlassCard hover accent={COLORS.emeraldBorder} style={{ height: "100%" }}>
+            <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "16px 0" }}>
+              <div
+                style={{
+                  width: "56px",
+                  height: "56px",
+                  borderRadius: "16px",
+                  backgroundColor: COLORS.emeraldSubtle,
+                  border: `1px solid ${COLORS.emeraldBorder}`,
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
+                <KeyRound size={28} color={COLORS.emerald} />
+              </div>
+              <div>
+                <h3 style={{ color: COLORS.text, fontSize: "1.15rem", fontWeight: 700, margin: "0 0 6px" }}>
+                  AI Agent Session
+                </h3>
+                <p style={{ color: COLORS.textMuted, fontSize: "0.85rem", margin: 0, lineHeight: 1.5 }}>
+                  Generate a fresh keypair in your browser and get a copy-paste MCP env block for Claude.
+                </p>
+              </div>
+            </div>
+          </GlassCard>
+        </Link>
+
         <Link href={`/dashboard/vaults/${vaultNonce}/delegate/openclaw`} style={{ textDecoration: "none", cursor: "pointer" }}>
           <GlassCard hover accent="rgba(168, 85, 247, 0.2)" style={{ height: "100%" }}>
             <div style={{ display: "flex", flexDirection: "column", alignItems: "center", textAlign: "center", gap: "16px", padding: "16px 0" }}>
@@ -55,7 +84,7 @@ export default function CreateDelegatePage({ params }: { params: Promise<{ nonce
                   OpenClaw / AI Agent
                 </h3>
                 <p style={{ color: COLORS.textMuted, fontSize: "0.85rem", margin: 0, lineHeight: 1.5 }}>
-                  Authorize an AI agent with granular permissions, limits, and policy constraints.
+                  Authorize an existing agent pubkey with granular permissions, limits, and policy constraints.
                 </p>
               </div>
             </div>
