@@ -2,7 +2,7 @@
   "name": "fuin",
   "private": true,
   "scripts": {
-    "build": "turbo run build",
+    "build": "pnpm --filter @fuin-labs/db db:generate && turbo run build",
     "dev": "turbo run dev",
     "dev:vault": "turbo run dev --filter=vault",
     "dev:video": "turbo run dev --filter=video",
