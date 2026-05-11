@@ -43,8 +43,29 @@ function buildRoles(): Roles {
   };
 }
 
+// Minimal anchor.Wallet replacement — anchor.Wallet itself is a Node-only
+// export (loads keypair from filesystem) and the bundler can't resolve it
+// in the browser.
+class KeypairWallet {
+  constructor(readonly payer: Keypair) {}
+  get publicKey() {
+    return this.payer.publicKey;
+  }
+  async signTransaction<T extends Transaction | anchor.web3.VersionedTransaction>(tx: T): Promise<T> {
+    if ("partialSign" in tx) {
+      (tx as Transaction).partialSign(this.payer);
+    } else {
+      (tx as anchor.web3.VersionedTransaction).sign([this.payer]);
+    }
+    return tx;
+  }
+  async signAllTransactions<T extends Transaction | anchor.web3.VersionedTransaction>(txs: T[]): Promise<T[]> {
+    return Promise.all(txs.map((tx) => this.signTransaction(tx)));
+  }
+}
+
 function makeProvider(connection: Connection, payer: Keypair): anchor.AnchorProvider {
-  const wallet = new anchor.Wallet(payer);
+  const wallet = new KeypairWallet(payer);
   return new anchor.AnchorProvider(connection, wallet, { commitment: "confirmed" });
 }
 

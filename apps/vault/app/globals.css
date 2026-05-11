@@ -13,6 +13,8 @@
   --color-ledger: var(--ledger);
   --color-ledger-low: var(--ledger-low);
   --color-oxide: var(--oxide);
+  --color-lichen: var(--lichen);
+  --color-lichen-low: var(--lichen-low);
 
   /* v1 tokens (kept for /dashboard compatibility) */
   --color-accent: var(--accent);
@@ -49,6 +51,8 @@
     --ledger: oklch(0.83 0.165 92);
     --ledger-low: oklch(0.83 0.165 92 / 0.14);
     --oxide: oklch(0.55 0.18 30);
+    --lichen: oklch(0.70 0.10 145);
+    --lichen-low: oklch(0.70 0.10 145 / 0.14);
 
     /* ── v1 tokens (kept) ── */
     --background: #000000;
