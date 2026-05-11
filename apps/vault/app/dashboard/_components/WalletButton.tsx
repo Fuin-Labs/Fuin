@@ -9,7 +9,7 @@ import { useWalletBalance } from "../_hooks/useWalletBalance";
 import { useIsMobile } from "../_hooks/useMediaQuery";
 import { LogOut } from "lucide-react";
 
-const PILL_BASE: React.CSSProperties = {
+const PILL_BASE = {
   display: "inline-flex",
   alignItems: "center",
   fontFamily: "var(--font-mono-v2), monospace",

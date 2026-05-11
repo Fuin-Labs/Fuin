@@ -372,7 +372,7 @@ export function TerminalAnimationRoot({
         if (lineIndex <= tab.lines.length) {
           setVisibleLines(lineIndex)
           if (lineIndex < tab.lines.length) {
-            const delay = tab.lines[lineIndex].delay ?? 100
+            const delay = tab.lines[lineIndex]?.delay ?? 100
             const t = setTimeout(() => showLines(lineIndex + 1), delay)
             timeoutRef.current.push(t)
           } else if (hideCursorOnComplete) {
@@ -393,7 +393,7 @@ export function TerminalAnimationRoot({
     return clearTimeouts
   }, [activeTab, animateTab, clearTimeouts])
 
-  const currentTab = tabs[activeTab] ?? tabs[0]
+  const currentTab = (tabs[activeTab] ?? tabs[0])!
   const safeActiveTab = Math.min(activeTab, tabs.length - 1)
 
   const value: TerminalAnimationContextValue = {
