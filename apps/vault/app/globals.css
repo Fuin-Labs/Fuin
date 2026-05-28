@@ -38,6 +38,11 @@
   --color-status-red: var(--red);
   --color-status-amber: var(--amber);
   --color-status-blue: var(--blue);
+
+  /* Live (lime) — the agentic accent. Used in landing hero, CTAs, focus, active states. */
+  --color-live: var(--live);
+  --color-live-low: var(--live-low);
+  --color-live-glow: var(--live-glow);
 }
 
 @layer base {
@@ -58,6 +63,11 @@
     --oxide: oklch(0.62 0.22 25);
     --lichen: oklch(0.70 0.10 145);
     --lichen-low: oklch(0.70 0.10 145 / 0.14);
+
+    /* Live (lime) — futuristic agentic accent. Recolored to the user-picked #c1e859. */
+    --live:      #c1e859;
+    --live-low:  rgba(193, 232, 89, 0.12);
+    --live-glow: rgba(193, 232, 89, 0.55);
 
     /* Gradient (Solana purple → green) for big type + CTAs */
     --accent-grad: linear-gradient(135deg, oklch(0.62 0.27 295) 0%, oklch(0.85 0.27 152) 100%);
@@ -220,11 +230,75 @@
     text-rendering: optimizeLegibility;
   }
 
-  /* v1 default body (used by existing pages that opt in) */
+  /* ── Obsidian monochrome theme: warm near-black, warm-ivory text, one whisper of cold steel.
+     Premium-via-restraint. Remaps every token the app references (manifesto, core, v1 legacy)
+     so the whole UI re-themes with no per-component edits. ── */
   body.v1 {
+    /* manifesto tokens (dashboard + docs + audit use these directly) */
+    --paper:        #13110f;                         /* one step up from page bg */
+    --paper-rise:   #1a1815;                         /* two steps up */
+    --ink-black:    oklch(0.95 0.008 80);
+    --ink-soft:     oklch(0.76 0.006 75);
+    --ink-mute:     oklch(0.58 0.005 75);
+    --rule-paper:   oklch(0.32 0.005 70);
+    --crimson:      oklch(0.81 0.035 245);          /* steel (kept for dashboard accent) */
+    --crimson-low:  oklch(0.81 0.035 245 / 0.12);
+    --prussian:     oklch(0.72 0.030 250);
+    --prussian-low: oklch(0.72 0.030 250 / 0.12);
+    --prussian-soft:oklch(0.72 0.030 250 / 0.20);
+
+    /* core tokens — warm-bias near-black surface, lime as the live line */
+    --ink:        #0a0907;                          /* page bg — warm-bias near-black */
+    --ink-deep:   #050403;                          /* deepest layer */
+    --ink-rise:   #13110f;                          /* elevated surface */
+    --cream:      #f2ece1;                          /* warm ivory text */
+    --cream-soft: oklch(0.76 0.006 75);
+    --mute:       oklch(0.58 0.005 75);
+    --rule:       oklch(0.30 0.005 70);
+    --rule-soft:  oklch(0.225 0.005 70);
+    --ledger:     #c1e859;                          /* primary accent -> LIVE LIME */
+    --ledger-low: rgba(193, 232, 89, 0.12);
+    --neon:       #c1e859;                          /* same as ledger; collapse to one signal */
+    --neon-low:   rgba(193, 232, 89, 0.12);
+    --oxide:      oklch(0.60 0.13 28);              /* danger -> muted oxblood */
+    --lichen:     #9fb4c7;                          /* secondary -> cold steel whisper */
+    --lichen-low: rgba(159, 180, 199, 0.12);
+
+    /* v1 legacy tokens (dashboard inline styles + @theme utility classes) */
+    --accent:        #c1e859;                       /* dashboard CTAs go LIME too */
+    --accent-glow:   rgba(193, 232, 89, 0.30);
+    --accent-subtle: rgba(193, 232, 89, 0.10);
+    --accent-border: rgba(193, 232, 89, 0.22);
+    --bg-card:       oklch(1 0 0 / 0.03);
+    --bg-card-hover: oklch(1 0 0 / 0.06);
+    --bg-input:      oklch(1 0 0 / 0.04);
+    --bg-elevated:   #13110f;
+    --bg-sunken:     #050403;
+    --text-primary:  #f2ece1;
+    --text-secondary:oklch(0.76 0.006 75);
+    --text-muted:    oklch(0.58 0.005 75);
+    --text-dim:      oklch(0.44 0.005 75);
+    --border:        oklch(1 0 0 / 0.10);
+    --border-light:  oklch(1 0 0 / 0.16);
+    --green:         #c1e859;                        /* status colors collapse to live lime */
+    --red:           oklch(0.60 0.13 28);
+
+    /* fonts */
+    --font-display: var(--font-geist-sans);
+    --font-body:    var(--font-geist-sans);
+    --font-mono-v2: var(--font-geist-mono);
+
+    /* base */
+    --background: #0a0907;
+    --foreground: #f2ece1;
+    --codex-line: oklch(0.30 0.005 70);
+    --codex-ink-soft: oklch(0.76 0.006 75);
+    --danger: oklch(0.60 0.13 28);
+
     color: var(--foreground);
     background: var(--background);
     font-family: var(--font-geist-sans), sans-serif;
+    overflow-x: clip;
   }
 
   body { /* fallback default = v2 */
@@ -407,4 +481,53 @@
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
   }
+}
+
+/* ── v1 typography (restored for the v1 landing) ── */
+.font-geist { font-family: var(--font-geist-sans), sans-serif; }
+
+.text-hero {
+  font-size: clamp(2.5rem, 8vw, 6rem);
+  line-height: 1;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+.text-section {
+  font-size: clamp(1.75rem, 4vw, 3rem);
+  line-height: 1.1;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.text-headline {
+  font-size: clamp(1.25rem, 2.5vw, 1.875rem);
+  line-height: 1.2;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}
+.text-subhead {
+  font-size: clamp(1rem, 2vw, 1.5rem);
+  line-height: 1.4;
+  font-weight: 400;
+}
+
+/* ── codex hero motion: the drawing draws itself, then text rises ── */
+@keyframes codex-draw {
+  to { stroke-dashoffset: 0; }
+}
+@keyframes codex-rise {
+  from { opacity: 0; transform: translateY(14px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.codex-stroke {
+  stroke-dasharray: var(--len, 1200);
+  stroke-dashoffset: var(--len, 1200);
+  animation: codex-draw 1.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+.codex-rise {
+  opacity: 0;
+  animation: codex-rise 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .codex-stroke { animation: none; stroke-dashoffset: 0; }
+  .codex-rise   { animation: none; opacity: 1; transform: none; }
 }
