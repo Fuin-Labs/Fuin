@@ -279,7 +279,7 @@ export function DashboardSidebar({
         style={{
           width: isCollapsed ? "80px" : "260px",
           transition: "width 0.2s ease",
-          minHeight: "100vh",
+          minHeight: "100dvh",
           background: "var(--paper)",
           borderRight: "1px solid var(--rule-soft)",
           padding: "24px 12px",

@@ -6,6 +6,7 @@ import "./landing.css";
 import dynamic from "next/dynamic";
 import Link from "next/link";
 import { Mark } from "./components/Mark";
+import { LenisProvider } from "./components/LenisProvider";
 
 const UsecaseFlow = dynamic(() => import("./components/UsecaseFlow").then((m) => m.UsecaseFlow), {
   ssr: false,
@@ -397,6 +398,7 @@ export default function Home(): React.JSX.Element {
   // No JS scroll listener — see globals/landing CSS .fl-progress block.
 
   return (
+    <LenisProvider>
     <div
       id="fuin-landing"
       style={{ fontFamily: "var(--font-archivo), sans-serif", background: BG, color: IVORY }}
@@ -634,5 +636,6 @@ export default function Home(): React.JSX.Element {
         </div>
       </footer>
     </div>
+    </LenisProvider>
   );
 }

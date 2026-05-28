@@ -18,7 +18,7 @@ function DashboardShell({ children }: { children: React.ReactNode }) {
   const isMobile = useIsMobile();
 
   return (
-    <div style={{ display: "flex", minHeight: "100vh", backgroundColor: COLORS.bg }}>
+    <div style={{ display: "flex", minHeight: "100dvh", backgroundColor: COLORS.bg }}>
       <DashboardSidebar isOpen={sidebarOpen} onClose={() => setSidebarOpen(false)} isCollapsed={isCollapsed} onToggleCollapse={() => setIsCollapsed(!isCollapsed)} />
       <div style={{ flex: 1, marginLeft: isMobile ? 0 : (isCollapsed ? "80px" : "260px"), transition: "margin-left 0.2s ease", display: "flex", flexDirection: "column", position: "relative" }}>
         <div style={{ position: "relative", zIndex: 1, display: "flex", flexDirection: "column", flex: 1 }}>
