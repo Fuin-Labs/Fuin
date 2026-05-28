@@ -186,38 +186,6 @@ const STYLES = `
   /* Below 480px the canvas is too small to be meaningful; hide and burn no CPU */
   #fuin-landing .fl-hero-panel { display: none; }
 }
-#fuin-landing .fl-hero-panel-meta {
-  position: absolute;
-  bottom: 12px;
-  left: 14px;
-  max-width: calc(100% - 28px);
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  z-index: 2;
-  pointer-events: none;
-  font-family: var(--font-mono-v2), ui-monospace, "SF Mono", monospace;
-  font-size: 0.66rem;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--muted);
-  background: rgba(10, 9, 7, 0.55);
-  padding: 4px 9px;
-  border-radius: 4px;
-  border: 1px solid var(--hairline);
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-#fuin-landing .fl-hero-panel-meta .fl-live-dot {
-  width: 6px; height: 6px;
-  background: var(--live);
-  border-radius: 50%;
-  box-shadow: 0 0 6px var(--live-glow);
-  animation: fl-pulse-dot 1.6s ease-out infinite;
-}
 #fuin-landing .fl-hero-panel-corner {
   position: absolute;
   width: 12px; height: 12px;
@@ -235,38 +203,23 @@ const STYLES = `
 @keyframes fl-corner-in {
   to { opacity: 0.55; transform: scale(1); }
 }
-#fuin-landing .fl-hero-panel-meta {
-  /* Slide up + fade in after the panel settles */
-  opacity: 0;
-  transform: translateY(6px);
-  animation: fl-meta-in 0.5s var(--ease) 0.75s forwards;
-}
-@keyframes fl-meta-in {
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* Hero vertical accent rule removed per design (was distracting between copy and shader panel). */
+/* Hero vertical accent rule + panel-meta strip removed per design. */
 #fuin-landing .fl-eyebrow { display: inline-flex; align-items: center; }
-@keyframes fl-pulse-dot {
-  0%, 100% { box-shadow: 0 0 0 0 var(--live-glow); }
-  60%      { box-shadow: 0 0 0 7px rgba(193, 232, 89, 0); }
-}
 #fuin-landing .fl-hero-headline {
-  font-weight: 800; font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.04; letter-spacing: -0.025em;
+  font-weight: 800; font-size: clamp(2.6rem, 8vw, 4.2rem); line-height: 1.02; letter-spacing: -0.03em;
   color: var(--ivory); max-width: 100%;
   overflow-wrap: break-word; word-wrap: break-word;
 }
 #fuin-landing .fl-hero-copy { min-width: 0; }
 #fuin-landing .fl-hero-grid, #fuin-landing .fl-hero-split { min-width: 0; }
 @media (min-width: 980px) {
-  /* Split layout: each sentence on one line. Hard skill rule: headline max 2 lines on desktop. */
-  #fuin-landing .fl-hero-headline { font-size: clamp(2rem, 2.8vw, 2.7rem); letter-spacing: -0.02em; }
+  /* Split layout: bigger for visual impact. Sentences may wrap to 2 lines each — accepted trade for the headline weight the brand wants. */
+  #fuin-landing .fl-hero-headline { font-size: clamp(2.8rem, 4.5vw, 4.6rem); letter-spacing: -0.028em; }
 }
 @media (max-width: 480px) {
-  /* Phone: each sentence wraps to ~2 lines, total ≤ 4 lines acceptable on mobile. */
   #fuin-landing .fl-hero-headline {
-    font-size: clamp(1.7rem, 6.5vw, 2.1rem);
-    letter-spacing: -0.02em;
+    font-size: clamp(2rem, 8vw, 2.6rem);
+    letter-spacing: -0.025em;
   }
 }
 #fuin-landing .fl-hero-headline .fl-ln { display: block; }
@@ -505,18 +458,14 @@ export default function Home(): React.JSX.Element {
               </div>
 
               {/* Digital Rain — on-chain alphabet falling into a ledger surface.
-                  The canvas itself is aria-hidden inside DigitalRain; the meta
-                  text below remains in the a11y tree as the panel's caption. */}
+                  Canvas is aria-hidden inside DigitalRain; corner marks frame it as
+                  an HUD without adding caption chrome. */}
               <div className="fl-hero-panel fl-reveal r3">
                 <DigitalRain />
                 <span className="fl-hero-panel-corner tl" aria-hidden="true" />
                 <span className="fl-hero-panel-corner tr" aria-hidden="true" />
                 <span className="fl-hero-panel-corner bl" aria-hidden="true" />
                 <span className="fl-hero-panel-corner br" aria-hidden="true" />
-                <div className="fl-hero-panel-meta">
-                  <span className="fl-live-dot" aria-hidden="true" />
-                  live · settling intents to ledger
-                </div>
               </div>
             </div>
 
