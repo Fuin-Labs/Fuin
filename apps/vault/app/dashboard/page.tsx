@@ -26,7 +26,7 @@ function StatCard({ label, value, unit }: StatCardProps) {
     <div
       style={{
         background: "var(--paper-rise)",
-        border: "1px solid var(--ink-black)",
+        border: "1px solid var(--rule-soft)",
         padding: "24px 22px 22px",
         display: "flex",
         flexDirection: "column",
@@ -92,7 +92,7 @@ function ActionCard({ label, description, href }: ActionCardProps) {
         }}
         style={{
           background: "var(--paper-rise)",
-          border: "1px solid var(--ink-black)",
+          border: "1px solid var(--rule-soft)",
           padding: "22px 24px",
           cursor: "pointer",
           display: "grid",

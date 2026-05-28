@@ -3,7 +3,6 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import { Vollkorn, Schibsted_Grotesk, Fragment_Mono, Archivo } from "next/font/google";
 import { GeistPixelSquare } from "geist/font/pixel";
-import Script from "next/script";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
@@ -64,15 +63,6 @@ export default function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} ${GeistPixelSquare.variable} ${vollkorn.variable} ${schibsted.variable} ${fragmentMono.variable} ${archivo.variable} antialiased v1`}
       >
         {children}
-        <Script
-          src="https://code.iconify.design/iconify-icon/1.0.7/iconify-icon.min.js"
-          strategy="lazyOnload"
-        />
-        <Script
-          id="unicorn-script"
-          strategy="lazyOnload"
-          dangerouslySetInnerHTML={{ __html: `!function(){if(!window.UnicornStudio){window.UnicornStudio={isInitialized:!1};var i=document.createElement("script");i.src="https://cdn.jsdelivr.net/gh/hiunicornstudio/unicornstudio.js@v1.4.29/dist/unicornStudio.umd.js",i.onload=function(){window.UnicornStudio.isInitialized||(UnicornStudio.init(),window.UnicornStudio.isInitialized=!0)},(document.head || document.body).appendChild(i)}}();` }}
-        />
         <Analytics />
       </body>
     </html>

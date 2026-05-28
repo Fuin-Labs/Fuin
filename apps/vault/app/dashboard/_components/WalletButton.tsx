@@ -17,7 +17,7 @@ const PILL_BASE = {
   letterSpacing: "0.06em",
   height: "36px",
   padding: "0 14px",
-  border: "1px solid var(--ink-black)",
+  border: "1px solid var(--rule-soft)",
   background: "transparent",
   color: "var(--ink-black)",
   cursor: "pointer",

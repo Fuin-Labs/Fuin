@@ -1,258 +1,243 @@
 "use client";
 
-import { motion, AnimatePresence } from "framer-motion";
 import { JSX, useState } from "react";
-import { Shield, Sparkles, Zap, Lock, Activity, Bot } from "lucide-react";
+import { AnimatePresence, motion } from "framer-motion";
 
-// --- Animated OpenClaw Agent SVG Component ---
-const AnimatedOpenClaw = () => (
-    <motion.div
-        style={{ width: "100%", height: "100%", maxWidth: "300px", padding: "20px" }}
-        animate={{ y: [-10, 10, -10] }}
-        transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
-    >
-        <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg" style={{ filter: "drop-shadow(0px 0px 20px rgba(255, 77, 77, 0.4))" }}>
-            <defs>
-                <linearGradient id="lobster-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
-                    <stop offset="0%" stopColor="#ff4d4d" />
-                    <stop offset="100%" stopColor="#991b1b" />
-                </linearGradient>
-            </defs>
+/**
+ * UsecaseFlow — two delegation scenarios (Autonomous Agents / Junior Vaults).
+ * Rebuilt 2026-05-28 to match the lime-on-near-black brand: no emerald/rose/yellow,
+ * no side-stripe borders, no icon-in-rounded-square pattern, no glowing illustrations.
+ * Flat hairline cards, monospace eyebrow labels, lime as the single accent.
+ */
 
-            {/* Body - Breathing Animation */}
-            <motion.path
-                d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z"
-                fill="url(#lobster-gradient)"
-                animate={{ scale: [1, 1.02, 1] }}
-                transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
-                style={{ originX: "50%", originY: "50%" }}
-            />
+const IVORY = "#f2ece1";
+const MUTED = "#b3aca0";
+const STEEL = "#9fb4c7";
+const LIVE = "#c1e859";
+const LIVE_GLOW = "rgba(193, 232, 89, 0.30)";
+const BG = "#0a0907";
+const SURFACE = "#13110f";
+const HAIRLINE = "rgba(242, 236, 225, 0.10)";
+const HAIRLINE_STRONG = "rgba(242, 236, 225, 0.18)";
 
-            {/* Left Claw - Clamping */}
-            <motion.path
-                d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z"
-                fill="url(#lobster-gradient)"
-                animate={{ rotate: [0, -15, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
-                style={{ originX: "25px", originY: "55px" }}
-            />
+type TabId = "agent" | "junior";
 
-            {/* Right Claw - Clamping */}
-            <motion.path
-                d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z"
-                fill="url(#lobster-gradient)"
-                animate={{ rotate: [0, 15, 0] }}
-                transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", repeatType: "reverse", delay: 0.2 }}
-                style={{ originX: "95px", originY: "55px" }}
-            />
-
-            {/* Antenna */}
-            <path d="M45 15 Q35 5 30 8" stroke="#ff4d4d" strokeWidth="3" strokeLinecap="round" />
-            <path d="M75 15 Q85 5 90 8" stroke="#ff4d4d" strokeWidth="3" strokeLinecap="round" />
-
-            {/* Eye Backgrounds */}
-            <circle cx="45" cy="35" r="6" fill="#050810" />
-            <circle cx="75" cy="35" r="6" fill="#050810" />
-
-            {/* Glowing Pupils - Scanning */}
-            <motion.circle
-                cx="46" cy="34" r="2.5" fill="#34d399"
-                animate={{ cx: [44, 48, 44], cy: [34, 34, 34] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                style={{ filter: "drop-shadow(0 0 4px #34d399)" }}
-            />
-            <motion.circle
-                cx="76" cy="34" r="2.5" fill="#34d399"
-                animate={{ cx: [74, 78, 74], cy: [34, 34, 34] }}
-                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-                style={{ filter: "drop-shadow(0 0 4px #34d399)" }}
-            />
-        </svg>
-    </motion.div>
-);
-
-
-// --- Flow Step Card Component ---
-const FlowStepCard = ({ step, title, desc, icon, delay, accentColor }: any) => {
-    return (
-        <motion.div
-            initial={{ opacity: 0, x: -20 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.6, delay }}
-            className="flex gap-5 p-6 bg-[#0f0f0f] border border-[rgba(255,255,255,0.1)] rounded-2xl relative overflow-hidden group hover:border-[rgba(255,255,255,0.15)] transition-colors"
-        >
-            {/* Accent left bar */}
-            <div style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "3px",
-                height: "100%",
-                backgroundColor: accentColor,
-            }} />
-
-            <div style={{
-                width: "48px", height: "48px", borderRadius: "12px",
-                backgroundColor: `${accentColor}15`,
-                display: "flex", alignItems: "center", justifyContent: "center",
-                border: `1px solid ${accentColor}30`,
-                flexShrink: 0
-            }}>
-                {icon}
-            </div>
-
-            <div className="font-geist">
-                <div style={{ color: accentColor }} className="text-xs font-pixel tracking-[0.1em] uppercase mb-1">
-                    Phase 0{step}
-                </div>
-                <h4 className="text-white text-xl font-bold m-0 mb-2 font-geist">
-                    {title}
-                </h4>
-                <p className="text-white/60 text-[0.95rem] leading-relaxed m-0 font-geist">
-                    {desc}
-                </p>
-            </div>
-        </motion.div>
-    );
+interface Phase {
+  step: number;
+  title: string;
+  desc: string;
 }
 
-// --- Main UsecaseFlow Component ---
-export const UsecaseFlow = (): JSX.Element => {
-    const [activeTab, setActiveTab] = useState<"agent" | "junior">("agent");
-
-    return (
-        <section id="usecase-flow" className="relative z-10 w-full py-28 md:py-32 px-6 flex flex-col items-center font-geist overflow-hidden">
-            <div className="section-divider w-full absolute top-0 left-0"></div>
-
-            {/* Header / Toggle Section */}
-            <div className="max-w-4xl w-full z-10 text-center mb-16">
-                <span className="font-pixel text-[11px] text-white/50 tracking-widest uppercase mb-6 block">Usecases</span>
-                <h2 className="text-section font-geist text-white mb-8">
-                    Web3 For <span className={activeTab === "agent" ? "text-rose-400" : "text-emerald-400"} style={{ transition: "color 0.4s ease" }}>Everyone</span>
-                </h2>
-
-                {/* Toggle Switch */}
-                <div className="inline-flex bg-[#0f0f0f] border border-[rgba(255,255,255,0.1)] rounded-full p-1.5 relative">
-                    <button
-                        onClick={() => setActiveTab("agent")}
-                        className={`px-4 py-2.5 sm:px-8 sm:py-3 rounded-full border-none text-base font-semibold cursor-pointer transition-colors duration-200 flex items-center gap-2 ${activeTab === "agent" ? 'bg-rose-500/15 text-rose-400' : 'bg-transparent text-white/60'}`}
-                    >
-                        <Bot size={18} />
-                        Autonomous Agents
-                    </button>
-                    <button
-                        onClick={() => setActiveTab("junior")}
-                        className={`px-4 py-2.5 sm:px-8 sm:py-3 rounded-full border-none text-base font-semibold cursor-pointer transition-colors duration-200 flex items-center gap-2 ${activeTab === "junior" ? 'bg-emerald-400/15 text-emerald-400' : 'bg-transparent text-white/60'}`}
-                    >
-                        <Shield size={18} />
-                        Junior Vaults
-                    </button>
-                </div>
-            </div>
-
-            {/* Dynamic Content Container */}
-            <div className="max-w-[1200px] w-full min-h-[500px] relative">
-                <AnimatePresence mode="wait">
-
-                    {/* --- OPENCLAW AGENT FLOW --- */}
-                    {activeTab === "agent" && (
-                        <motion.div
-                            key="agent-flow"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.5 }}
-                            className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-[60px] items-center"
-                        >
-                            {/* Left: Graphic Visualization — hidden on mobile, shown second on md+ */}
-                            <div className="hidden md:flex relative h-[400px] items-center justify-center">
-                                <AnimatedOpenClaw />
-                            </div>
-
-                            {/* Right: Flow Steps */}
-                            <div className="flex flex-col gap-5">
-                                <FlowStepCard
-                                    step={1}
-                                    title="Awaken via Webhook"
-                                    desc="Guardian deposits funds into the PDA. Helius Geyser webhook fires immediately, pinging the sandboxed agent: 'You have liquidity.'"
-                                    icon={<Activity color="#ff4d4d" />}
-                                    delay={0.1}
-                                    accentColor="#ff4d4d"
-                                />
-                                <FlowStepCard
-                                    step={2}
-                                    title="Acquire Scoped Session"
-                                    desc="Agent receives a cryptographic session key bound strictly to predefined Routes (Capability Routing). It cannot compose custom transactions."
-                                    icon={<Lock color="#ff4d4d" />}
-                                    delay={0.3}
-                                    accentColor="#ff4d4d"
-                                />
-                                <FlowStepCard
-                                    step={3}
-                                    title="Execute Verified Intent"
-                                    desc="Agent signs an intent (e.g., 'Swap SOL for USDC'). A centralized Relayer executes the meta-transaction, covering gas. Policy engine validates rules on-chain."
-                                    icon={<Zap color="#ff4d4d" />}
-                                    delay={0.5}
-                                    accentColor="#ff4d4d"
-                                />
-                            </div>
-                        </motion.div>
-                    )}
-
-                    {/* --- JUNIOR / TEENAGER FLOW --- */}
-                    {activeTab === "junior" && (
-                        <motion.div
-                            key="junior-flow"
-                            initial={{ opacity: 0, y: 20 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: -20 }}
-                            transition={{ duration: 0.5 }}
-                            className="grid grid-cols-1 md:grid-cols-2 gap-10 md:gap-[60px] items-center"
-                        >
-                            {/* Left: Graphic Visualization — hidden on mobile */}
-                            <div className="hidden md:flex relative h-[400px] items-center justify-center">
-                                {/* Holographic Shield Animation */}
-                                <motion.div
-                                    animate={{ y: [-15, 15, -15], scale: [1, 1.05, 1] }}
-                                    transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
-                                >
-                                    <Shield size={180} color="#34d399" strokeWidth={1} style={{ filter: "drop-shadow(0 0 30px rgba(52,211,153,0.5))" }} />
-                                    <Sparkles size={40} color="#FACC15" style={{ position: "absolute", top: -10, right: -10 }} />
-                                </motion.div>
-                            </div>
-
-                            {/* Right: Flow Steps */}
-                            <div className="flex flex-col gap-5">
-                                <FlowStepCard
-                                    step={1}
-                                    title="Parental Vault Setup"
-                                    desc="Parent deploys a smart PDA vault. They establish the PolicySet: a strict $20 daily limit, and a whitelist of approved dApps (e.g., specific games or DEXs)."
-                                    icon={<Shield color="#34d399" />}
-                                    delay={0.1}
-                                    accentColor="#34d399"
-                                />
-                                <FlowStepCard
-                                    step={2}
-                                    title="Invisible Delegation"
-                                    desc="The junior user is silently issued a time-bound Session Key. Their frontend interactions feel identical to Web2, without pop-ups or seed phrase risks."
-                                    icon={<Zap color="#34d399" />}
-                                    delay={0.3}
-                                    accentColor="#34d399"
-                                />
-                                <FlowStepCard
-                                    step={3}
-                                    title="Sponsored Execution"
-                                    desc="When trading or playing, a Relayer pushes the transaction. Gas is sponsored by the Parent's GasTank. The on-chain policy verifies limits mathematically."
-                                    icon={<Activity color="#34d399" />}
-                                    delay={0.5}
-                                    accentColor="#34d399"
-                                />
-                            </div>
-                        </motion.div>
-                    )}
-
-                </AnimatePresence>
-            </div>
-        </section>
-    );
+const FLOWS: Record<TabId, { label: string; lead: string; phases: Phase[] }> = {
+  agent: {
+    label: "Autonomous agent",
+    lead: "An on-chain bot trades from your funds — within bounds you signed, never beyond them.",
+    phases: [
+      {
+        step: 1,
+        title: "Awaken on deposit",
+        desc: "Guardian funds the vault PDA. A Helius webhook pings the sandboxed agent: liquidity is available, scope is set.",
+      },
+      {
+        step: 2,
+        title: "Scoped session key",
+        desc: "The agent receives a session key bound to specific Routes (programs, slippage, time). It cannot compose arbitrary transactions.",
+      },
+      {
+        step: 3,
+        title: "Verified intent",
+        desc: "Agent signs an intent. A relayer submits the transaction. The on-chain policy engine validates every rule before it settles.",
+      },
+    ],
+  },
+  junior: {
+    label: "Junior vault",
+    lead: "A kid, contractor, or sub-account gets a wallet that can spend within your rules — and can never drain.",
+    phases: [
+      {
+        step: 1,
+        title: "Parental vault setup",
+        desc: "Parent deploys a vault PDA. They set the PolicySet: a strict daily cap, and a whitelist of approved programs.",
+      },
+      {
+        step: 2,
+        title: "Invisible delegation",
+        desc: "The junior is silently issued a time-bound session key. Their interactions feel like Web2 — no pop-ups, no seed phrase, no risk.",
+      },
+      {
+        step: 3,
+        title: "Sponsored execution",
+        desc: "When they trade or play, a relayer submits the transaction and the parent's gas tank covers it. Limits are enforced mathematically on-chain.",
+      },
+    ],
+  },
 };
+
+export const UsecaseFlow = (): JSX.Element => {
+  const [tab, setTab] = useState<TabId>("agent");
+  const flow = FLOWS[tab];
+
+  return (
+    <div style={{ padding: "clamp(2.5rem, 5vh, 3.5rem) clamp(1.5rem, 4vw, 3rem)" }}>
+      {/* Toggle */}
+      <div style={{ display: "flex", justifyContent: "center", marginBottom: "clamp(2rem, 5vh, 3rem)" }}>
+        <div
+          role="tablist"
+          aria-label="Delegation scenarios"
+          style={{
+            display: "inline-flex",
+            padding: 4,
+            border: `1px solid ${HAIRLINE_STRONG}`,
+            borderRadius: 999,
+            background: BG,
+          }}
+        >
+          {(["agent", "junior"] as TabId[]).map((id) => {
+            const active = tab === id;
+            return (
+              <button
+                key={id}
+                role="tab"
+                aria-selected={active}
+                onClick={() => setTab(id)}
+                style={{
+                  padding: "0.7rem 1.3rem",
+                  minHeight: 44,
+                  borderRadius: 999,
+                  border: "none",
+                  background: active ? LIVE : "transparent",
+                  color: active ? "#050505" : MUTED,
+                  fontWeight: active ? 600 : 500,
+                  fontSize: "0.88rem",
+                  letterSpacing: "0.01em",
+                  cursor: "pointer",
+                  transition: "background 0.25s ease, color 0.25s ease",
+                  fontFamily: "inherit",
+                }}
+              >
+                {FLOWS[id].label}
+              </button>
+            );
+          })}
+        </div>
+      </div>
+
+      {/* Subhead */}
+      <p
+        style={{
+          textAlign: "center",
+          color: MUTED,
+          fontSize: "clamp(1rem, 1.4vw, 1.18rem)",
+          lineHeight: 1.55,
+          maxWidth: "52ch",
+          margin: "0 auto clamp(2.5rem, 6vh, 3.5rem)",
+        }}
+      >
+        {flow.lead}
+      </p>
+
+      {/* Phases — flat hairline cards in a 3-column grid (1-col on mobile) */}
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={tab}
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+          style={{
+            display: "grid",
+            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+            gap: "1px",
+            background: HAIRLINE,
+            border: `1px solid ${HAIRLINE}`,
+            borderRadius: 12,
+            overflow: "hidden",
+          }}
+        >
+          {flow.phases.map((p) => (
+            <PhaseCell key={p.step} phase={p} />
+          ))}
+        </motion.div>
+      </AnimatePresence>
+    </div>
+  );
+};
+
+function PhaseCell({ phase }: { phase: Phase }): JSX.Element {
+  return (
+    <article
+      style={{
+        background: SURFACE,
+        padding: "1.75rem 1.5rem 1.75rem",
+        display: "flex",
+        flexDirection: "column",
+        gap: "0.85rem",
+        position: "relative",
+      }}
+    >
+      {/* Step indicator: a small lime dot + monospace label, no rounded-icon-square */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          gap: 10,
+          fontFamily: "var(--font-mono-v2), ui-monospace, monospace",
+          fontSize: "0.7rem",
+          letterSpacing: "0.22em",
+          textTransform: "uppercase",
+          color: MUTED,
+        }}
+      >
+        <span
+          aria-hidden="true"
+          style={{
+            display: "inline-block",
+            width: 6,
+            height: 6,
+            borderRadius: "50%",
+            background: LIVE,
+            boxShadow: `0 0 6px ${LIVE_GLOW}`,
+          }}
+        />
+        Phase {String(phase.step).padStart(2, "0")}
+      </div>
+
+      <h4
+        style={{
+          fontFamily: "var(--font-display), Georgia, serif",
+          fontWeight: 500,
+          fontSize: "clamp(1.25rem, 1.7vw, 1.5rem)",
+          letterSpacing: "-0.01em",
+          color: IVORY,
+          margin: 0,
+          lineHeight: 1.15,
+        }}
+      >
+        {phase.title}
+      </h4>
+
+      <p
+        style={{
+          color: MUTED,
+          fontSize: "0.95rem",
+          lineHeight: 1.55,
+          margin: 0,
+          maxWidth: "32ch",
+        }}
+      >
+        {phase.desc}
+      </p>
+
+      {/* Subtle steel hairline at the foot — secondary signal */}
+      <div
+        aria-hidden="true"
+        style={{
+          marginTop: "auto",
+          paddingTop: "1.25rem",
+          borderTop: `1px solid ${STEEL}`,
+          opacity: 0.18,
+        }}
+      />
+    </article>
+  );
+}

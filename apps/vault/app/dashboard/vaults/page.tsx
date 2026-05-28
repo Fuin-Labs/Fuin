@@ -111,7 +111,7 @@ export default function VaultsPage(): React.JSX.Element {
             style={{
               width: "100%",
               padding: "11px 14px 11px 40px",
-              border: "1px solid var(--ink-black)",
+              border: "1px solid var(--rule-soft)",
               background: "var(--paper)",
               color: "var(--ink-black)",
               fontFamily: "var(--font-mono-v2), monospace",
@@ -123,11 +123,11 @@ export default function VaultsPage(): React.JSX.Element {
               transition: "border-color 0.18s ease, background-color 0.18s ease",
             }}
             onFocus={(e) => {
-              e.currentTarget.style.borderColor = "var(--crimson)";
+              e.currentTarget.style.borderColor = "var(--live)";
               e.currentTarget.style.background = "var(--paper-rise)";
             }}
             onBlur={(e) => {
-              e.currentTarget.style.borderColor = "var(--ink-black)";
+              e.currentTarget.style.borderColor = "var(--rule-soft)";
               e.currentTarget.style.background = "var(--paper)";
             }}
           />

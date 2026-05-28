@@ -65,7 +65,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps): 
         background: "color-mix(in oklch, var(--paper) 96%, transparent)",
         backdropFilter: "blur(10px)",
         WebkitBackdropFilter: "blur(10px)",
-        borderBottom: "1px solid var(--ink-black)",
+        borderBottom: "1px solid var(--rule-soft)",
       }}
     >
       {/* Hairline rule above — matches landing masthead */}
@@ -73,8 +73,8 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps): 
         aria-hidden
         style={{
           height: "1px",
-          background: "var(--ink-black)",
-          opacity: 0.35,
+          background: "var(--rule)",
+          opacity: 0.5,
         }}
       />
       <div
@@ -97,9 +97,12 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps): 
                 background: "none",
                 border: "none",
                 cursor: "pointer",
-                padding: "6px",
+                padding: "11px",
+                minWidth: 44,
+                minHeight: 44,
                 display: "flex",
                 alignItems: "center",
+                justifyContent: "center",
                 color: "var(--ink-black)",
               }}
             >

@@ -5,19 +5,8 @@ import { useEffect } from "react";
 import "./landing.css";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { ShieldCheck } from "lucide-react";
 import { Mark } from "./components/Mark";
-
-// Declare iconify-icon web component for TypeScript (script loaded in layout.tsx)
-declare module "react" {
-  namespace JSX {
-    interface IntrinsicElements {
-      "iconify-icon": React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement> & {
-        icon: string;
-        class?: string;
-      };
-    }
-  }
-}
 
 const UsecaseFlow = dynamic(() => import("./components/UsecaseFlow").then((m) => m.UsecaseFlow), {
   ssr: false,
@@ -245,17 +234,7 @@ const STYLES = `
   to { opacity: 1; transform: translateY(0); }
 }
 
-#fuin-landing .fl-hero-rule {
-  position: absolute; top: 0; bottom: 0; left: clamp(2.5rem, 18vw, 13rem); width: 1px;
-  background: var(--hairline); pointer-events: none;
-}
-@media (max-width: 979px) {
-  /* Hide the vertical accent rule on stacked layout — it clashes with the panel */
-  #fuin-landing .fl-hero-rule { display: none; }
-}
-#fuin-landing .fl-hero-rule::before {
-  content: ""; position: absolute; top: 38%; left: 0; width: 1px; height: 96px; background: var(--live); opacity: 0.65;
-}
+/* Hero vertical accent rule removed per design (was distracting between copy and shader panel). */
 #fuin-landing .fl-eyebrow { display: inline-flex; align-items: center; gap: 0.7rem; }
 #fuin-landing .fl-eyebrow .fl-dot {
   width: 6px; height: 6px; background: var(--live); border-radius: 50%; display: inline-block;
@@ -346,20 +325,8 @@ const STYLES = `
 #fuin-landing .fl-cell .fl-ct { font-weight: 700; font-size: clamp(1.35rem, 2vw, 1.6rem); letter-spacing: -0.01em; line-height: 1.1; color: var(--ivory); margin-bottom: 0.85rem; }
 #fuin-landing .fl-cell .fl-cd { max-width: 26ch; color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
 
-/* PULL QUOTE */
-#fuin-landing .fl-quote { position: relative; padding-block: clamp(7rem, 22vh, 13rem); border-top: 1px solid var(--hairline); text-align: center; }
-#fuin-landing .fl-quote-inner { max-width: 24ch; margin: 0 auto; }
-#fuin-landing .fl-quote-rule { width: 64px; height: 1px; background: var(--live); margin: 0 auto clamp(2.5rem, 6vh, 4rem); }
-#fuin-landing .fl-quote-text { font-weight: 700; font-size: clamp(1.9rem, 5vw, 3.4rem); line-height: 1.12; letter-spacing: -0.025em; color: var(--ivory); }
-
-/* WHO — UsecaseFlow surface panel */
-#fuin-landing .fl-flow-panel {
-  margin-top: clamp(2.5rem, 6vh, 4rem);
-  background: var(--surface);
-  border: 1px solid var(--hairline);
-  border-radius: 1.25rem;
-  overflow: hidden;
-}
+/* WHO — UsecaseFlow lives directly on the page (no wrapper card, avoids nested-card anti-pattern). */
+#fuin-landing .fl-flow-panel { margin-top: clamp(2.5rem, 6vh, 4rem); }
 
 /* CLOSE / CTA */
 #fuin-landing .fl-close { position: relative; padding-block: clamp(7rem, 20vh, 12rem); border-top: 1px solid var(--hairline); }
@@ -477,8 +444,6 @@ export default function Home(): React.JSX.Element {
         {/* HERO CONTENT — split: copy left, Digital Rain shader right (lg+) */}
         <div className="fl-shell" id="top">
           <div className="fl-hero-grid">
-            <span className="fl-hero-rule" aria-hidden="true" />
-
             <div className="fl-hero-split">
               <div className="fl-hero-copy">
                 <span className="fl-eyebrow fl-label fl-reveal r1">
@@ -506,10 +471,7 @@ export default function Home(): React.JSX.Element {
                   </Link>
                 </div>
 
-                <p className="fl-cred fl-reveal r4">
-                  Live on Solana <span className="fl-cred-dot">·</span> backed by a Solana Foundation
-                  grant.
-                </p>
+                <p className="fl-cred fl-reveal r4">Live on Solana.</p>
               </div>
 
               {/* Digital Rain — on-chain alphabet falling into a ledger surface.
@@ -626,10 +588,7 @@ export default function Home(): React.JSX.Element {
                       <span style={{ fontSize: "0.875rem", fontWeight: 600, color: IVORY }}>
                         Vault Configurations
                       </span>
-                      <iconify-icon
-                        icon="solar:shield-check-bold-duotone"
-                        style={{ fontSize: "1.5rem", color: STEEL }}
-                      ></iconify-icon>
+                      <ShieldCheck size={22} color={STEEL} strokeWidth={1.5} />
                     </div>
 
                     {/* Active delegate */}
@@ -722,37 +681,21 @@ export default function Home(): React.JSX.Element {
 
             <div className="fl-grid-4" style={{ marginTop: "clamp(2.5rem, 6vh, 4rem)" }}>
               <div className="fl-cell fl-reveal r1">
-                <div className="fl-ix">01</div>
                 <h3 className="fl-ct">Hard caps</h3>
                 <p className="fl-cd">Per-transaction and rolling limits the key can never exceed.</p>
               </div>
               <div className="fl-cell fl-reveal r2">
-                <div className="fl-ix">02</div>
                 <h3 className="fl-ct">Allow-lists</h3>
                 <p className="fl-cd">Funds move only to the destinations and programs you approve.</p>
               </div>
               <div className="fl-cell fl-reveal r3">
-                <div className="fl-ix">03</div>
                 <h3 className="fl-ct">Instant revoke</h3>
                 <p className="fl-cd">Kill any key on-chain, in one click, forever.</p>
               </div>
               <div className="fl-cell fl-reveal r4">
-                <div className="fl-ix">04</div>
                 <h3 className="fl-ct">Provable</h3>
                 <p className="fl-cd">Every action is checked by the program before it settles.</p>
               </div>
-            </div>
-          </div>
-        </section>
-
-        {/* ===================== PULL QUOTE ===================== */}
-        <section className="fl-quote" aria-label="Pull quote">
-          <div className="fl-shell">
-            <div className="fl-quote-inner">
-              <div className="fl-quote-rule fl-reveal r1" aria-hidden="true" />
-              <blockquote className="fl-quote-text fl-reveal r2">
-                One signature. A hard limit. Nothing they can&apos;t be trusted with.
-              </blockquote>
             </div>
           </div>
         </section>
