@@ -5,6 +5,7 @@ import { useEffect } from "react";
 import "./landing.css";
 import dynamic from "next/dynamic";
 import Link from "next/link";
+import { animate, stagger } from "animejs";
 import { Mark } from "./components/Mark";
 import { LenisProvider } from "./components/LenisProvider";
 
@@ -211,6 +212,19 @@ const STYLES = `
   color: var(--ivory); max-width: 100%;
   overflow-wrap: break-word; word-wrap: break-word;
 }
+/* Word-stagger reveal driven by anime.js — words start invisible and below baseline,
+   anime fades + translates them in on mount with 45ms stagger. */
+#fuin-landing .fl-hero-headline .fl-word {
+  display: inline-block;
+  opacity: 0;
+  transform: translateY(22px);
+}
+@media (prefers-reduced-motion: reduce) {
+  #fuin-landing .fl-hero-headline .fl-word {
+    opacity: 1;
+    transform: none;
+  }
+}
 #fuin-landing .fl-hero-copy { min-width: 0; }
 #fuin-landing .fl-hero-grid, #fuin-landing .fl-hero-split { min-width: 0; }
 @media (min-width: 980px) {
@@ -397,6 +411,23 @@ export default function Home(): React.JSX.Element {
   // Progress bar is now CSS scroll-driven (animation-timeline: scroll(root)).
   // No JS scroll listener — see globals/landing CSS .fl-progress block.
 
+  // Hero headline word-by-word reveal via anime.js. Words start opacity:0
+  // via CSS, anime staggers them in on mount. Skipped under reduced motion.
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const ctrl = animate("#fuin-landing .fl-hero-headline .fl-word", {
+      opacity: [0, 1],
+      translateY: [22, 0],
+      duration: 700,
+      delay: stagger(45, { start: 220 }),
+      ease: "outExpo",
+    });
+    return () => {
+      ctrl?.pause();
+    };
+  }, []);
+
   return (
     <LenisProvider>
     <div
@@ -441,8 +472,22 @@ export default function Home(): React.JSX.Element {
                 </span>
 
                 <h1 className="fl-hero-headline">
-                  <span className="fl-ln fl-reveal r1">The next wave isn&apos;t more access.</span>
-                  <span className="fl-ln fl-reveal r2">It&apos;s restricted access.</span>
+                  <span className="fl-ln">
+                    {"The next wave isn't more access.".split(" ").map((w, i) => (
+                      <span key={`a-${i}`} className="fl-word">
+                        {w}
+                        {" "}
+                      </span>
+                    ))}
+                  </span>
+                  <span className="fl-ln">
+                    {"It's restricted access.".split(" ").map((w, i) => (
+                      <span key={`b-${i}`} className="fl-word">
+                        {w}
+                        {" "}
+                      </span>
+                    ))}
+                  </span>
                 </h1>
 
                 <p className="fl-hero-sub fl-reveal r3">
