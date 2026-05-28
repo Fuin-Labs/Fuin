@@ -213,9 +213,12 @@ const STYLES = `
   overflow-wrap: break-word; word-wrap: break-word;
 }
 /* Word-stagger reveal driven by anime.js — words start invisible and below baseline,
-   anime fades + translates them in on mount with 45ms stagger. */
+   anime fades + translates them in on mount with 45ms stagger. Inline-block collapses
+   whitespace at the boundary, so word spacing is enforced via margin-right (0.25em ≈
+   the natural word-space at this font size). */
 #fuin-landing .fl-hero-headline .fl-word {
   display: inline-block;
+  margin-right: 0.25em;
   opacity: 0;
   transform: translateY(22px);
 }
