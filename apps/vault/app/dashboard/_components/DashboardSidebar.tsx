@@ -7,6 +7,7 @@ import { usePathname } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronsLeft, ChevronsRight, X } from "lucide-react";
 import { useIsMobile } from "../_hooks/useMediaQuery";
+import { Mark } from "../../components/Mark";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview" },
@@ -25,33 +26,23 @@ function Wordmark({ collapsed }: { collapsed?: boolean }) {
   return (
     <Link
       href="/"
-      aria-label="Fuin — back to landing"
+      aria-label="Fuin home"
       style={{
         display: "inline-flex",
         alignItems: "center",
-        gap: "12px",
+        gap: "10px",
         color: "var(--ink-black)",
         textDecoration: "none",
       }}
     >
-      <span
-        aria-hidden
-        style={{
-          width: "10px",
-          height: "10px",
-          background: "var(--crimson)",
-          transform: "rotate(45deg)",
-          display: "inline-block",
-          flex: "none",
-        }}
-      />
+      <Mark size={28} />
       {!collapsed && (
         <span
           style={{
-            fontFamily: "var(--font-display), Georgia, serif",
-            fontSize: "1.5rem",
-            fontWeight: 500,
-            letterSpacing: "-0.014em",
+            fontFamily: "var(--font-archivo), sans-serif",
+            fontSize: "1.2rem",
+            fontWeight: 700,
+            letterSpacing: "0.01em",
             lineHeight: 1,
           }}
         >
@@ -205,32 +196,14 @@ function SidebarContent({
                 transition: "background-color 0.15s",
               }}
             >
-              {/* Active-state marker: small crimson diamond, not a border-stripe */}
-              {isActive && (
-                <span
-                  aria-hidden
-                  style={{
-                    position: "absolute",
-                    left: isCollapsed ? "50%" : "4px",
-                    top: "50%",
-                    transform: isCollapsed
-                      ? "translate(-50%, -50%) rotate(45deg)"
-                      : "translateY(-50%) rotate(45deg)",
-                    width: "5px",
-                    height: "5px",
-                    background: "var(--crimson)",
-                  }}
-                />
-              )}
               {!isCollapsed && (
                 <span
                   style={{
-                    fontFamily: "var(--font-display), Georgia, serif",
-                    fontSize: "0.98rem",
+                    fontFamily: "var(--font-archivo), sans-serif",
+                    fontSize: "0.95rem",
                     fontWeight: isActive ? 600 : 500,
                     color: isActive ? "var(--ink-black)" : "var(--ink-soft)",
                     letterSpacing: "-0.005em",
-                    paddingLeft: "16px",
                   }}
                 >
                   {item.label}
@@ -240,9 +213,9 @@ function SidebarContent({
                 <span
                   aria-hidden
                   style={{
-                    fontFamily: "var(--font-display), Georgia, serif",
+                    fontFamily: "var(--font-archivo), sans-serif",
                     fontSize: "0.95rem",
-                    fontWeight: isActive ? 600 : 500,
+                    fontWeight: isActive ? 700 : 500,
                     color: isActive ? "var(--ink-black)" : "var(--ink-mute)",
                   }}
                   title={item.label}
@@ -272,9 +245,9 @@ function SidebarContent({
             gap: "10px",
             padding: isCollapsed ? "12px 0" : "12px 16px",
             color: "var(--ink-mute)",
-            fontFamily: "var(--font-display), Georgia, serif",
-            fontStyle: "italic",
-            fontSize: "0.88rem",
+            fontFamily: "var(--font-archivo), sans-serif",
+            fontSize: "0.85rem",
+            letterSpacing: "-0.005em",
           }}
         >
           {!isCollapsed && <span>← back to landing</span>}

@@ -33,20 +33,24 @@ export function WalletButton(): React.JSX.Element {
   if (!connected || !publicKey) {
     return (
       <motion.button
-        whileHover={{ background: "var(--ink-black)", color: "var(--paper)" }}
+        whileHover={{ boxShadow: "0 0 22px rgba(193, 232, 89, 0.32)", y: -1 }}
         whileTap={{ scale: 0.98 }}
         onClick={() => setVisible(true)}
         style={{
           ...PILL_BASE,
-          height: "40px",
-          padding: isMobile ? "0 14px" : "0 18px",
-          fontSize: isMobile ? "0.7rem" : "0.74rem",
+          background: "var(--live)",
+          color: "#050505",
+          border: "1px solid transparent",
+          borderRadius: 999,
+          height: "44px",
+          padding: isMobile ? "0 16px" : "0 22px",
+          fontSize: isMobile ? "0.72rem" : "0.78rem",
           textTransform: "uppercase",
-          letterSpacing: "0.18em",
-          fontWeight: 600,
+          letterSpacing: "0.16em",
+          fontWeight: 700,
         }}
       >
-        {isMobile ? "Connect ↗" : "Connect wallet ↗"}
+        {isMobile ? "Connect" : "Connect wallet"}
       </motion.button>
     );
   }
