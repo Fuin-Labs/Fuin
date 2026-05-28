@@ -189,25 +189,15 @@ export const UsecaseFlow = (): JSX.Element => {
 function PhaseCell({ phase, index }: { phase: Phase; index: number }): JSX.Element {
   return (
     <article className="uf-cell" data-index={index}>
-      {/* Step indicator: monospace label only (no decorative dot) */}
-      <div
-        style={{
-          fontFamily: "var(--font-mono-v2), ui-monospace, monospace",
-          fontSize: "0.7rem",
-          letterSpacing: "0.22em",
-          textTransform: "uppercase",
-          color: MUTED,
-        }}
-      >
-        Phase {String(phase.step).padStart(2, "0")}
-      </div>
-
+      {/* No "Phase NN" step label per skill rule: generic step labels banned,
+          the title itself is the label. Order is communicated by column flow. */}
       <h4
         style={{
-          fontFamily: "var(--font-display), Georgia, serif",
-          fontWeight: 500,
+          // Inherit Archivo from the landing root — keeps section-04 typography
+          // consistent with the chapter titles instead of falling back to Georgia.
+          fontWeight: 600,
           fontSize: "clamp(1.35rem, 1.8vw, 1.6rem)",
-          letterSpacing: "-0.01em",
+          letterSpacing: "-0.012em",
           color: IVORY,
           margin: 0,
           lineHeight: 1.15,
