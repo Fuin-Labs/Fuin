@@ -161,7 +161,7 @@ const STYLES = `
 #fuin-landing .fl-hero-panel {
   position: relative;
   width: 100%;
-  aspect-ratio: 4 / 3;
+  aspect-ratio: 4 / 5;
   border: 1px solid var(--hairline);
   border-radius: 14px;
   overflow: hidden;
@@ -268,8 +268,7 @@ const STYLES = `
 #fuin-landing .fl-hero-sub { font-size: clamp(1rem, 1.35vw, 1.18rem); font-weight: 400; line-height: 1.55; color: var(--muted); max-width: 46ch; }
 #fuin-landing .fl-hero-cta { display: flex; flex-wrap: wrap; gap: 1rem; }
 #fuin-landing .fl-hero-cta .fl-pill-solid { padding: 0.95rem 1.7rem; font-size: 0.95rem; }
-#fuin-landing .fl-cred { font-size: 0.85rem; color: var(--muted); letter-spacing: 0.01em; }
-#fuin-landing .fl-cred .fl-cred-dot { color: var(--live); }
+/* fl-cred removed per design (was Solana grant disclaimer). */
 #fuin-landing .fl-hero-foot {
   display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem;
   margin-top: clamp(0.5rem, 2vh, 1.5rem); padding-top: 1.25rem; border-top: 1px solid var(--hairline); flex-wrap: wrap;
@@ -470,8 +469,6 @@ export default function Home(): React.JSX.Element {
                     Read the docs
                   </Link>
                 </div>
-
-                <p className="fl-cred fl-reveal r4">Live on Solana.</p>
               </div>
 
               {/* Digital Rain — on-chain alphabet falling into a ledger surface.

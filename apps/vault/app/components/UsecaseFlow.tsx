@@ -12,11 +12,9 @@ import { AnimatePresence, motion } from "framer-motion";
 
 const IVORY = "#f2ece1";
 const MUTED = "#b3aca0";
-const STEEL = "#9fb4c7";
 const LIVE = "#c1e859";
 const LIVE_GLOW = "rgba(193, 232, 89, 0.30)";
 const BG = "#0a0907";
-const SURFACE = "#13110f";
 const HAIRLINE = "rgba(242, 236, 225, 0.10)";
 const HAIRLINE_STRONG = "rgba(242, 236, 225, 0.18)";
 
@@ -136,7 +134,10 @@ export const UsecaseFlow = (): JSX.Element => {
         {flow.lead}
       </p>
 
-      {/* Phases — flat hairline cards in a 3-column grid (1-col on mobile) */}
+      {/* Phases — editorial Swiss grid matching chapter 03:
+          no outer container, no rounded corners, just hairline borders
+          on the grid + individual cells. Border-left removed on first cell
+          per row for clean edges. */}
       <AnimatePresence mode="wait">
         <motion.div
           key={tab}
@@ -144,38 +145,52 @@ export const UsecaseFlow = (): JSX.Element => {
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-            gap: "1px",
-            background: HAIRLINE,
-            border: `1px solid ${HAIRLINE}`,
-            borderRadius: 12,
-            overflow: "hidden",
-          }}
+          className="uf-grid"
         >
-          {flow.phases.map((p) => (
-            <PhaseCell key={p.step} phase={p} />
+          {flow.phases.map((p, i) => (
+            <PhaseCell key={p.step} phase={p} index={i} />
           ))}
         </motion.div>
       </AnimatePresence>
+
+      {/* Scoped editorial-grid CSS — same pattern as #fuin-landing .fl-grid-4 */}
+      <style>{`
+        .uf-grid {
+          display: grid;
+          grid-template-columns: 1fr;
+          border-top: 1px solid ${HAIRLINE};
+        }
+        @media (min-width: 760px) {
+          .uf-grid { grid-template-columns: repeat(3, 1fr); }
+        }
+        .uf-cell {
+          padding: clamp(1.75rem, 3vh, 2.25rem) clamp(0rem, 1.6vw, 1.5rem);
+          border-bottom: 1px solid ${HAIRLINE};
+          display: flex;
+          flex-direction: column;
+          gap: 0.85rem;
+        }
+        @media (min-width: 760px) {
+          .uf-cell {
+            padding-left: clamp(1.25rem, 1.6vw, 1.5rem);
+            padding-right: clamp(1.25rem, 1.6vw, 1.5rem);
+            border-left: 1px solid ${HAIRLINE};
+            border-bottom: none;
+          }
+          .uf-cell:first-child {
+            border-left: none;
+            padding-left: 0;
+          }
+        }
+      `}</style>
     </div>
   );
 };
 
-function PhaseCell({ phase }: { phase: Phase }): JSX.Element {
+function PhaseCell({ phase, index }: { phase: Phase; index: number }): JSX.Element {
   return (
-    <article
-      style={{
-        background: SURFACE,
-        padding: "1.75rem 1.5rem 1.75rem",
-        display: "flex",
-        flexDirection: "column",
-        gap: "0.85rem",
-        position: "relative",
-      }}
-    >
-      {/* Step indicator: a small lime dot + monospace label, no rounded-icon-square */}
+    <article className="uf-cell" data-index={index}>
+      {/* Step indicator: small lime dot + monospace label */}
       <div
         style={{
           display: "flex",
@@ -206,7 +221,7 @@ function PhaseCell({ phase }: { phase: Phase }): JSX.Element {
         style={{
           fontFamily: "var(--font-display), Georgia, serif",
           fontWeight: 500,
-          fontSize: "clamp(1.25rem, 1.7vw, 1.5rem)",
+          fontSize: "clamp(1.35rem, 1.8vw, 1.6rem)",
           letterSpacing: "-0.01em",
           color: IVORY,
           margin: 0,
@@ -227,17 +242,6 @@ function PhaseCell({ phase }: { phase: Phase }): JSX.Element {
       >
         {phase.desc}
       </p>
-
-      {/* Subtle steel hairline at the foot — secondary signal */}
-      <div
-        aria-hidden="true"
-        style={{
-          marginTop: "auto",
-          paddingTop: "1.25rem",
-          borderTop: `1px solid ${STEEL}`,
-          opacity: 0.18,
-        }}
-      />
     </article>
   );
 }
