@@ -373,13 +373,14 @@
   border-radius: 12px !important;
   color: #ffffff !important;
 }
-.wallet-adapter-button:hover { background-color: oklch(0.62 0.27 295 / 0.18) !important; }
+.wallet-adapter-button:hover { background-color: rgba(193, 232, 89, 0.14) !important; }
 .wallet-adapter-modal-list li { border-radius: 12px !important; }
 .wallet-adapter-button-trigger {
-  background: var(--accent-grad) !important;
-  color: oklch(0.10 0.014 280) !important;
-  border-radius: 10px !important;
+  background: #c1e859 !important;
+  color: #050505 !important;
+  border-radius: 999px !important;
   font-weight: 700 !important;
+  letter-spacing: 0.02em !important;
 }
 
 :focus-visible {
