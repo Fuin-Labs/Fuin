@@ -20,21 +20,57 @@ const HAIRLINE_STRONG = "rgba(242, 236, 225, 0.18)";
 
 type TabId = "agent" | "junior";
 
+interface Phase {
+  step: number;
+  title: string;
+  desc: string;
+}
+
 interface View {
   label: string;
-  caption: string;
+  phases: Phase[];
 }
 
 const VIEWS: Record<TabId, View> = {
   agent: {
     label: "Autonomous agent",
-    caption:
-      "An on-chain bot trades from your funds, within bounds you signed, never beyond them. One root intent fans out into research, execute, and audit sub-agents. The rogue out-of-scope attempt bounces off verify_authorizes on-chain.",
+    phases: [
+      {
+        step: 1,
+        title: "Awaken via webhook",
+        desc: "Guardian deposits funds into the PDA. A Helius webhook fires immediately, pinging the sandboxed agent: liquidity is available, scope is set.",
+      },
+      {
+        step: 2,
+        title: "Acquire scoped session",
+        desc: "Agent receives a cryptographic session key bound strictly to predefined Routes (capability routing). It cannot compose custom transactions.",
+      },
+      {
+        step: 3,
+        title: "Execute verified intent",
+        desc: "Agent signs an intent (e.g. swap SOL for USDC). A relayer submits the transaction and covers gas. The on-chain policy engine validates every rule before it settles.",
+      },
+    ],
   },
   junior: {
     label: "Junior vault",
-    caption:
-      "A kid, contractor, or sub-account gets a wallet that spends within your rules. Daily cap, allow-listed programs, time-bound session key. They use it like Web2; the policy engine enforces every limit on-chain.",
+    phases: [
+      {
+        step: 1,
+        title: "Parental vault setup",
+        desc: "Parent deploys a smart PDA vault. They establish the PolicySet: a strict daily limit and a whitelist of approved programs (e.g. specific games or DEXes).",
+      },
+      {
+        step: 2,
+        title: "Invisible delegation",
+        desc: "The junior is silently issued a time-bound session key. Their interactions feel like Web2, without pop-ups or seed phrase risks.",
+      },
+      {
+        step: 3,
+        title: "Sponsored execution",
+        desc: "When trading or playing, a relayer pushes the transaction. Gas is sponsored by the parent's gas tank. The on-chain policy verifies limits mathematically.",
+      },
+    ],
   },
 };
 
@@ -87,58 +123,135 @@ export const UsecaseFlow = (): JSX.Element => {
         </div>
       </div>
 
-      {/* Character SVG, framed by a hairline panel. Centered, generous padding,
-          subtle outer lime glow tying it back to the hero panel chrome. */}
+      {/* Split layout — SVG on the left, 3-phase card stack on the right (md+).
+          Stacks vertically on mobile with the SVG above the cards. */}
       <AnimatePresence mode="wait">
-        <motion.figure
+        <motion.div
           key={tab}
           initial={{ opacity: 0, y: 14 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -6 }}
           transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
-          style={{
-            margin: 0,
-            position: "relative",
-            border: `1px solid ${HAIRLINE_STRONG}`,
-            borderRadius: 14,
-            overflow: "hidden",
-            background:
-              "radial-gradient(ellipse 60% 60% at 50% 40%, rgba(193, 232, 89, 0.04), transparent 70%), var(--paper-rise)",
-            boxShadow: "0 30px 80px -40px rgba(193, 232, 89, 0.16), 0 0 0 1px rgba(193, 232, 89, 0.05)",
-            minHeight: "clamp(280px, 40vh, 420px)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            padding: "clamp(2rem, 5vh, 3.5rem)",
-          }}
+          className="uf-split"
         >
-          {tab === "agent" ? <OpenClawAgent /> : <KidVault />}
-        </motion.figure>
+          {/* Left: character SVG inside the framed panel */}
+          <div className="uf-visual">
+            {tab === "agent" ? <OpenClawAgent /> : <KidVault />}
+          </div>
+
+          {/* Right: phase card stack */}
+          <div className="uf-stack">
+            {view.phases.map((phase, i) => (
+              <PhaseCard key={phase.step} phase={phase} delay={i * 0.08} />
+            ))}
+          </div>
+        </motion.div>
       </AnimatePresence>
 
-      {/* Caption */}
-      <AnimatePresence mode="wait">
-        <motion.p
-          key={`cap-${tab}`}
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{ duration: 0.3 }}
-          style={{
-            textAlign: "center",
-            color: MUTED,
-            fontSize: "0.95rem",
-            lineHeight: 1.55,
-            maxWidth: "60ch",
-            margin: "clamp(1.5rem, 3vh, 2rem) auto 0",
-          }}
-        >
-          {view.caption}
-        </motion.p>
-      </AnimatePresence>
+      <style>{`
+        .uf-split {
+          display: grid;
+          grid-template-columns: 1fr;
+          gap: clamp(2rem, 5vh, 3rem);
+          align-items: center;
+        }
+        @media (min-width: 880px) {
+          .uf-split {
+            grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+            gap: clamp(2.5rem, 5vw, 4rem);
+          }
+        }
+        .uf-visual {
+          position: relative;
+          border: 1px solid ${HAIRLINE_STRONG};
+          border-radius: 14px;
+          overflow: hidden;
+          background:
+            radial-gradient(ellipse 60% 60% at 50% 40%, rgba(193, 232, 89, 0.04), transparent 70%),
+            var(--paper-rise);
+          box-shadow: 0 30px 80px -40px rgba(193, 232, 89, 0.16), 0 0 0 1px rgba(193, 232, 89, 0.05);
+          min-height: clamp(280px, 42vh, 420px);
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          padding: clamp(1.5rem, 4vh, 2.5rem);
+        }
+        .uf-stack {
+          display: flex;
+          flex-direction: column;
+          gap: 14px;
+        }
+      `}</style>
     </div>
   );
 };
+
+/**
+ * PhaseCard — one row in the right-side stack. Title + description, hairline
+ * border, lime accent dot + corner-tick on hover. No side-stripe (skill ban),
+ * no icon-in-rounded-square (skill ban), no Phase NN eyebrow (skill ban).
+ */
+function PhaseCard({ phase, delay }: { phase: Phase; delay: number }): JSX.Element {
+  return (
+    <motion.article
+      initial={{ opacity: 0, x: -16 }}
+      animate={{ opacity: 1, x: 0 }}
+      transition={{ duration: 0.5, delay, ease: [0.16, 1, 0.3, 1] }}
+      style={{
+        position: "relative",
+        padding: "1.4rem 1.5rem",
+        background: "var(--paper-rise)",
+        border: `1px solid ${HAIRLINE}`,
+        borderRadius: 10,
+        display: "flex",
+        gap: 16,
+        alignItems: "flex-start",
+        transition: "border-color 0.25s ease, transform 0.25s ease",
+      }}
+      whileHover={{ borderColor: LIVE, x: 4 }}
+    >
+      {/* Lime accent dot — single semantic mark per card, like the rest of the brand */}
+      <span
+        aria-hidden="true"
+        style={{
+          flex: "none",
+          width: 8,
+          height: 8,
+          borderRadius: "50%",
+          background: LIVE,
+          marginTop: 8,
+          boxShadow: `0 0 8px rgba(193, 232, 89, 0.45)`,
+        }}
+      />
+
+      <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+        <h4
+          style={{
+            fontFamily: "var(--font-archivo), sans-serif",
+            fontWeight: 700,
+            fontSize: "1.05rem",
+            letterSpacing: "-0.012em",
+            color: IVORY,
+            margin: 0,
+            lineHeight: 1.2,
+          }}
+        >
+          {phase.title}
+        </h4>
+        <p
+          style={{
+            color: MUTED,
+            fontSize: "0.9rem",
+            lineHeight: 1.55,
+            margin: 0,
+          }}
+        >
+          {phase.desc}
+        </p>
+      </div>
+    </motion.article>
+  );
+}
 
 /**
  * OpenClaw — Fuin's autonomous agent mascot, restored from the original
