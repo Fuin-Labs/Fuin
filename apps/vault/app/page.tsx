@@ -5,7 +5,6 @@ import { useEffect } from "react";
 import "./landing.css";
 import dynamic from "next/dynamic";
 import Link from "next/link";
-import { ShieldCheck } from "lucide-react";
 import { Mark } from "./components/Mark";
 
 const UsecaseFlow = dynamic(() => import("./components/UsecaseFlow").then((m) => m.UsecaseFlow), {
@@ -69,15 +68,27 @@ const STYLES = `
   border-radius: 2px;
 }
 
-/* Top progress bar — thin lime hairline (the live line, literally) */
+/* Top progress bar. CSS scroll-driven animation (no JS scroll listener).
+   Browser support: Chrome 115+, Firefox 116+, Safari 17.4+. Falls back to invisible. */
 #fuin-landing .fl-progress {
   position: fixed;
   top: 0; left: 0;
   height: 2px;
-  width: 0%;
+  width: 100%;
   background: var(--live);
   z-index: 100;
-  transition: width 0.08s linear;
+  transform: scaleX(0);
+  transform-origin: left;
+}
+@supports (animation-timeline: scroll(root)) {
+  #fuin-landing .fl-progress {
+    animation: fl-progress-grow linear;
+    animation-timeline: scroll(root);
+  }
+  @keyframes fl-progress-grow {
+    from { transform: scaleX(0); }
+    to   { transform: scaleX(1); }
+  }
 }
 
 #fuin-landing .fl-shell {
@@ -140,7 +151,7 @@ const STYLES = `
 #fuin-landing .fl-hero { position: relative; min-height: 100vh; min-height: 100svh; display: flex; align-items: center; }
 #fuin-landing .fl-hero-grid {
   width: 100%; display: grid; grid-template-columns: 1fr; gap: clamp(2rem, 5vh, 3.5rem);
-  padding-top: clamp(7rem, 14vh, 9rem); padding-bottom: clamp(5rem, 10vh, 7rem); position: relative;
+  padding-top: clamp(5rem, 10vh, 6rem); padding-bottom: clamp(4rem, 8vh, 6rem); position: relative;
 }
 /* Split hero — copy left, Digital Rain shader right (lg+) */
 #fuin-landing .fl-hero-split {
@@ -235,32 +246,26 @@ const STYLES = `
 }
 
 /* Hero vertical accent rule removed per design (was distracting between copy and shader panel). */
-#fuin-landing .fl-eyebrow { display: inline-flex; align-items: center; gap: 0.7rem; }
-#fuin-landing .fl-eyebrow .fl-dot {
-  width: 6px; height: 6px; background: var(--live); border-radius: 50%; display: inline-block;
-  box-shadow: 0 0 8px var(--live-glow);
-  animation: fl-pulse-dot 1.8s ease-out infinite;
-}
+#fuin-landing .fl-eyebrow { display: inline-flex; align-items: center; }
 @keyframes fl-pulse-dot {
   0%, 100% { box-shadow: 0 0 0 0 var(--live-glow); }
   60%      { box-shadow: 0 0 0 7px rgba(193, 232, 89, 0); }
 }
 #fuin-landing .fl-hero-headline {
-  font-weight: 800; font-size: clamp(2.7rem, 8.2vw, 6rem); line-height: 1.02; letter-spacing: -0.03em;
-  color: var(--ivory); max-width: min(18ch, 100%);
+  font-weight: 800; font-size: clamp(2rem, 6vw, 3.4rem); line-height: 1.04; letter-spacing: -0.025em;
+  color: var(--ivory); max-width: 100%;
   overflow-wrap: break-word; word-wrap: break-word;
 }
 #fuin-landing .fl-hero-copy { min-width: 0; }
 #fuin-landing .fl-hero-grid, #fuin-landing .fl-hero-split { min-width: 0; }
 @media (min-width: 980px) {
-  /* Split layout — narrower copy column, ease the type back so it never six-line-wraps */
-  #fuin-landing .fl-hero-headline { font-size: clamp(2.6rem, 4.5vw, 4.4rem); }
+  /* Split layout: each sentence on one line. Hard skill rule: headline max 2 lines on desktop. */
+  #fuin-landing .fl-hero-headline { font-size: clamp(2rem, 2.8vw, 2.7rem); letter-spacing: -0.02em; }
 }
 @media (max-width: 480px) {
-  /* Phone — tighten the headline + drop the 18ch cap so wrapping is the binding constraint */
+  /* Phone: each sentence wraps to ~2 lines, total ≤ 4 lines acceptable on mobile. */
   #fuin-landing .fl-hero-headline {
-    font-size: clamp(1.85rem, 7.4vw, 2.3rem);
-    max-width: 100%;
+    font-size: clamp(1.7rem, 6.5vw, 2.1rem);
     letter-spacing: -0.02em;
   }
 }
@@ -268,28 +273,10 @@ const STYLES = `
 #fuin-landing .fl-hero-sub { font-size: clamp(1rem, 1.35vw, 1.18rem); font-weight: 400; line-height: 1.55; color: var(--muted); max-width: 46ch; }
 #fuin-landing .fl-hero-cta { display: flex; flex-wrap: wrap; gap: 1rem; }
 #fuin-landing .fl-hero-cta .fl-pill-solid { padding: 0.95rem 1.7rem; font-size: 0.95rem; }
-/* fl-cred removed per design (was Solana grant disclaimer). */
-#fuin-landing .fl-hero-foot {
-  display: flex; align-items: flex-end; justify-content: space-between; gap: 2rem;
-  margin-top: clamp(0.5rem, 2vh, 1.5rem); padding-top: 1.25rem; border-top: 1px solid var(--hairline); flex-wrap: wrap;
-}
-#fuin-landing .fl-scroll-cue { display: inline-flex; align-items: center; gap: 0.85rem; color: var(--muted); }
-#fuin-landing .fl-scroll-cue .fl-track { position: relative; width: 46px; height: 1px; background: var(--hairline); overflow: hidden; }
-#fuin-landing .fl-scroll-cue .fl-track::after {
-  content: ""; position: absolute; inset: 0; width: 16px; background: var(--live); animation: fl-slideline 2.4s var(--ease) infinite;
-}
-@keyframes fl-slideline {
-  0% { transform: translateX(-18px); opacity: 0; }
-  25% { opacity: 1; }
-  70% { opacity: 1; }
-  100% { transform: translateX(46px); opacity: 0; }
-}
-#fuin-landing .fl-index-tag { font-variant-numeric: tabular-nums; }
+/* fl-cred, fl-hero-foot, fl-scroll-cue removed per design (banned scroll cue + section-number eyebrow). */
 
 /* GENERIC STORY CHAPTER */
 #fuin-landing .fl-chapter { position: relative; padding-block: clamp(6rem, 18vh, 11rem); border-top: 1px solid var(--hairline); }
-#fuin-landing .fl-chapter-head { display: flex; align-items: center; gap: 1rem; margin-bottom: clamp(2.5rem, 6vh, 4rem); }
-#fuin-landing .fl-chapter-head .fl-seg { flex: 1; height: 1px; background: var(--hairline); }
 #fuin-landing .fl-chapter-title {
   font-weight: 700; font-size: clamp(2rem, 5.4vw, 4rem); line-height: 1.06; letter-spacing: -0.025em; color: var(--ivory); max-width: 20ch;
 }
@@ -301,6 +288,71 @@ const STYLES = `
 /* SPLIT: copy beside product mock-card */
 #fuin-landing .fl-split { display: grid; grid-template-columns: 1fr; gap: clamp(2.5rem, 6vw, 4.5rem); align-items: center; margin-top: clamp(2.5rem, 6vh, 4rem); }
 @media (min-width: 900px) { #fuin-landing .fl-split { grid-template-columns: 1fr 1fr; } }
+
+/* POLICY RECEIPT — editorial config artifact (replaces former fake product mock).
+   Flat hairlines, monospace values, no rounded card chrome. */
+#fuin-landing .fl-policy {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--hairline);
+  border-bottom: 1px solid var(--hairline);
+  font-family: var(--font-mono-v2), ui-monospace, "SF Mono", monospace;
+}
+#fuin-landing .fl-policy-head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 1.1rem 0 1rem;
+  border-bottom: 1px solid var(--hairline);
+}
+#fuin-landing .fl-policy-tag {
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ivory);
+  font-weight: 600;
+}
+#fuin-landing .fl-policy-status {
+  font-size: 0.66rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--live);
+  font-weight: 600;
+}
+#fuin-landing .fl-policy-rows {
+  display: grid;
+  grid-template-columns: 1fr;
+}
+#fuin-landing .fl-policy-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem;
+  padding: 0.9rem 0;
+  border-bottom: 1px solid var(--hairline);
+  font-size: 0.85rem;
+}
+#fuin-landing .fl-policy-row:last-child { border-bottom: none; }
+#fuin-landing .fl-policy-row dt {
+  color: var(--muted);
+  letter-spacing: 0.02em;
+}
+#fuin-landing .fl-policy-row dd {
+  color: var(--ivory);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+  margin: 0;
+}
+#fuin-landing .fl-policy-foot {
+  padding: 1rem 0 0.3rem;
+  font-size: 0.7rem;
+  color: var(--muted);
+  letter-spacing: 0.02em;
+  line-height: 1.5;
+}
+#fuin-landing .fl-policy-foot code {
+  font-family: inherit;
+  color: var(--ivory);
+}
 
 /* GUARANTEE — Swiss 4-cell grid */
 #fuin-landing .fl-grid-4 { display: grid; grid-template-columns: 1fr; border-top: 1px solid var(--hairline); }
@@ -360,7 +412,6 @@ const STYLES = `
 @media (prefers-reduced-motion: reduce) {
   #fuin-landing .fl-reveal { opacity: 1 !important; transform: none !important; transition: none !important; }
   #fuin-landing .fl-pill, #fuin-landing .fl-ghost, #fuin-landing .fl-nav-link { transition: none !important; }
-  #fuin-landing .fl-scroll-cue .fl-track::after,
   #fuin-landing .fl-progress { animation: none !important; transition: none !important; }
 }
 `;
@@ -389,23 +440,8 @@ export default function Home(): React.JSX.Element {
     return () => observer.disconnect();
   }, []);
 
-  // Thin top progress bar
-  useEffect(() => {
-    const bar = document.getElementById("fl-progress");
-    if (!bar) return;
-    const update = () => {
-      const h = document.documentElement.scrollHeight - window.innerHeight;
-      const p = h > 0 ? (window.scrollY / h) * 100 : 0;
-      bar.style.width = p + "%";
-    };
-    window.addEventListener("scroll", update, { passive: true });
-    window.addEventListener("resize", update);
-    update();
-    return () => {
-      window.removeEventListener("scroll", update);
-      window.removeEventListener("resize", update);
-    };
-  }, []);
+  // Progress bar is now CSS scroll-driven (animation-timeline: scroll(root)).
+  // No JS scroll listener — see globals/landing CSS .fl-progress block.
 
   return (
     <div
@@ -446,19 +482,16 @@ export default function Home(): React.JSX.Element {
             <div className="fl-hero-split">
               <div className="fl-hero-copy">
                 <span className="fl-eyebrow fl-label fl-reveal r1">
-                  <span className="fl-dot" aria-hidden="true" />
                   Restricted Access · Solana
                 </span>
 
                 <h1 className="fl-hero-headline">
-                  <span className="fl-ln fl-reveal r1">The next wave of crypto</span>
-                  <span className="fl-ln fl-reveal r2">isn&apos;t more access.</span>
-                  <span className="fl-ln fl-reveal r3">It&apos;s restricted access.</span>
+                  <span className="fl-ln fl-reveal r1">The next wave isn&apos;t more access.</span>
+                  <span className="fl-ln fl-reveal r2">It&apos;s restricted access.</span>
                 </h1>
 
                 <p className="fl-hero-sub fl-reveal r3">
-                  Fuin gives an AI agent, a teammate, or your kid a key to your wallet that spends
-                  within your limits — and can never drain it.
+                  Give an AI agent, a teammate, or your kid a key that spends within your limits. Never drains.
                 </p>
 
                 <div className="fl-hero-cta fl-reveal r4">
@@ -487,30 +520,19 @@ export default function Home(): React.JSX.Element {
               </div>
             </div>
 
-            <div className="fl-hero-foot fl-reveal r4">
-              <span className="fl-scroll-cue">
-                <span className="fl-track" aria-hidden="true" />
-                <span className="fl-label">Scroll</span>
-              </span>
-              <span className="fl-label fl-index-tag">01 — Manifesto</span>
-            </div>
           </div>
         </div>
       </header>
 
       <main>
-        {/* ===================== 01 — THE SHIFT ===================== */}
+        {/* ===================== 01 The Shift ===================== */}
         <section className="fl-chapter" aria-labelledby="s1-title">
           <div className="fl-shell" style={{ maxWidth: "896px" }}>
-            <div className="fl-chapter-head">
-              <span className="fl-label fl-reveal r1">01 / The Shift</span>
-              <span className="fl-seg fl-reveal r1" aria-hidden="true" />
-            </div>
             <h2 className="fl-chapter-title fl-reveal r2" id="s1-title">
               Crypto has only ever sold more.
             </h2>
             <p className="fl-chapter-body fl-reveal r3">
-              More keys. More approvals. More permissions. Every wallet is all-or-nothing — hold the
+              More keys. More approvals. More permissions. Every wallet is all-or-nothing. Hold the
               keys yourself, or hand them over completely. One bad signature, one compromised bot,
               one prompt-injected agent can take everything.
             </p>
@@ -522,14 +544,9 @@ export default function Home(): React.JSX.Element {
           </div>
         </section>
 
-        {/* ===================== 02 — A KEY WITH A LEASH ===================== */}
+        {/* ===================== 02 A Key with a Leash ===================== */}
         <section className="fl-chapter" aria-labelledby="s2-title">
           <div className="fl-shell">
-            <div className="fl-chapter-head">
-              <span className="fl-label fl-reveal r1">02 / Fuin</span>
-              <span className="fl-seg fl-reveal r1" aria-hidden="true" />
-            </div>
-
             <div className="fl-split">
               {/* Copy */}
               <div>
@@ -537,141 +554,56 @@ export default function Home(): React.JSX.Element {
                   A key with a leash.
                 </h2>
                 <p className="fl-chapter-body fl-reveal r3">
-                  Fuin issues scoped keys from your wallet to anyone — an AI agent, a teammate, your
+                  Fuin issues scoped keys from your wallet to anyone: an AI agent, a teammate, your
                   kid. Each key carries your rules: how much, how often, where to, for how long.
-                  Spend within them freely. Cross them — impossible.
+                  Spend freely within them. Crossing them is impossible.
                 </p>
               </div>
 
-              {/* Product mock-card (kept from old page, re-skinned to obsidian/steel) */}
-              <div className="fl-reveal r3" style={{ position: "relative" }}>
-                <div
-                  style={{
-                    width: "100%",
-                    borderRadius: "1rem",
-                    border: `1px solid ${HAIRLINE}`,
-                    background: SURFACE,
-                    padding: "1.5rem",
-                    position: "relative",
-                    overflow: "hidden",
-                    display: "flex",
-                    flexDirection: "column",
-                    // subtle inner highlight (nested depth), no heavy shadow/glow
-                    boxShadow: "inset 0 1px 0 rgba(242,236,225,0.05)",
-                  }}
-                >
-                  {/* Decorative grid background */}
-                  <div
-                    style={{
-                      position: "absolute",
-                      inset: 0,
-                      backgroundImage:
-                        "linear-gradient(to right, rgba(242,236,225,0.05) 1px, transparent 1px), linear-gradient(to bottom, rgba(242,236,225,0.05) 1px, transparent 1px)",
-                      backgroundSize: "24px 24px",
-                    }}
-                  />
-
-                  {/* Mock UI */}
-                  <div style={{ position: "relative", zIndex: 10, display: "flex", flexDirection: "column", gap: "1rem" }}>
-                    <div
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-between",
-                        borderBottom: `1px solid ${HAIRLINE}`,
-                        paddingBottom: "1rem",
-                      }}
-                    >
-                      <span style={{ fontSize: "0.875rem", fontWeight: 600, color: IVORY }}>
-                        Vault Configurations
-                      </span>
-                      <ShieldCheck size={22} color={STEEL} strokeWidth={1.5} />
-                    </div>
-
-                    {/* Active delegate */}
-                    <div style={{ background: BG, border: `1px solid ${HAIRLINE}`, borderRadius: "0.6rem", padding: "1rem" }}>
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                        <span style={{ fontSize: "0.72rem", color: MUTED, textTransform: "uppercase", letterSpacing: "0.12em" }}>
-                          Delegate
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "0.7rem",
-                            color: IVORY,
-                            background: "rgba(242,236,225,0.08)",
-                            padding: "0.1rem 0.5rem",
-                            borderRadius: "0.25rem",
-                          }}
-                        >
-                          Active
-                        </span>
-                      </div>
-                      <div style={{ fontSize: "0.9rem", color: IVORY, fontWeight: 600 }}>Trading Bot (Agent)</div>
-                      <div style={{ marginTop: "0.75rem", display: "grid", gridTemplateColumns: "1fr 1fr", gap: "0.5rem" }}>
-                        <div style={{ background: "rgba(0,0,0,0.25)", borderRadius: "0.4rem", padding: "0.5rem", border: `1px solid ${HAIRLINE}` }}>
-                          <div style={{ fontSize: "0.62rem", color: MUTED, marginBottom: "0.25rem" }}>Cap</div>
-                          <div style={{ fontSize: "0.75rem", color: IVORY }}>20 SOL / Day</div>
-                        </div>
-                        <div style={{ background: "rgba(0,0,0,0.25)", borderRadius: "0.4rem", padding: "0.5rem", border: `1px solid ${HAIRLINE}` }}>
-                          <div style={{ fontSize: "0.62rem", color: MUTED, marginBottom: "0.25rem" }}>Allowed</div>
-                          <div
-                            style={{
-                              fontSize: "0.75rem",
-                              color: IVORY,
-                              whiteSpace: "nowrap",
-                              overflow: "hidden",
-                              textOverflow: "ellipsis",
-                            }}
-                          >
-                            Jupiter, Meteora
-                          </div>
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* Revoked delegate (monochrome, no rose/green) */}
-                    <div
-                      style={{
-                        background: BG,
-                        border: `1px solid ${HAIRLINE}`,
-                        borderRadius: "0.6rem",
-                        padding: "1rem",
-                        opacity: 0.5,
-                      }}
-                    >
-                      <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                        <span style={{ fontSize: "0.72rem", color: MUTED, textTransform: "uppercase", letterSpacing: "0.12em" }}>
-                          Delegate
-                        </span>
-                        <span
-                          style={{
-                            fontSize: "0.7rem",
-                            color: MUTED,
-                            border: `1px solid ${HAIRLINE}`,
-                            padding: "0.1rem 0.5rem",
-                            borderRadius: "0.25rem",
-                            textDecoration: "line-through",
-                          }}
-                        >
-                          Revoked
-                        </span>
-                      </div>
-                      <div style={{ fontSize: "0.9rem", color: IVORY, fontWeight: 600 }}>Junior Wallet</div>
-                    </div>
+              {/* Policy receipt. Editorial config-as-artifact (not a fake product screenshot).
+                  Reads as the policy itself, in code form: the rules that bound the key. */}
+              <div className="fl-reveal r3 fl-policy" role="figure" aria-label="Sample delegate policy">
+                <div className="fl-policy-head">
+                  <span className="fl-policy-tag">Policy / Trading Bot</span>
+                  <span className="fl-policy-status">Live</span>
+                </div>
+                <dl className="fl-policy-rows">
+                  <div className="fl-policy-row">
+                    <dt>Daily cap</dt>
+                    <dd>20 SOL</dd>
                   </div>
+                  <div className="fl-policy-row">
+                    <dt>Per-tx cap</dt>
+                    <dd>2 SOL</dd>
+                  </div>
+                  <div className="fl-policy-row">
+                    <dt>Allowed programs</dt>
+                    <dd>Jupiter, Meteora</dd>
+                  </div>
+                  <div className="fl-policy-row">
+                    <dt>Active window</dt>
+                    <dd>06:00 / 22:00 UTC</dd>
+                  </div>
+                  <div className="fl-policy-row">
+                    <dt>Expires</dt>
+                    <dd>2026-06-04</dd>
+                  </div>
+                  <div className="fl-policy-row">
+                    <dt>Holder</dt>
+                    <dd>7yQq…3xKr</dd>
+                  </div>
+                </dl>
+                <div className="fl-policy-foot">
+                  <span>Enforced on-chain by program <code>E6Gk…AoSiy</code>.</span>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ===================== 03 — THE GUARANTEE (GRID) ===================== */}
+        {/* ===================== 03 The Guarantee (Grid) ===================== */}
         <section className="fl-chapter" aria-labelledby="s3-title">
           <div className="fl-shell">
-            <div className="fl-chapter-head">
-              <span className="fl-label fl-reveal r1">03 / The Guarantee</span>
-              <span className="fl-seg fl-reveal r1" aria-hidden="true" />
-            </div>
             <h2 className="fl-chapter-title fl-reveal r2" id="s3-title">
               Enforced on-chain, not on trust.
             </h2>
@@ -697,13 +629,9 @@ export default function Home(): React.JSX.Element {
           </div>
         </section>
 
-        {/* ===================== 04 — WHO ===================== */}
+        {/* ===================== 04 Who ===================== */}
         <section className="fl-chapter" aria-labelledby="s4-title">
           <div className="fl-shell">
-            <div className="fl-chapter-head">
-              <span className="fl-label fl-reveal r1">04 / Who</span>
-              <span className="fl-seg fl-reveal r1" aria-hidden="true" />
-            </div>
             <h2 className="fl-chapter-title fl-reveal r2" id="s4-title">
               One primitive. Every delegation.
             </h2>
@@ -727,7 +655,7 @@ export default function Home(): React.JSX.Element {
               Stop choosing between control and delegation.
             </h2>
             <p className="fl-close-sub fl-reveal r2">
-              Give an agent the keys to act — never the keys to everything.
+              Give an agent the keys to act. Never the keys to everything.
             </p>
             <div className="fl-cta-row fl-reveal r3">
               <Link className="fl-pill fl-pill-solid" href="/dashboard/vaults">
@@ -746,7 +674,7 @@ export default function Home(): React.JSX.Element {
         <div className="fl-shell fl-footer-inner">
           <div className="fl-footer-brand">
             <Mark size={28} />
-            <span className="fl-ft">Fuin — restricted access on Solana</span>
+            <span className="fl-ft">Fuin. Restricted access on Solana.</span>
           </div>
           <nav className="fl-footer-links" aria-label="Footer">
             <Link href="/docs">Docs</Link>

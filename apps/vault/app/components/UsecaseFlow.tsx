@@ -13,7 +13,6 @@ import { AnimatePresence, motion } from "framer-motion";
 const IVORY = "#f2ece1";
 const MUTED = "#b3aca0";
 const LIVE = "#c1e859";
-const LIVE_GLOW = "rgba(193, 232, 89, 0.30)";
 const BG = "#0a0907";
 const HAIRLINE = "rgba(242, 236, 225, 0.10)";
 const HAIRLINE_STRONG = "rgba(242, 236, 225, 0.18)";
@@ -29,7 +28,7 @@ interface Phase {
 const FLOWS: Record<TabId, { label: string; lead: string; phases: Phase[] }> = {
   agent: {
     label: "Autonomous agent",
-    lead: "An on-chain bot trades from your funds — within bounds you signed, never beyond them.",
+    lead: "An on-chain bot trades from your funds, within bounds you signed, never beyond them.",
     phases: [
       {
         step: 1,
@@ -50,7 +49,7 @@ const FLOWS: Record<TabId, { label: string; lead: string; phases: Phase[] }> = {
   },
   junior: {
     label: "Junior vault",
-    lead: "A kid, contractor, or sub-account gets a wallet that can spend within your rules — and can never drain.",
+    lead: "A kid, contractor, or sub-account gets a wallet that spends within your rules. Never drains.",
     phases: [
       {
         step: 1,
@@ -60,7 +59,7 @@ const FLOWS: Record<TabId, { label: string; lead: string; phases: Phase[] }> = {
       {
         step: 2,
         title: "Invisible delegation",
-        desc: "The junior is silently issued a time-bound session key. Their interactions feel like Web2 — no pop-ups, no seed phrase, no risk.",
+        desc: "The junior is silently issued a time-bound session key. Their interactions feel like Web2: no pop-ups, no seed phrase, no risk.",
       },
       {
         step: 3,
@@ -190,12 +189,9 @@ export const UsecaseFlow = (): JSX.Element => {
 function PhaseCell({ phase, index }: { phase: Phase; index: number }): JSX.Element {
   return (
     <article className="uf-cell" data-index={index}>
-      {/* Step indicator: small lime dot + monospace label */}
+      {/* Step indicator: monospace label only (no decorative dot) */}
       <div
         style={{
-          display: "flex",
-          alignItems: "center",
-          gap: 10,
           fontFamily: "var(--font-mono-v2), ui-monospace, monospace",
           fontSize: "0.7rem",
           letterSpacing: "0.22em",
@@ -203,17 +199,6 @@ function PhaseCell({ phase, index }: { phase: Phase; index: number }): JSX.Eleme
           color: MUTED,
         }}
       >
-        <span
-          aria-hidden="true"
-          style={{
-            display: "inline-block",
-            width: 6,
-            height: 6,
-            borderRadius: "50%",
-            background: LIVE,
-            boxShadow: `0 0 6px ${LIVE_GLOW}`,
-          }}
-        />
         Phase {String(phase.step).padStart(2, "0")}
       </div>
 
