@@ -2,6 +2,7 @@
 
 import { JSX, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import { Shield, Sparkles } from "lucide-react";
 
 /**
  * UsecaseFlow — two delegation scenarios, each with a custom line-art character
@@ -140,130 +141,117 @@ export const UsecaseFlow = (): JSX.Element => {
 };
 
 /**
- * OpenClaw — Fuin's autonomous agent persona. Geometric line-art bot: hex head
- * with one lime aperture-eye, antenna with signal pulses, F-monogram chest stem,
- * scoped-perimeter brackets enclosing the body. Drawn (not borrowed) per brand.
+ * OpenClaw — Fuin's autonomous agent mascot, restored from the original
+ * pre-redesign component (commit c1017a5). The lobster body + clamping claws
+ * + scanning pupils with the original red gradient. Kept the character intact;
+ * the scanning pupils were emerald in the original, swapped to lime to match
+ * the current brand accent.
  */
 function OpenClawAgent(): JSX.Element {
   return (
-    <svg
-      viewBox="0 0 280 320"
-      width="280"
-      height="320"
-      fill="none"
-      stroke={IVORY}
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      role="img"
-      aria-label="OpenClaw — an autonomous agent operating within a scoped perimeter"
-      style={{ maxWidth: "100%", height: "auto" }}
+    <motion.div
+      style={{ width: "100%", maxWidth: "300px", display: "flex", justifyContent: "center" }}
+      animate={{ y: [-10, 10, -10] }}
+      transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
     >
-      {/* Scoped-perimeter brackets — the agent operates inside these bounds */}
-      <path d="M 28 70 L 18 70 L 18 250 L 28 250" stroke={LIVE} />
-      <path d="M 252 70 L 262 70 L 262 250 L 252 250" stroke={LIVE} />
+      <svg
+        viewBox="0 0 120 120"
+        width="280"
+        height="280"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+        role="img"
+        aria-label="OpenClaw — Fuin's autonomous agent mascot"
+        style={{
+          maxWidth: "100%",
+          height: "auto",
+          filter: "drop-shadow(0px 0px 24px rgba(255, 77, 77, 0.35))",
+        }}
+      >
+        <defs>
+          <linearGradient id="lobster-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stopColor="#ff4d4d" />
+            <stop offset="100%" stopColor="#991b1b" />
+          </linearGradient>
+        </defs>
 
-      {/* Antenna + signal pulses */}
-      <path d="M 140 22 L 140 60" />
-      <circle cx="140" cy="16" r="4" fill={LIVE} stroke="none" />
-      <path d="M 116 28 L 124 36" opacity="0.55" />
-      <path d="M 164 28 L 156 36" opacity="0.55" />
+        {/* Body — breathing animation */}
+        <motion.path
+          d="M60 10 C30 10 15 35 15 55 C15 75 30 95 45 100 L45 110 L55 110 L55 100 C55 100 60 102 65 100 L65 110 L75 110 L75 100 C90 95 105 75 105 55 C105 35 90 10 60 10Z"
+          fill="url(#lobster-gradient)"
+          animate={{ scale: [1, 1.02, 1] }}
+          transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+          style={{ originX: "50%", originY: "50%" }}
+        />
 
-      {/* Hexagonal head */}
-      <path d="M 140 60 L 196 92 L 196 156 L 140 188 L 84 156 L 84 92 Z" />
+        {/* Left claw — clamping */}
+        <motion.path
+          d="M20 45 C5 40 0 50 5 60 C10 70 20 65 25 55 C28 48 25 45 20 45Z"
+          fill="url(#lobster-gradient)"
+          animate={{ rotate: [0, -15, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", repeatType: "reverse" }}
+          style={{ originX: "25px", originY: "55px" }}
+        />
 
-      {/* Lime aperture eye (centered, single — the brand's F-aperture echo) */}
-      <rect x="118" y="115" width="44" height="14" rx="2" stroke="none" fill={LIVE} opacity="0.18" />
-      <rect x="118" y="115" width="44" height="14" rx="2" />
-      <rect x="148" y="117" width="10" height="10" rx="1" fill={LIVE} stroke="none" />
+        {/* Right claw — clamping */}
+        <motion.path
+          d="M100 45 C115 40 120 50 115 60 C110 70 100 65 95 55 C92 48 95 45 100 45Z"
+          fill="url(#lobster-gradient)"
+          animate={{ rotate: [0, 15, 0] }}
+          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut", repeatType: "reverse", delay: 0.2 }}
+          style={{ originX: "95px", originY: "55px" }}
+        />
 
-      {/* Subtle steel scan-line below the eye */}
-      <path d="M 100 144 L 180 144" stroke={STEEL} opacity="0.5" strokeWidth={1} />
+        {/* Antennae */}
+        <path d="M45 15 Q35 5 30 8" stroke="#ff4d4d" strokeWidth="3" strokeLinecap="round" />
+        <path d="M75 15 Q85 5 90 8" stroke="#ff4d4d" strokeWidth="3" strokeLinecap="round" />
 
-      {/* Body — squarish chassis with F-stem chest detail */}
-      <path d="M 92 196 L 92 268 L 188 268 L 188 196 Z" />
-      <path d="M 124 208 L 124 256 L 138 256 L 138 208 Z" stroke={IVORY} />
-      <path d="M 138 208 L 162 208 L 162 220 L 138 220" />
-      <path d="M 138 230 L 154 230 L 154 240 L 138 240" />
-      <rect x="158" y="230" width="4" height="10" fill={LIVE} stroke="none" />
+        {/* Eye backgrounds */}
+        <circle cx="45" cy="35" r="6" fill="#050810" />
+        <circle cx="75" cy="35" r="6" fill="#050810" />
 
-      {/* Articulated arms */}
-      <path d="M 92 212 L 64 232 L 64 272" />
-      <path d="M 188 212 L 216 232 L 216 272" />
-      <circle cx="64" cy="278" r="6" />
-      <circle cx="216" cy="278" r="6" />
-
-      {/* Feet base */}
-      <path d="M 108 268 L 108 296 L 130 296 L 130 268" />
-      <path d="M 150 268 L 150 296 L 172 296 L 172 268" />
-      <path d="M 96 296 L 184 296" />
-    </svg>
+        {/* Scanning pupils — recolored to lime (was emerald in the original) */}
+        <motion.circle
+          cx="46" cy="34" r="2.5" fill={LIVE}
+          animate={{ cx: [44, 48, 44], cy: [34, 34, 34] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          style={{ filter: `drop-shadow(0 0 4px ${LIVE})` }}
+        />
+        <motion.circle
+          cx="76" cy="34" r="2.5" fill={LIVE}
+          animate={{ cx: [74, 78, 74], cy: [34, 34, 34] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          style={{ filter: `drop-shadow(0 0 4px ${LIVE})` }}
+        />
+      </svg>
+    </motion.div>
   );
 }
 
 /**
- * KidVault — a friendly junior persona. Small humanoid line figure holding a
- * lime key, standing next to a vault outline showing the parental policy frame.
+ * KidVault — restored from the original pre-redesign component (commit c1017a5).
+ * Floating shield with a sparkle, recolored from emerald + yellow to the brand's
+ * lime + ivory palette. Same float + scale animation gesture.
  */
 function KidVault(): JSX.Element {
   return (
-    <svg
-      viewBox="0 0 320 320"
-      width="320"
-      height="320"
-      fill="none"
-      stroke={IVORY}
-      strokeWidth={1.6}
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      role="img"
-      aria-label="A junior user with a scoped key, beside a vault under parental policy"
-      style={{ maxWidth: "100%", height: "auto" }}
+    <motion.div
+      style={{ position: "relative", display: "inline-flex" }}
+      animate={{ y: [-15, 15, -15], scale: [1, 1.05, 1] }}
+      transition={{ duration: 5, repeat: Infinity, ease: "easeInOut" }}
     >
-      {/* Vault on the right — policy frame */}
-      <rect x="180" y="80" width="120" height="180" rx="4" />
-      <circle cx="240" cy="170" r="14" />
-      <path d="M 240 156 L 240 184 M 226 170 L 254 170" stroke={STEEL} />
-      {/* Three lime ticks at the top of the vault = active caps */}
-      <path d="M 200 96 L 200 108" stroke={LIVE} strokeWidth={2} />
-      <path d="M 220 96 L 220 108" stroke={LIVE} strokeWidth={2} />
-      <path d="M 240 96 L 240 108" stroke={LIVE} strokeWidth={2} />
-      {/* Vault feet */}
-      <path d="M 190 260 L 190 270 M 290 260 L 290 270" />
-
-      {/* Kid on the left — round head, simple body */}
-      {/* Head */}
-      <circle cx="92" cy="100" r="28" />
-      {/* Eyes */}
-      <circle cx="82" cy="98" r="2" fill={IVORY} stroke="none" />
-      <circle cx="102" cy="98" r="2" fill={IVORY} stroke="none" />
-      {/* Smile */}
-      <path d="M 82 110 Q 92 116 102 110" strokeWidth={1.4} />
-      {/* Hair tuft */}
-      <path d="M 78 76 Q 88 70 96 76 M 96 76 Q 104 70 108 78" />
-
-      {/* Neck */}
-      <path d="M 92 128 L 92 138" />
-
-      {/* Body — slight oversized for kid proportions */}
-      <path d="M 60 138 L 60 220 L 124 220 L 124 138 Z" />
-
-      {/* Arms */}
-      {/* Left arm hanging */}
-      <path d="M 60 152 L 44 200 L 44 232" />
-      <circle cx="44" cy="238" r="5" />
-      {/* Right arm raised, holding a lime key */}
-      <path d="M 124 152 L 160 132 L 160 110" />
-      <circle cx="160" cy="104" r="5" />
-      {/* Key bow at top of right hand */}
-      <circle cx="160" cy="86" r="8" stroke={LIVE} strokeWidth={2} />
-      <path d="M 160 94 L 160 70 M 158 76 L 164 76 M 158 80 L 162 80" stroke={LIVE} strokeWidth={2} />
-
-      {/* Legs */}
-      <path d="M 76 220 L 76 280 L 86 280 L 86 220" />
-      <path d="M 98 220 L 98 280 L 108 280 L 108 220" />
-      {/* Feet ground line */}
-      <path d="M 66 282 L 118 282" />
-    </svg>
+      <Shield
+        size={200}
+        color={LIVE}
+        strokeWidth={1.2}
+        style={{ filter: `drop-shadow(0 0 32px rgba(193, 232, 89, 0.45))` }}
+      />
+      <Sparkles
+        size={42}
+        color={IVORY}
+        strokeWidth={1.4}
+        style={{ position: "absolute", top: -12, right: -16 }}
+      />
+    </motion.div>
   );
 }
