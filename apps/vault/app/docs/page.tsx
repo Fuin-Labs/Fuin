@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState, useRef, useCallback } from "react";
 import Link from "next/link";
+import { FuinWordmark } from "../components/FuinWordmark";
 import "../landing.css";
 
 const sections = [
@@ -16,7 +17,7 @@ const sections = [
 
 function CodeBlock({ children, title }: { children: string; title?: string }) {
   return (
-    <div className="my-4 rounded-lg border border-white/10 bg-[#0a0a0a] overflow-hidden">
+    <div className="my-4 rounded-lg border border-white/10 bg-[#13110f] overflow-hidden">
       {title && (
         <div className="px-4 py-2 border-b border-white/10 text-xs text-white/40 font-mono">{title}</div>
       )}
@@ -28,19 +29,30 @@ function CodeBlock({ children, title }: { children: string; title?: string }) {
 }
 
 function InlineCode({ children }: { children: React.ReactNode }) {
-  return <code className="bg-white/5 px-1.5 py-0.5 rounded text-emerald-400 font-mono text-sm">{children}</code>;
+  return <code className="bg-white/5 px-1.5 py-0.5 rounded text-[#c1e859] font-mono text-sm">{children}</code>;
 }
 
 function SectionHeading({ id, children }: { id: string; children: React.ReactNode }) {
   return (
-    <h2 id={id} className="text-section font-geist text-white mt-20 mb-6 scroll-mt-8">
+    <h2
+      id={id}
+      className="text-section text-[#f2ece1] mt-20 mb-6 scroll-mt-8"
+      style={{ fontFamily: "var(--font-display), sans-serif", letterSpacing: "-0.02em" }}
+    >
       {children}
     </h2>
   );
 }
 
 function SubHeading({ children }: { children: React.ReactNode }) {
-  return <h3 className="text-xl font-semibold font-geist text-white mt-10 mb-4">{children}</h3>;
+  return (
+    <h3
+      className="text-xl font-bold text-[#f2ece1] mt-10 mb-4"
+      style={{ fontFamily: "var(--font-display), sans-serif" }}
+    >
+      {children}
+    </h3>
+  );
 }
 
 function Paragraph({ children }: { children: React.ReactNode }) {
@@ -114,23 +126,23 @@ export default function DocsPage() {
   };
 
   return (
-    <div className="min-h-screen bg-black">
+    <div className="min-h-screen bg-[#0a0907]">
       {/* Mobile top bar */}
-      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-black/95 backdrop-blur-xl border-b border-white/10">
+      <div className="md:hidden fixed top-0 left-0 right-0 z-50 bg-[#0a0907]/95 backdrop-blur-xl border-b border-white/10">
         <div className="flex items-center justify-between px-4 py-3">
-          <Link href="/" className="flex items-center gap-2">
-            <img src="/logo.svg" alt="Fuin" className="h-8 w-8" />
-            <span className="text-sm font-semibold font-geist text-white">Docs</span>
+          <Link href="/" className="flex items-center gap-2" style={{ color: "#f2ece1" }} aria-label="Fuin home">
+            <FuinWordmark height={20} />
+            <span className="text-[10px] font-mono text-white/40 tracking-[0.22em] uppercase">Docs</span>
           </Link>
           <button
             onClick={() => setMobileNavOpen(!mobileNavOpen)}
-            className="text-white/70 hover:text-white p-2 rounded-lg bg-white/5 border border-white/10 text-sm font-geist"
+            className="text-white/70 hover:text-[#f2ece1] p-2 rounded-lg bg-white/5 border border-white/10 text-sm font-geist"
           >
             {mobileNavOpen ? "Close" : "Menu"}
           </button>
         </div>
         {mobileNavOpen && (
-          <div className="px-4 pb-4 border-b border-white/10 bg-black/95">
+          <div className="px-4 pb-4 border-b border-white/10 bg-[#0a0907]/95">
             <nav className="flex flex-col gap-1">
               {sections.map(({ id, label }) => (
                 <button
@@ -138,7 +150,7 @@ export default function DocsPage() {
                   onClick={() => scrollTo(id)}
                   className={`text-left px-3 py-2 rounded-lg text-sm font-geist transition-colors ${
                     activeSection === id
-                      ? "text-white bg-white/5"
+                      ? "text-[#f2ece1] bg-white/5"
                       : "text-white/50 hover:text-white/70"
                   }`}
                 >
@@ -151,14 +163,11 @@ export default function DocsPage() {
       </div>
 
       {/* Desktop sidebar */}
-      <aside className="hidden md:flex flex-col fixed top-0 left-0 bottom-0 w-64 bg-[#0a0a0a] border-r border-white/10 z-40">
-        <div className="p-6 border-b border-white/10">
-          <Link href="/" className="flex items-center gap-3 group">
-            <img src="/logo.svg" alt="Fuin" className="h-10 w-10" />
-            <div>
-              <span className="text-sm font-semibold font-geist text-white group-hover:text-white/80 transition-colors">Fuin</span>
-              <span className="block text-[10px] font-pixel text-white/40 tracking-widest uppercase">Documentation</span>
-            </div>
+      <aside className="hidden md:flex flex-col fixed top-0 left-0 bottom-0 w-64 bg-[#13110f] border-r border-white/10 z-40">
+        <div className="px-6 flex items-center border-b border-white/10" style={{ height: "76px", color: "#f2ece1" }}>
+          <Link href="/" className="flex items-center gap-3 group" aria-label="Fuin home">
+            <FuinWordmark height={24} />
+            <span className="block text-[10px] font-mono text-white/40 tracking-[0.22em] uppercase">Docs</span>
           </Link>
         </div>
 
@@ -167,15 +176,12 @@ export default function DocsPage() {
             <button
               key={id}
               onClick={() => scrollTo(id)}
-              className={`w-full text-left px-4 py-2.5 rounded-lg text-sm font-geist transition-all mb-0.5 relative ${
+              className={`w-full text-left px-4 py-2.5 rounded-lg text-sm transition-all mb-0.5 ${
                 activeSection === id
-                  ? "text-white bg-white/5"
-                  : "text-white/50 hover:text-white/70 hover:bg-white/[0.02]"
+                  ? "text-[#c1e859] bg-[#c1e859]/[0.08]"
+                  : "text-white/50 hover:text-white/80 hover:bg-white/[0.03]"
               }`}
             >
-              {activeSection === id && (
-                <span className="absolute left-0 top-1/2 -translate-y-1/2 w-0.5 h-5 bg-emerald-400 rounded-full" />
-              )}
               {label}
             </button>
           ))}
@@ -196,10 +202,10 @@ export default function DocsPage() {
         {/* Overview */}
         <SectionHeading id="overview">Overview</SectionHeading>
         <Paragraph>
-          Fuin is a programmable authorization layer on Solana. It lets you create on-chain vaults, deposit funds, and issue scoped delegate keys to AI agents &mdash; with spending caps, permission controls, and policy constraints enforced entirely on-chain.
+          Fuin is a programmable authorization layer on Solana. It lets you create on-chain vaults, deposit funds, and issue scoped delegate keys to AI agents, with spending caps, permission controls, and policy constraints enforced entirely on-chain.
         </Paragraph>
         <Paragraph>
-          Your agent can transfer SOL, send SPL tokens, and execute swaps &mdash; but only within the boundaries you set. You stay in control.
+          Your agent can transfer SOL, send SPL tokens, and execute swaps, but only within the boundaries you set. You stay in control.
         </Paragraph>
 
         <SubHeading>How It Works</SubHeading>
@@ -211,8 +217,8 @@ export default function DocsPage() {
             { title: "3. Issue a Delegate Key", desc: "Generate a keypair for your AI agent and issue a delegate with specific permissions, spending limits, and expiry." },
             { title: "4. Connect Your Agent", desc: "Configure the Fuin MCP server in your AI client (Claude, Cursor, etc.) with the delegate private key. The agent can now operate within your policy constraints." },
           ].map(({ title, desc }) => (
-            <div key={title} className="rounded-lg border border-white/10 bg-[#0f0f0f] p-4">
-              <div className="text-sm font-medium font-geist text-white mb-1">{title}</div>
+            <div key={title} className="rounded-lg border border-white/10 bg-[#13110f] p-4">
+              <div className="text-sm font-medium font-geist text-[#f2ece1] mb-1">{title}</div>
               <div className="text-sm text-white/50 font-geist">{desc}</div>
             </div>
           ))}
@@ -223,17 +229,17 @@ export default function DocsPage() {
 
         <SubHeading>What You Need</SubHeading>
         <ul className="list-disc list-inside text-white/70 font-geist space-y-2 mb-6">
-          <li>A Solana wallet (Phantom, Solflare, etc.) set to <strong className="text-white">Devnet</strong></li>
-          <li>Some devnet SOL &mdash; use a <a href="https://faucet.solana.com" target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">faucet</a> or <InlineCode>solana airdrop 2</InlineCode></li>
+          <li>A Solana wallet (Phantom, Solflare, etc.) set to <strong className="text-[#f2ece1]">Devnet</strong></li>
+          <li>Some devnet SOL. Use a <a href="https://faucet.solana.com" target="_blank" rel="noreferrer" className="text-[#c1e859] hover:underline">faucet</a> or <InlineCode>solana airdrop 2</InlineCode></li>
           <li>Node.js 18+ installed (for running the MCP server)</li>
         </ul>
 
         <SubHeading>Step 1: Create a Vault</SubHeading>
         <ol className="list-decimal list-inside text-white/70 font-geist space-y-3 mb-6">
-          <li>Go to the <Link href="/dashboard/vaults" className="text-emerald-400 hover:underline">Fuin Dashboard</Link></li>
+          <li>Go to the <Link href="/dashboard/vaults" className="text-[#c1e859] hover:underline">Fuin Dashboard</Link></li>
           <li>Connect your wallet (make sure it&apos;s set to Devnet)</li>
-          <li>Click <strong className="text-white">Create Vault</strong></li>
-          <li>Your vault PDA address will be displayed &mdash; copy it</li>
+          <li>Click <strong className="text-[#f2ece1]">Create Vault</strong></li>
+          <li>Your vault PDA address will be displayed. Copy it</li>
         </ol>
 
         <SubHeading>Step 2: Fund the Vault</SubHeading>
@@ -263,26 +269,26 @@ solana airdrop 1 $(solana address -k agent-key.json)`}</CodeBlock>
 
         <SubHeading>Step 4: Issue a Delegate</SubHeading>
         <ol className="list-decimal list-inside text-white/70 font-geist space-y-3 mb-6">
-          <li>Go to your vault in the <Link href="/dashboard/vaults" className="text-emerald-400 hover:underline">Dashboard</Link></li>
-          <li>Click <strong className="text-white">Issue Delegate</strong></li>
+          <li>Go to your vault in the <Link href="/dashboard/vaults" className="text-[#c1e859] hover:underline">Dashboard</Link></li>
+          <li>Click <strong className="text-[#f2ece1]">Issue Delegate</strong></li>
           <li>Paste the agent&apos;s public key</li>
           <li>Choose permissions (e.g. Transfer, Swap)</li>
           <li>Set a spending cap and expiry</li>
-          <li>Submit &mdash; the delegate is created on-chain</li>
+          <li>Submit. The delegate is created on-chain</li>
         </ol>
         <Paragraph>
-          After creation, the dashboard shows a <strong className="text-white">Quick Start</strong> card with the exact MCP config to copy into your AI client.
+          After creation, the dashboard shows a <strong className="text-[#f2ece1]">Quick Start</strong> card with the exact MCP config to copy into your AI client.
         </Paragraph>
 
         {/* Connect Your AI Agent */}
         <SectionHeading id="connect-agent">Connect Your AI Agent</SectionHeading>
 
         <Paragraph>
-          The Fuin MCP server lets AI coding assistants (Claude Desktop, Cursor, Claude Code) interact with your vault directly. It exposes tools for balance checks, transfers, and swaps &mdash; all enforced by on-chain policies.
+          The Fuin MCP server lets AI coding assistants (Claude Desktop, Cursor, Claude Code) interact with your vault directly. It exposes tools for balance checks, transfers, and swaps. All enforced by on-chain policies.
         </Paragraph>
 
         <Paragraph>
-          Install via npm &mdash; no server to deploy. The MCP server runs locally on the user&apos;s machine and communicates via stdio.
+          Install via npm, no server to deploy. The MCP server runs locally on the user&apos;s machine and communicates via stdio.
         </Paragraph>
         <CodeBlock title="Install">{`npx -y @fuin-labs/mcp-server`}</CodeBlock>
 
@@ -407,7 +413,7 @@ spl-token transfer <MINT_ADDRESS> 500000 <VAULT_PDA> --fund-recipient`}</CodeBlo
         </Paragraph>
 
         <SubHeading>Exceed Spending Cap</SubHeading>
-        <div className="rounded-lg border border-white/10 bg-[#0f0f0f] p-4 my-4">
+        <div className="rounded-lg border border-white/10 bg-[#13110f] p-4 my-4">
           <div className="text-sm font-geist mb-2">
             <span className="text-white/40 mr-2">Prompt:</span>
             <span className="text-white/70">&quot;Transfer 100 SOL to &lt;destination&gt;&quot;</span>
@@ -420,7 +426,7 @@ spl-token transfer <MINT_ADDRESS> 500000 <VAULT_PDA> --fund-recipient`}</CodeBlo
         </div>
 
         <SubHeading>Wrong Permission</SubHeading>
-        <div className="rounded-lg border border-white/10 bg-[#0f0f0f] p-4 my-4">
+        <div className="rounded-lg border border-white/10 bg-[#13110f] p-4 my-4">
           <div className="text-sm font-geist mb-2">
             <span className="text-white/40 mr-2">Setup:</span>
             <span className="text-white/70">Delegate has only <InlineCode>CAN_SWAP</InlineCode> (1), no <InlineCode>CAN_TRANSFER</InlineCode></span>
@@ -436,7 +442,7 @@ spl-token transfer <MINT_ADDRESS> 500000 <VAULT_PDA> --fund-recipient`}</CodeBlo
         </div>
 
         <SubHeading>Paused Delegate</SubHeading>
-        <div className="rounded-lg border border-white/10 bg-[#0f0f0f] p-4 my-4">
+        <div className="rounded-lg border border-white/10 bg-[#13110f] p-4 my-4">
           <div className="text-sm font-geist mb-2">
             <span className="text-white/40 mr-2">Setup:</span>
             <span className="text-white/70">Guardian pauses the delegate from the dashboard (status = 1)</span>
@@ -456,7 +462,7 @@ spl-token transfer <MINT_ADDRESS> 500000 <VAULT_PDA> --fund-recipient`}</CodeBlo
         <SectionHeading id="manage-delegates">Managing Delegates</SectionHeading>
 
         <Paragraph>
-          From the <Link href="/dashboard/vaults" className="text-emerald-400 hover:underline">Guardian Dashboard</Link> you can pause, resume, or permanently revoke delegates at any time.
+          From the <Link href="/dashboard/vaults" className="text-[#c1e859] hover:underline">Guardian Dashboard</Link> you can pause, resume, or permanently revoke delegates at any time.
         </Paragraph>
         <Table
           headers={["Code", "Action", "Reversible"]}
@@ -467,7 +473,7 @@ spl-token transfer <MINT_ADDRESS> 500000 <VAULT_PDA> --fund-recipient`}</CodeBlo
           ]}
         />
         <Paragraph>
-          Pausing a delegate immediately blocks all actions. The guardian can resume later. Revoking is permanent &mdash; the delegate key can never be reactivated.
+          Pausing a delegate immediately blocks all actions. The guardian can resume later. Revoking is permanent. The delegate key can never be reactivated.
         </Paragraph>
 
         {/* Reference */}
@@ -475,7 +481,7 @@ spl-token transfer <MINT_ADDRESS> 500000 <VAULT_PDA> --fund-recipient`}</CodeBlo
 
         <SubHeading>Network</SubHeading>
         <Paragraph>
-          Fuin is currently live on <strong className="text-white">Solana Devnet</strong>. Make sure your wallet and RPC are set to devnet.
+          Fuin is currently live on <strong className="text-[#f2ece1]">Solana Devnet</strong>. Make sure your wallet and RPC are set to devnet.
         </Paragraph>
 
         <SubHeading>Permissions</SubHeading>
@@ -508,7 +514,7 @@ spl-token transfer <MINT_ADDRESS> 500000 <VAULT_PDA> --fund-recipient`}</CodeBlo
         </Paragraph>
         <CodeBlock title="Install">{`npm install @fuin-labs/sdk`}</CodeBlock>
         <Paragraph>
-          See the <a href="https://github.com/Fuin-Labs/Fuin" target="_blank" rel="noreferrer" className="text-emerald-400 hover:underline">GitHub repository</a> for SDK documentation and examples.
+          See the <a href="https://github.com/Fuin-Labs/Fuin" target="_blank" rel="noreferrer" className="text-[#c1e859] hover:underline">GitHub repository</a> for SDK documentation and examples.
         </Paragraph>
 
         <SubHeading>Program ID</SubHeading>
