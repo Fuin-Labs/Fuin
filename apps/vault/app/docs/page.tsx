@@ -10,6 +10,7 @@ const sections = [
   { id: "connect-agent", label: "Connect Your AI Agent" },
   { id: "available-tools", label: "Available Tools" },
   { id: "what-agents-can-do", label: "What Agents Can Do" },
+  { id: "intent-inheritance", label: "Intent Inheritance" },
   { id: "policy-guardrails", label: "Policy Guardrails" },
   { id: "manage-delegates", label: "Managing Delegates" },
   { id: "reference", label: "Reference" },
@@ -356,7 +357,7 @@ solana airdrop 1 $(solana address -k agent-key.json)`}</CodeBlock>
         <SectionHeading id="available-tools">Available Tools</SectionHeading>
 
         <Paragraph>
-          The MCP server exposes the following tools. All destructive operations are validated on-chain by the policy engine.
+          These are the delegate tools for operating a single vault. All destructive operations are validated on-chain by the policy engine. The intent-inheritance tools for agent swarms are listed under <button onClick={() => scrollTo("intent-inheritance")} className="text-[#c1e859] hover:underline">Intent Inheritance</button> below.
         </Paragraph>
 
         <Table
@@ -403,6 +404,70 @@ spl-token transfer <MINT_ADDRESS> 500000 <VAULT_PDA> --fund-recipient`}</CodeBlo
         <CodeBlock title="Prompt">{`Swap 1 token of mint <INPUT_MINT> on pool <POOL_ADDRESS> with 1% slippage`}</CodeBlock>
         <Paragraph>
           The policy engine validates the CAN_SWAP permission, checks spending limits, and verifies the target program is in the vault&apos;s allow-list.
+        </Paragraph>
+
+        {/* Intent Inheritance */}
+        <SectionHeading id="intent-inheritance">Intent Inheritance</SectionHeading>
+
+        <Paragraph>
+          Delegate keys cover one agent. Intent inheritance covers a whole swarm. You sign one root intent (an agent, a budget, a predicate, an expiry). Any agent operating under it can derive a child intent for a sub-agent, but only a strictly tighter one. At execution, an on-chain ancestor walk checks the action against the intent and every ancestor above it. No layer can widen what it inherited.
+        </Paragraph>
+        <Paragraph>
+          One signature anchors the tree. Every derived scope is cryptographically narrower than its parent, so the worst case is fixed no matter how many agents spawn beneath you. One signature, infinite agents, fixed downside.
+        </Paragraph>
+
+        <SubHeading>How a child intent narrows</SubHeading>
+        <Paragraph>
+          Each <InlineCode>derive_child_intent</InlineCode> call must satisfy three constraints, all enforced on-chain:
+        </Paragraph>
+        <ul className="list-disc list-inside text-white/70 font-geist space-y-2 mb-6">
+          <li>Child budget is less than or equal to the parent&apos;s remaining budget, and it is debited from the parent</li>
+          <li>Child expiry is less than or equal to the parent&apos;s expiry</li>
+          <li>Child <InlineCode>GoalPredicate</InlineCode> is AND-composed with the parent&apos;s, so a child can only add constraints, never remove them</li>
+        </ul>
+        <Paragraph>
+          Intents form a tree up to <InlineCode>8</InlineCode> levels deep, each seeded at <InlineCode>{`["intent", user, agent, nonce]`}</InlineCode>.
+        </Paragraph>
+
+        <SubHeading>The predicate bitfield</SubHeading>
+        <Paragraph>
+          A <InlineCode>GoalPredicate</InlineCode> is an AND-composed bitfield. Each flag restricts what the action may do; a child may set more flags than its parent, never fewer:
+        </Paragraph>
+        <Table
+          headers={["Flag", "Constrains the action to"]}
+          rows={[
+            ["`PRED_PRICE`", "A USD price ceiling, checked against a Pyth feed"],
+            ["`PRED_DEX`", "An allow-list of DEX programs"],
+            ["`PRED_TIME`", "A time window"],
+            ["`PRED_READ_ONLY`", "Read-only, no state-changing instructions"],
+          ]}
+        />
+
+        <SubHeading>The ancestor walk</SubHeading>
+        <Paragraph>
+          At execution, <InlineCode>verify_authorizes</InlineCode> runs in the same transaction as the action, as a sibling instruction rather than a wrapper. It parses the target action from the instructions sysvar (SPL transfer, Jupiter v6 swap, or read-only), evaluates the leaf intent&apos;s predicate, then walks every ancestor passed in <InlineCode>remaining_accounts</InlineCode>. Every ancestor must accept, and the leaf&apos;s <InlineCode>remaining_budget</InlineCode> is debited. If any layer rejects, the whole transaction fails.
+        </Paragraph>
+
+        <SubHeading>Swarm tools</SubHeading>
+        <Paragraph>
+          These MCP tools demonstrate the intent hierarchy end-to-end. They are relayer-backed, so they require the Fuin relayer running (<InlineCode>pnpm relayer:dev</InlineCode>, port 8788).
+        </Paragraph>
+        <Table
+          headers={["Tool", "Description", "Type"]}
+          rows={[
+            ["`sign-root-intent`", "User signs a root intent: agent, predicate, budget, expiry", "Signing"],
+            ["`derive-child-intent`", "Derive a strictly-tighter child intent for a sub-agent", "Signing"],
+            ["`verified-spl-transfer`", "Execute an SPL transfer verified against the intent and every ancestor", "Destructive"],
+            ["`attempt-rogue-action`", "Attempt an out-of-scope action; the ancestor walk rejects it (BOUNDARY HELD)", "Boundary test"],
+            ["`list-my-intents`", "List intents derived for the caller's agent", "Read-only"],
+            ["`get-intent`", "Fetch a single intent account by PDA", "Read-only"],
+            ["`init-swarm-demo`", "Fund and set up the demo actors (user, orchestrator, research, execute, audit, rogue)", "Setup"],
+            ["`swarm-state`", "Inspect the current demo state", "Read-only"],
+            ["`reset-swarm-demo`", "Reset the demo to a clean slate", "Setup"],
+          ]}
+        />
+        <Paragraph>
+          Try it: ask your assistant to sign a Jupiter-only root intent, derive a research sub-agent under it, then run <InlineCode>attempt-rogue-action</InlineCode>. The rogue action tries to widen scope and is rejected on-chain.
         </Paragraph>
 
         {/* Policy Guardrails */}
