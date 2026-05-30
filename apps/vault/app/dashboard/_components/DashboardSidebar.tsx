@@ -8,6 +8,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ChevronsLeft, ChevronsRight, X } from "lucide-react";
 import { useIsMobile } from "../_hooks/useMediaQuery";
 import { Mark } from "../../components/Mark";
+import { FuinWordmark } from "../../components/FuinWordmark";
 
 const NAV_ITEMS = [
   { href: "/dashboard", label: "Overview" },
@@ -22,15 +23,21 @@ interface DashboardSidebarProps {
   onToggleCollapse?: () => void;
 }
 
-function Wordmark(_props: { collapsed?: boolean }) {
-  // Just the F monogram, no wordmark text (matches the landing nav).
+function Wordmark({ collapsed }: { collapsed?: boolean }) {
+  // Expanded: the full FUIN logotype, drawn in the same geometric bar-style as
+  // the F monogram. Collapsed: just the F mark (FUIN won't fit at 80px).
   return (
     <Link
       href="/"
       aria-label="Fuin home"
-      style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}
+      style={{
+        display: "inline-flex",
+        alignItems: "center",
+        color: "var(--ink-black)",
+        textDecoration: "none",
+      }}
     >
-      <Mark size={44} />
+      {collapsed ? <Mark size={36} /> : <FuinWordmark height={26} />}
     </Link>
   );
 }
