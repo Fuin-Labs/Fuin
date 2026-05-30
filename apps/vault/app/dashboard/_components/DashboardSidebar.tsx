@@ -22,33 +22,15 @@ interface DashboardSidebarProps {
   onToggleCollapse?: () => void;
 }
 
-function Wordmark({ collapsed }: { collapsed?: boolean }) {
+function Wordmark(_props: { collapsed?: boolean }) {
+  // Just the F monogram, no wordmark text (matches the landing nav).
   return (
     <Link
       href="/"
       aria-label="Fuin home"
-      style={{
-        display: "inline-flex",
-        alignItems: "center",
-        gap: "10px",
-        color: "var(--ink-black)",
-        textDecoration: "none",
-      }}
+      style={{ display: "inline-flex", alignItems: "center", textDecoration: "none" }}
     >
-      <Mark size={28} />
-      {!collapsed && (
-        <span
-          style={{
-            fontFamily: "var(--font-display), sans-serif",
-            fontSize: "1.2rem",
-            fontWeight: 700,
-            letterSpacing: "0.01em",
-            lineHeight: 1,
-          }}
-        >
-          Fuin
-        </span>
-      )}
+      <Mark size={44} />
     </Link>
   );
 }
@@ -67,20 +49,24 @@ function SidebarContent({
 
   return (
     <>
-      {/* Wordmark + toggle */}
+      {/* Brand band — 76px flush-top, bottom border mirrors the header so the
+          top-left corner reads as one continuous chrome band (same height,
+          same border, same --paper background). */}
       <div
         style={{
+          position: "relative",
+          height: "76px",
+          flex: "none",
           display: "flex",
           alignItems: "center",
-          justifyContent: isCollapsed ? "center" : "space-between",
-          marginBottom: "32px",
-          padding: isCollapsed ? "0" : "0 8px",
-          height: "48px",
+          justifyContent: "center",
+          borderBottom: "1px solid var(--rule-soft)",
         }}
       >
         <Wordmark collapsed={isCollapsed} />
 
-        <div style={{ display: "flex", gap: "8px" }}>
+        {/* Collapse / close controls pinned right so the F stays centered */}
+        <div style={{ position: "absolute", right: "12px", top: "50%", transform: "translateY(-50%)", display: "flex", gap: "8px" }}>
           {isMobile && onClose && !isCollapsed && (
             <button
               type="button"
@@ -134,18 +120,15 @@ function SidebarContent({
         </div>
       </div>
 
-      {/* Hairline rule under the wordmark */}
-      {!isCollapsed && (
-        <div
-          aria-hidden
-          style={{
-            height: 1,
-            background: "var(--ink-black)",
-            opacity: 0.18,
-            margin: "0 8px 20px",
-          }}
-        />
-      )}
+      {/* Nav + footer column (fills remaining height; back-link pins to bottom) */}
+      <div
+        style={{
+          flex: 1,
+          display: "flex",
+          flexDirection: "column",
+          padding: isCollapsed ? "16px 0" : "20px 12px",
+        }}
+      >
 
       {/* Section eyebrow */}
       {!isCollapsed && (
@@ -254,6 +237,7 @@ function SidebarContent({
           {isCollapsed && <span aria-hidden style={{ fontFamily: "var(--font-mono-v2), monospace" }}>←</span>}
         </motion.div>
       </Link>
+      </div>
     </>
   );
 }
@@ -282,10 +266,9 @@ export function DashboardSidebar({
           minHeight: "100dvh",
           background: "var(--paper)",
           borderRight: "1px solid var(--rule-soft)",
-          padding: "24px 12px",
           display: "flex",
           flexDirection: "column",
-          gap: "4px",
+          gap: "0",
           position: "fixed",
           left: 0,
           top: 0,
@@ -294,19 +277,6 @@ export function DashboardSidebar({
         }}
         title={isCollapsed ? "Click to expand sidebar" : undefined}
       >
-        {/* Hairline rule along the top edge — matches the masthead colophon */}
-        <div
-          aria-hidden
-          style={{
-            position: "absolute",
-            left: 0,
-            right: 0,
-            top: 0,
-            height: 1,
-            background: "var(--ink-black)",
-            opacity: 0.35,
-          }}
-        />
         <SidebarContent isCollapsed={isCollapsed} onToggleCollapse={onToggleCollapse} />
       </aside>
     );
@@ -342,10 +312,9 @@ export function DashboardSidebar({
               width: "280px",
               background: "var(--paper)",
               borderRight: "1px solid var(--rule-soft)",
-              padding: "24px 12px",
               display: "flex",
               flexDirection: "column",
-              gap: "4px",
+              gap: "0",
               zIndex: 100,
             }}
           >

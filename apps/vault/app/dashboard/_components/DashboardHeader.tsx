@@ -62,21 +62,10 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps): 
         position: "sticky",
         top: 0,
         zIndex: 40,
-        background: "color-mix(in oklch, var(--paper) 96%, transparent)",
-        backdropFilter: "blur(10px)",
-        WebkitBackdropFilter: "blur(10px)",
+        background: "var(--paper)",
         borderBottom: "1px solid var(--rule-soft)",
       }}
     >
-      {/* Hairline rule above — matches landing masthead */}
-      <div
-        aria-hidden
-        style={{
-          height: "1px",
-          background: "var(--rule)",
-          opacity: 0.5,
-        }}
-      />
       <div
         style={{
           height: "76px",
