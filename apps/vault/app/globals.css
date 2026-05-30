@@ -195,8 +195,8 @@
     --green:         #c1e859;                        /* status colors collapse to live lime */
     --red:           oklch(0.60 0.13 28);
 
-    /* fonts */
-    --font-display: var(--font-geist-sans);
+    /* fonts — Bricolage Grotesque (display) + Geist (body) + Geist Mono (artifacts) */
+    --font-display: var(--font-bricolage);
     --font-body:    var(--font-geist-sans);
     --font-mono-v2: var(--font-geist-mono);
 

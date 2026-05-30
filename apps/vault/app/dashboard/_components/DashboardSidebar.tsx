@@ -39,7 +39,7 @@ function Wordmark({ collapsed }: { collapsed?: boolean }) {
       {!collapsed && (
         <span
           style={{
-            fontFamily: "var(--font-archivo), sans-serif",
+            fontFamily: "var(--font-display), sans-serif",
             fontSize: "1.2rem",
             fontWeight: 700,
             letterSpacing: "0.01em",
@@ -199,7 +199,7 @@ function SidebarContent({
               {!isCollapsed && (
                 <span
                   style={{
-                    fontFamily: "var(--font-archivo), sans-serif",
+                    fontFamily: "var(--font-body), system-ui, sans-serif",
                     fontSize: "0.95rem",
                     fontWeight: isActive ? 600 : 500,
                     color: isActive ? "var(--ink-black)" : "var(--ink-soft)",
@@ -213,7 +213,7 @@ function SidebarContent({
                 <span
                   aria-hidden
                   style={{
-                    fontFamily: "var(--font-archivo), sans-serif",
+                    fontFamily: "var(--font-body), system-ui, sans-serif",
                     fontSize: "0.95rem",
                     fontWeight: isActive ? 700 : 500,
                     color: isActive ? "var(--ink-black)" : "var(--ink-mute)",
@@ -245,7 +245,7 @@ function SidebarContent({
             gap: "10px",
             padding: isCollapsed ? "12px 0" : "12px 16px",
             color: "var(--ink-mute)",
-            fontFamily: "var(--font-archivo), sans-serif",
+            fontFamily: "var(--font-body), system-ui, sans-serif",
             fontSize: "0.85rem",
             letterSpacing: "-0.005em",
           }}

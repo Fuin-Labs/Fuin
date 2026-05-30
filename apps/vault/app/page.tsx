@@ -113,11 +113,8 @@ const STYLES = `
 #fuin-landing .fl-nav { position: absolute; top: 0; left: 0; right: 0; z-index: 20; padding-top: clamp(1.5rem, 3vh, 2.25rem); }
 #fuin-landing .fl-nav-inner {
   display: flex; align-items: center; justify-content: space-between; gap: 1.25rem;
-  padding-bottom: clamp(1.25rem, 2.5vh, 1.75rem);
-  border-bottom: 1px solid var(--hairline);
 }
-#fuin-landing .fl-brand { display: flex; align-items: center; gap: 0.75rem; }
-#fuin-landing .fl-wordmark { font-weight: 700; font-size: 1.05rem; letter-spacing: 0.02em; color: var(--ivory); }
+#fuin-landing .fl-brand { display: flex; align-items: center; }
 #fuin-landing .fl-nav-links { display: flex; align-items: center; gap: clamp(1rem, 2.5vw, 2rem); }
 #fuin-landing .fl-nav-link {
   font-size: 0.85rem; font-weight: 500; letter-spacing: 0.02em; color: var(--muted);
@@ -208,6 +205,7 @@ const STYLES = `
 /* Hero vertical accent rule + panel-meta strip removed per design. */
 #fuin-landing .fl-eyebrow { display: inline-flex; align-items: center; }
 #fuin-landing .fl-hero-headline {
+  font-family: var(--font-display), sans-serif;
   font-weight: 800; font-size: clamp(2.6rem, 8vw, 4.2rem); line-height: 1.02; letter-spacing: -0.03em;
   color: var(--ivory); max-width: 100%;
   overflow-wrap: break-word; word-wrap: break-word;
@@ -249,6 +247,7 @@ const STYLES = `
 /* GENERIC STORY CHAPTER */
 #fuin-landing .fl-chapter { position: relative; padding-block: clamp(6rem, 18vh, 11rem); border-top: 1px solid var(--hairline); }
 #fuin-landing .fl-chapter-title {
+  font-family: var(--font-display), sans-serif;
   font-weight: 700; font-size: clamp(2rem, 5.4vw, 4rem); line-height: 1.06; letter-spacing: -0.025em; color: var(--ivory); max-width: 20ch;
 }
 #fuin-landing .fl-chapter-body {
@@ -344,7 +343,7 @@ const STYLES = `
   font-weight: 500; font-size: 0.72rem; letter-spacing: 0.28em; text-transform: uppercase; color: var(--muted);
   font-variant-numeric: tabular-nums; margin-bottom: 1.1rem;
 }
-#fuin-landing .fl-cell .fl-ct { font-weight: 700; font-size: clamp(1.35rem, 2vw, 1.6rem); letter-spacing: -0.01em; line-height: 1.1; color: var(--ivory); margin-bottom: 0.85rem; }
+#fuin-landing .fl-cell .fl-ct { font-family: var(--font-display), sans-serif; font-weight: 700; font-size: clamp(1.35rem, 2vw, 1.6rem); letter-spacing: -0.01em; line-height: 1.1; color: var(--ivory); margin-bottom: 0.85rem; }
 #fuin-landing .fl-cell .fl-cd { max-width: 26ch; color: var(--muted); font-size: 0.95rem; line-height: 1.5; }
 
 /* WHO — UsecaseFlow lives directly on the page (no wrapper card, avoids nested-card anti-pattern). */
@@ -352,7 +351,7 @@ const STYLES = `
 
 /* CLOSE / CTA */
 #fuin-landing .fl-close { position: relative; padding-block: clamp(7rem, 20vh, 12rem); border-top: 1px solid var(--hairline); }
-#fuin-landing .fl-close-title { font-weight: 800; font-size: clamp(2.3rem, 6vw, 4.4rem); line-height: 1.04; letter-spacing: -0.03em; color: var(--ivory); max-width: 18ch; }
+#fuin-landing .fl-close-title { font-family: var(--font-display), sans-serif; font-weight: 800; font-size: clamp(2.3rem, 6vw, 4.4rem); line-height: 1.04; letter-spacing: -0.03em; color: var(--ivory); max-width: 18ch; }
 #fuin-landing .fl-close-sub { margin-top: clamp(1.25rem, 3vh, 1.75rem); font-size: clamp(1.05rem, 1.5vw, 1.3rem); line-height: 1.55; color: var(--muted); max-width: 50ch; }
 #fuin-landing .fl-cta-row { margin-top: clamp(2.5rem, 6vh, 3.5rem); display: flex; flex-wrap: wrap; gap: 1rem; }
 
@@ -435,7 +434,7 @@ export default function Home(): React.JSX.Element {
     <LenisProvider>
     <div
       id="fuin-landing"
-      style={{ fontFamily: "var(--font-archivo), sans-serif", background: BG, color: IVORY }}
+      style={{ fontFamily: "var(--font-body), system-ui, sans-serif", background: BG, color: IVORY }}
     >
       <style dangerouslySetInnerHTML={{ __html: STYLES }} />
 
@@ -448,8 +447,7 @@ export default function Home(): React.JSX.Element {
         <nav className="fl-nav" aria-label="Primary">
           <div className="fl-shell fl-nav-inner">
             <Link className="fl-brand" href="/" aria-label="Fuin home">
-              <Mark size={34} />
-              <span className="fl-wordmark">Fuin</span>
+              <Mark size={64} />
             </Link>
             <div className="fl-nav-links">
               <Link className="fl-nav-link optional" href="/docs">

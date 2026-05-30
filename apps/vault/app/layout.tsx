@@ -1,7 +1,7 @@
 import React from "react";
 import type { Metadata } from "next";
 import localFont from "next/font/local";
-import { Vollkorn, Schibsted_Grotesk, Fragment_Mono, Archivo } from "next/font/google";
+import { Vollkorn, Schibsted_Grotesk, Fragment_Mono, Bricolage_Grotesque } from "next/font/google";
 import { GeistPixelSquare } from "geist/font/pixel";
 import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
@@ -37,10 +37,10 @@ const fragmentMono = Fragment_Mono({
   display: "swap",
 });
 
-// Archivo — Swiss-grotesk display for the obsidian-monochrome landing
-const archivo = Archivo({
+// Bricolage Grotesque — quirky editorial-grotesque display, paired with Geist body.
+const bricolage = Bricolage_Grotesque({
   subsets: ["latin"],
-  variable: "--font-archivo",
+  variable: "--font-bricolage",
   weight: ["400", "500", "600", "700", "800"],
   display: "swap",
 });
@@ -60,7 +60,7 @@ export default function RootLayout({
     <html lang="en">
       <head />
       <body
-        className={`${geistSans.variable} ${geistMono.variable} ${GeistPixelSquare.variable} ${vollkorn.variable} ${schibsted.variable} ${fragmentMono.variable} ${archivo.variable} antialiased v1`}
+        className={`${geistSans.variable} ${geistMono.variable} ${GeistPixelSquare.variable} ${vollkorn.variable} ${schibsted.variable} ${fragmentMono.variable} ${bricolage.variable} antialiased v1`}
       >
         {children}
         <Analytics />

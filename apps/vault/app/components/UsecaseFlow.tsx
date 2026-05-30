@@ -227,7 +227,7 @@ function PhaseCard({ phase, delay }: { phase: Phase; delay: number }): JSX.Eleme
       <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
         <h4
           style={{
-            fontFamily: "var(--font-archivo), sans-serif",
+            fontFamily: "var(--font-display), sans-serif",
             fontWeight: 700,
             fontSize: "1.05rem",
             letterSpacing: "-0.012em",

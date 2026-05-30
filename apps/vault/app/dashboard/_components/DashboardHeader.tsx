@@ -114,7 +114,7 @@ export function DashboardHeader({ title, onMenuToggle }: DashboardHeaderProps): 
               <h1
                 style={{
                   color: "var(--ink-black)",
-                  fontFamily: "var(--font-archivo), sans-serif",
+                  fontFamily: "var(--font-display), sans-serif",
                   fontSize: isMobile ? "1.15rem" : "1.5rem",
                   fontWeight: 700,
                   letterSpacing: "-0.012em",

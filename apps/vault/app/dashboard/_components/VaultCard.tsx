@@ -58,7 +58,7 @@ export function VaultCard({ vault, delegateCount, label }: VaultCardProps): Reac
             </span>
             <h3
               style={{
-                fontFamily: "var(--font-archivo), sans-serif",
+                fontFamily: "var(--font-display), sans-serif",
                 fontSize: "1.25rem",
                 fontWeight: 700,
                 letterSpacing: "-0.012em",
