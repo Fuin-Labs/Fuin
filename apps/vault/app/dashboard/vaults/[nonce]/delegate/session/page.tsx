@@ -167,7 +167,7 @@ export default function SessionDelegatePage({ params }: { params: Promise<{ nonc
   "mcpServers": {
     "fuin": {
       "command": "npx",
-      "args": ["tsx", "/home/jayant/Desktop/fuin/packages/mcp-server/src/index.ts"],
+      "args": ["-y", "@fuin-labs/mcp-server"],
       "env": {
         "DELEGATE_PRIVATE_KEY": "${created.sessionSecret}",
         "SOLANA_RPC_URL": "https://api.devnet.solana.com",
@@ -238,6 +238,13 @@ export default function SessionDelegatePage({ params }: { params: Promise<{ nonc
             — fine for testing but rate-limited. For real use, swap{" "}
             <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>SOLANA_RPC_URL</code>{" "}
             with your own Helius / QuickNode / Triton endpoint.
+          </p>
+          <p style={{ color: COLORS.textMuted, fontSize: "0.82rem", margin: "0 0 12px", lineHeight: 1.5 }}>
+            The <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>transfer-sol</code> and swarm tools route through the relayer. For local testing, start it with{" "}
+            <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>pnpm relayer:dev</code>{" "}
+            and keep <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>FUIN_RELAYER_URL</code> at{" "}
+            <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>http://127.0.0.1:8788</code>{" "}
+            — or point it at your hosted relayer. The other tools (balance, transfer-spl, swap) work without it.
           </p>
           <CodeBlock value={mcpSnippet} onCopy={() => handleCopy(mcpSnippet, "MCP config")} />
         </GlassCard>
