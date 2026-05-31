@@ -52,3 +52,7 @@ CLAUDE.md
 .claude
 .smithery/*
 .superpowers/
+
+# Installed agent skills (hyperframes etc. — reinstall via `npx skills add`)
+.agents/
+skills-lock.json

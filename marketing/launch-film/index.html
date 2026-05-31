@@ -1,0 +1,301 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=1920, height=1080" />
+    <title>Fuin — The Third Option (light)</title>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/CustomEase.min.js"></script>
+    <link rel="stylesheet" href="fonts.css" />
+    <style>
+      * { box-sizing: border-box; margin: 0; padding: 0; }
+      html, body { width: 1920px; height: 1080px; overflow: hidden; background: #f7f6f3; font-family: "Geist", sans-serif; }
+    </style>
+  </head>
+  <body>
+    <div id="root" data-composition-id="main" data-start="0" data-duration="58.5" data-width="1920" data-height="1080">
+
+      <!-- ===== persistent atmosphere (light) ===== -->
+      <div id="atmos">
+        <div id="litewash"></div>
+        <div id="grain"></div>
+        <div id="vignette"></div>
+      </div>
+
+      <!-- ===== scenes ===== -->
+
+      <!-- S1 HOOK -->
+      <section id="s1" class="scene">
+        <div class="inner"><div class="stack">
+          <div id="s1l1" class="display"><span class="w">The</span> <span class="w">next</span> <span class="w">wave</span> <span class="w">isn't</span> <span class="w">more</span> <span class="w">access.</span></div>
+          <div id="s1l2" class="display"><span class="w">It's</span> <span class="w hl"><span class="hlbg" id="s1hl"></span>restricted</span> <span class="w">access.</span></div>
+          <div id="s1rule" class="rule"></div>
+        </div></div>
+      </section>
+
+      <!-- S2 PROBLEM -->
+      <section id="s2" class="scene">
+        <div class="inner"><div class="stack left">
+          <div id="s2k" class="kicker">TODAY, TWO CHOICES</div>
+          <div id="s2o1" class="opt"><span class="num">01</span><span>Hold the keys yourself.</span></div>
+          <div id="s2rule" class="optrule"></div>
+          <div id="s2o2" class="opt"><span class="num">02</span><span>Hand them over completely.</span></div>
+        </div></div>
+      </section>
+
+      <!-- S3 DRAIN -->
+      <section id="s3" class="scene">
+        <div class="inner"><div class="stack">
+          <div id="s3card" class="card">
+            <div class="cardtop"><span class="cardlabel">HOT WALLET</span><span id="s3toggle" class="toggle">agent · approve all</span></div>
+            <div id="s3bal" class="bal">128.40 SOL</div>
+            <div id="s3stamp" class="stamp">DRAINED — 0.00 SOL</div>
+          </div>
+          <div id="s3cap" class="microcap">one missed prompt → everything, gone</div>
+        </div></div>
+      </section>
+
+      <!-- S4 THIRD -->
+      <section id="s4" class="scene">
+        <div class="inner"><div class="stack">
+          <div id="s4k" class="chip">03</div>
+          <div id="s4l" class="display">There's a third option.</div>
+        </div></div>
+      </section>
+
+      <!-- S5 VAULT -->
+      <section id="s5" class="scene">
+        <div class="inner">
+          <div class="vaultrow">
+            <div id="s5vault" class="card vcard">
+              <svg class="lock" viewBox="0 0 64 64" width="68" height="68" aria-hidden="true">
+                <path d="M20 30 v-7 a12 12 0 0 1 24 0 v7" fill="none" stroke="#15141a" stroke-width="4" stroke-linecap="round"/>
+                <rect x="13" y="30" width="38" height="26" rx="6" fill="none" stroke="#15141a" stroke-width="3"/>
+              </svg>
+              <div class="vtitle">VAULT</div>
+              <div class="vsub">no private key</div>
+            </div>
+            <div class="connector" id="s5conn"><span class="pulse" id="s5pulse"></span></div>
+            <div id="s5key" class="card vcard kcard">
+              <div class="ktitle">SCOPED KEY</div>
+              <div class="krow"><span class="kdot ok"></span>can act — swap, transfer</div>
+              <div class="krow"><span class="kdot no"></span>cannot drain — withdraw</div>
+            </div>
+          </div>
+          <div id="s5cap" class="capbottom">GRANT THE POWER TO ACT · WITHHOLD THE POWER TO DRAIN</div>
+        </div>
+      </section>
+
+      <!-- S6 RECEIPT -->
+      <section id="s6" class="scene">
+        <div class="inner">
+          <div id="s6r" class="card receipt">
+            <div class="rhead"><span class="limechip"></span>SCOPED KEY · POLICY</div>
+            <div class="rrow"><span>Daily cap</span><span class="rv">20 SOL</span></div>
+            <div class="rrow"><span>Per-transaction</span><span class="rv">2 SOL</span></div>
+            <div class="rrow"><span>Allowed</span><span class="rv">Jupiter, Meteora</span></div>
+            <div class="rrow"><span>Window</span><span class="rv">06:00–22:00 UTC</span></div>
+            <div class="rrow"><span>Kill-switch</span><span class="rv">guardian, on-chain</span></div>
+            <div class="rfoot">Cross a limit · rejected before it settles</div>
+          </div>
+        </div>
+      </section>
+
+      <!-- S7 PROOF -->
+      <section id="s7" class="scene">
+        <div class="inner"><div class="stack">
+          <div id="s7h" class="display mid"><span class="w">One</span> <span class="w">signature.</span> <span class="w">Infinite</span> <span class="w">agents.</span> <span class="w">Fixed</span> <span class="w">downside.</span></div>
+          <div id="s7term" class="card term">
+            <div class="tline tcmd">child-agent → transfer 41.8 SOL → unknown</div>
+            <div id="s7rej" class="tline trej">✕ REJECTED · OutOfBounds</div>
+            <div id="s7held" class="held"><span class="hlbg" id="s7hl"></span>BOUNDARY HELD · ~2ms</div>
+          </div>
+          <div id="s7tags" class="proof">LIVE ON SOLANA · ON-CHAIN REJECTION</div>
+        </div></div>
+      </section>
+
+      <!-- S8 CTA -->
+      <section id="s8" class="scene">
+        <div class="inner"><div class="stack tight">
+          <svg id="s8mono" class="mono" viewBox="0 0 512 512" width="150" height="150" aria-hidden="true">
+            <g fill="#15141a">
+              <path d="M158 116 h66 v280 h-66 z"/>
+              <path d="M224 116 h130 v62 h-130 z"/>
+              <path d="M224 224 h84 v58 h-84 z"/>
+            </g>
+            <rect id="s8ap" x="158" y="314" width="66" height="12" fill="#c1e859"/>
+          </svg>
+          <div id="s8l1" class="display mid">Stop handing over the keys.</div>
+          <div id="s8l2" class="sub">Give an agent the keys to act. Never the keys to everything.</div>
+        </div></div>
+      </section>
+
+      <!-- S9 CLOSE -->
+      <section id="s9" class="scene">
+        <div class="inner"><div class="stack tight">
+          <div id="s9m" class="wordmark">fuin</div>
+          <div id="s9u" class="urlrow">Restricted access on Solana · fuin.xyz</div>
+        </div></div>
+      </section>
+
+      <style>
+        #root {
+          --paper:#f7f6f3; --ink:#15141a; --mute:#8b8893; --rule:#dcd9d2; --live:#c1e859; --oxide:#d24426; --card:#ffffff;
+          position:relative; width:100%; height:100%; background:var(--paper); color:var(--ink); overflow:hidden;
+        }
+        #atmos { position:absolute; inset:0; z-index:0; }
+        #litewash { position:absolute; inset:0; background:radial-gradient(120% 92% at 50% 28%, #ffffff 0%, #f7f6f3 56%, #efece6 100%); }
+        #grain { position:absolute; inset:-20%; z-index:3; opacity:0.03; pointer-events:none; mix-blend-mode:multiply;
+          background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 240 240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+        #vignette { position:absolute; inset:0; z-index:4; pointer-events:none; background:radial-gradient(122% 102% at 50% 46%, transparent 60%, rgba(120,116,108,0.10) 100%); }
+
+        .scene { position:absolute; inset:0; z-index:1; opacity:0; }
+        .inner { position:absolute; inset:0; display:flex; align-items:center; justify-content:center; will-change:transform; }
+        .stack { display:flex; flex-direction:column; align-items:center; justify-content:center; gap:20px; text-align:center; padding:0 220px; }
+        .stack.left { align-items:flex-start; text-align:left; gap:30px; }
+        .stack.tight { gap:16px; }
+
+        .display { font-family:"Bricolage Grotesque",sans-serif; font-weight:800; font-size:90px; letter-spacing:-0.025em; line-height:1.08; color:var(--ink); text-wrap:balance; max-width:1380px; }
+        .display.mid { font-size:74px; }
+        .w { display:inline-block; will-change:transform,filter,opacity; }
+        .hl { position:relative; }
+        .hlbg { position:absolute; left:-0.07em; right:-0.07em; top:0.16em; bottom:0.04em; background:var(--live); z-index:-1; transform:scaleX(0); transform-origin:left center; border-radius:4px; }
+        .rule { width:300px; height:2px; background:var(--ink); opacity:0.22; transform:scaleX(0); transform-origin:center; margin-top:20px; }
+
+        .kicker { font-family:"Fragment Mono",monospace; font-size:26px; letter-spacing:0.3em; color:var(--mute); }
+        .chip { font-family:"Fragment Mono",monospace; font-size:30px; letter-spacing:0.1em; color:var(--ink); background:var(--live); padding:8px 20px; border-radius:999px; }
+        .opt { font-family:"Bricolage Grotesque",sans-serif; font-weight:600; font-size:66px; color:var(--ink); display:flex; align-items:baseline; gap:30px; }
+        .opt .num { font-family:"Fragment Mono",monospace; font-size:30px; color:var(--mute); }
+        .optrule { width:760px; height:1px; background:var(--rule); }
+
+        .card { background:var(--card); border:1px solid #ececea; border-radius:18px; box-shadow:0 1px 2px rgba(20,18,30,0.05), 0 36px 70px rgba(20,18,30,0.12); }
+        .card.term { background:#fbfaf8; }
+
+        .vaultrow { display:flex; align-items:center; justify-content:center; }
+        .card.vcard { width:400px; height:382px; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:14px; padding:44px; }
+        .vcard.kcard { align-items:flex-start; gap:24px; }
+        .lock { display:block; margin-bottom:8px; }
+        .vtitle { font-family:"Fragment Mono",monospace; font-size:30px; letter-spacing:0.22em; color:var(--ink); }
+        .vsub { font-family:"Fragment Mono",monospace; font-size:21px; letter-spacing:0.1em; color:var(--mute); }
+        .connector { width:110px; height:2px; background:linear-gradient(90deg, rgba(21,20,26,0.18), rgba(193,232,89,1)); position:relative; transform:scaleX(0); transform-origin:left center; }
+        .pulse { position:absolute; top:-4.5px; left:0; width:11px; height:11px; border-radius:50%; background:var(--live); box-shadow:0 0 0 4px rgba(193,232,89,0.3); }
+        .ktitle { font-family:"Fragment Mono",monospace; font-size:25px; letter-spacing:0.18em; color:var(--ink); align-self:center; margin-bottom:8px; }
+        .krow { font-family:"Fragment Mono",monospace; font-size:23px; color:#3c3a44; display:flex; align-items:center; gap:14px; }
+        .kdot { width:11px; height:11px; border-radius:50%; flex:none; }
+        .kdot.ok { background:#7cb000; } .kdot.no { background:var(--oxide); }
+
+        .cardtop { display:flex; justify-content:space-between; align-items:center; margin-bottom:24px; }
+        .card.receipt, .card.term { text-align:left; }
+        .card:not(.vcard) { padding:46px 52px; }
+        .cardlabel { font-family:"Fragment Mono",monospace; font-size:20px; letter-spacing:0.24em; color:var(--mute); }
+        .toggle { font-family:"Fragment Mono",monospace; font-size:22px; color:var(--mute); padding:7px 16px; border:1px solid var(--rule); border-radius:999px; }
+        .bal { font-family:"Geist",sans-serif; font-weight:600; font-size:98px; font-variant-numeric:tabular-nums; color:var(--ink); }
+        .stamp { font-family:"Fragment Mono",monospace; font-size:30px; letter-spacing:0.12em; color:var(--oxide); margin-top:14px; opacity:0; }
+        .card.term, .receipt { width:880px; }
+        .term { width:1000px; }
+        .microcap { font-family:"Fragment Mono",monospace; font-size:24px; color:var(--mute); margin-top:30px; }
+
+        .rhead { font-family:"Fragment Mono",monospace; font-size:24px; letter-spacing:0.2em; color:var(--ink); margin-bottom:26px; display:flex; align-items:center; gap:14px; }
+        .limechip { width:16px; height:16px; background:var(--live); border-radius:4px; display:inline-block; }
+        .rrow { display:flex; justify-content:space-between; align-items:baseline; padding:16px 0; border-bottom:1px solid var(--rule); font-family:"Fragment Mono",monospace; font-size:33px; color:var(--ink); opacity:0; }
+        .rrow .rv { color:var(--mute); }
+        .rfoot { font-family:"Fragment Mono",monospace; font-size:22px; color:var(--mute); margin-top:24px; opacity:0; }
+
+        .tline { font-family:"Fragment Mono",monospace; font-size:33px; }
+        .tcmd { color:#3c3a44; }
+        .trej { color:var(--oxide); margin-top:14px; opacity:0; }
+        .held { position:relative; display:inline-block; font-family:"Fragment Mono",monospace; font-size:38px; letter-spacing:0.08em; color:var(--ink); margin-top:18px; opacity:0; padding:2px 8px; }
+        #s7hl { position:absolute; left:0; right:0; top:0.12em; bottom:0.06em; background:var(--live); z-index:-1; transform:scaleX(0); transform-origin:left center; border-radius:4px; }
+        .proof { font-family:"Fragment Mono",monospace; font-size:23px; letter-spacing:0.16em; color:var(--mute); margin-top:30px; opacity:0; }
+
+        .mono { display:block; }
+        .sub { font-family:"Geist",sans-serif; font-weight:400; font-size:36px; color:var(--mute); }
+        .wordmark { font-family:"Bricolage Grotesque",sans-serif; font-weight:800; font-size:128px; letter-spacing:-0.03em; color:var(--ink); }
+        .urlrow { font-family:"Fragment Mono",monospace; font-size:27px; letter-spacing:0.16em; color:var(--mute); }
+        .capbottom { position:absolute; left:0; right:0; bottom:96px; text-align:center; font-family:"Fragment Mono",monospace; font-size:22px; letter-spacing:0.18em; color:var(--mute); }
+      </style>
+
+      <script>
+        CustomEase.create("smooth", "M0,0 C0.22,1 0.3,1 1,1");
+        const tl = gsap.timeline({ paused: true });
+        const E = "smooth";
+
+        const SC = [
+          {id:"s1",start:0.0,dur:5.7},{id:"s2",start:5.7,dur:6.6},{id:"s3",start:12.3,dur:8.9},
+          {id:"s4",start:21.2,dur:2.4},{id:"s5",start:23.6,dur:6.4},{id:"s6",start:30.0,dur:8.9},
+          {id:"s7",start:38.9,dur:10.4},{id:"s8",start:49.3,dur:4.6},{id:"s9",start:53.9,dur:4.6},
+        ];
+        SC.forEach((s,i)=>{
+          tl.set("#"+s.id,{opacity:0},0);
+          tl.fromTo("#"+s.id,{opacity:0},{opacity:1,duration:0.6,ease:"power2.out"},s.start);
+          tl.fromTo("#"+s.id+" .inner",{scale:1.0},{scale:1.03,duration:s.dur,ease:"none"},s.start);
+          if (i < SC.length-1) tl.to("#"+s.id,{opacity:0,filter:"blur(16px)",duration:0.6,ease:"power2.in"},s.start+s.dur-0.15);
+        });
+        function rise(sel,t,o={}){tl.fromTo(sel,{y:o.y??22,x:o.x??0,opacity:0,filter:"blur(8px)"},{y:0,x:0,opacity:1,filter:"blur(0px)",duration:o.d??0.85,ease:o.e??E},t);}
+
+        // S1 HOOK
+        const d1=[40,33,27,21,15,9];
+        gsap.utils.toArray("#s1l1 .w").forEach((w,i)=>rise(w,0.5+i*0.1,{x:d1[i],d:0.85}));
+        gsap.utils.toArray("#s1l2 .w").forEach((w,i)=>rise(w,2.0+i*0.13,{x:[26,15,7][i],d:0.95,e:"power3.out"}));
+        tl.fromTo("#s1hl",{scaleX:0},{scaleX:1,duration:0.55,ease:"power3.inOut"},2.85);
+        tl.fromTo("#s1rule",{scaleX:0},{scaleX:1,duration:1.0,ease:E},3.0);
+
+        // S2 PROBLEM
+        rise("#s2k",6.0,{y:16,d:0.7});
+        rise("#s2o1",6.5,{x:-50,d:0.85,e:"power3.out"});
+        tl.fromTo("#s2rule",{scaleX:0},{scaleX:1,duration:0.7,ease:E,transformOrigin:"left center"},7.2);
+        rise("#s2o2",7.6,{x:-50,d:0.85,e:"power3.out"});
+
+        // S3 DRAIN
+        rise("#s3card",12.8,{y:40,d:0.9});
+        tl.to("#s3toggle",{color:"#d24426",borderColor:"#d24426",duration:0.5},14.2);
+        const bal={v:128.40};
+        tl.to(bal,{v:0,duration:2.4,ease:"power2.in",onUpdate:()=>{const e=document.getElementById("s3bal");if(e)e.textContent=bal.v.toFixed(2)+" SOL";}},17.4);
+        tl.to("#s3bal",{color:"#d24426",duration:0.3},19.6);
+        tl.fromTo("#s3stamp",{opacity:0,y:8},{opacity:1,y:0,duration:0.4},19.8);
+        rise("#s3cap",18.6,{y:10,d:0.7});
+
+        // S4 THIRD
+        rise("#s4k",21.5,{y:0,d:0.55,e:"back.out(1.6)"});
+        rise("#s4l",21.8,{y:24,d:0.8});
+
+        // S5 VAULT
+        tl.fromTo("#s5vault",{opacity:0,scale:0.93,filter:"blur(10px)"},{opacity:1,scale:1,filter:"blur(0px)",duration:0.95,ease:"power3.out"},24.1);
+        tl.fromTo("#s5conn",{scaleX:0},{scaleX:1,duration:0.6,ease:E},24.9);
+        tl.fromTo("#s5pulse",{x:0,opacity:0},{opacity:1,duration:0.2,ease:"none"},24.95);
+        tl.to("#s5pulse",{x:100,duration:0.7,ease:"power1.inOut"},25.05);
+        tl.to("#s5pulse",{opacity:0,duration:0.3,ease:"none"},25.55);
+        tl.fromTo("#s5key",{opacity:0,scale:0.93,filter:"blur(10px)"},{opacity:1,scale:1,filter:"blur(0px)",duration:0.9,ease:"power3.out"},25.5);
+        gsap.utils.toArray("#s5key .krow").forEach((r,i)=>rise(r,26.2+i*0.28,{x:-14,d:0.55,e:"power2.out"}));
+        rise("#s5cap",26.6,{y:14,d:0.7});
+        tl.to("#s5 .vaultrow",{y:-8,duration:2.2,repeat:1,yoyo:true,ease:"sine.inOut"},27.4);
+
+        // S6 RECEIPT
+        rise("#s6r",30.4,{y:30,d:0.8});
+        gsap.utils.toArray("#s6 .rrow").forEach((r,i)=>rise(r,31.2+i*0.9,{x:-16,d:0.5,e:"power2.out"}));
+        rise("#s6 .rfoot",36.4,{y:8,d:0.6});
+
+        // S7 PROOF
+        gsap.utils.toArray("#s7h .w").forEach((w,i)=>rise(w,39.3+i*0.09,{y:30,d:0.6,e:"power3.out"}));
+        rise("#s7term",40.8,{y:24,d:0.7});
+        tl.fromTo("#s7rej",{opacity:0},{opacity:1,duration:0.25},45.6);
+        tl.fromTo("#s7held",{opacity:0},{opacity:1,duration:0.3},46.0);
+        tl.fromTo("#s7hl",{scaleX:0},{scaleX:1,duration:0.5,ease:"power3.inOut"},46.2);
+        rise("#s7tags",47.4,{y:12,d:0.7});
+
+        // S8 CTA
+        tl.fromTo("#s8mono",{opacity:0,scale:0.7},{opacity:1,scale:1,duration:0.8,ease:"back.out(1.4)"},49.7);
+        rise("#s8l1",50.4,{y:26,d:0.7});
+        rise("#s8l2",50.9,{y:18,d:0.7});
+
+        // S9 CLOSE (final, fade out)
+        rise("#s9m",54.3,{y:22,d:0.7});
+        rise("#s9u",54.8,{y:12,d:0.7});
+        tl.to("#s9 .inner",{opacity:0,filter:"blur(10px)",duration:1.0,ease:"power2.in"},57.3);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines["main"] = tl;
+      </script>
+    </div>
+  </body>
+</html>

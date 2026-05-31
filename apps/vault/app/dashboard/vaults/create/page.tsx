@@ -181,12 +181,12 @@ export default function CreateVaultPage(): React.JSX.Element {
                       background: COLORS.emerald,
                       border: "none",
                       borderRadius: "10px",
-                      padding: "12px 16px",
+                      padding: "14px 16px",
                       cursor: "pointer",
                       display: "flex",
                       alignItems: "center",
+                      justifyContent: "center",
                       alignSelf: "flex-start",
-                      marginTop: "24px",
                     }}
                   >
                     <Plus size={16} color="#000" />

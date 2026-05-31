@@ -1,0 +1,12 @@
+# Rendered output + heavy generated artifacts (regenerable from source)
+output/
+vo/
+ref/
+assets/
+node_modules/
+
+# Media (renders, audio, captured reference)
+*.mp4
+*.wav
+*.mp3
+*.webm

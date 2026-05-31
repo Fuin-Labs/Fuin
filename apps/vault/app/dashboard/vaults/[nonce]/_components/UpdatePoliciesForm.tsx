@@ -167,7 +167,6 @@ export function UpdatePoliciesForm({
             disabled={allowList.length >= 16}
             style={{
               alignSelf: "flex-start",
-              marginTop: "2px",
               background: COLORS.emeraldSubtle,
               border: `1px solid ${COLORS.emeraldBorder}`,
               borderRadius: "10px",
@@ -220,7 +219,6 @@ export function UpdatePoliciesForm({
             disabled={denyList.length >= 8}
             style={{
               alignSelf: "flex-start",
-              marginTop: "2px",
               background: COLORS.redSubtle,
               border: `1px solid ${COLORS.redBorder}`,
               borderRadius: "10px",
