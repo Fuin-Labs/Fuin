@@ -171,7 +171,7 @@ export default function SessionDelegatePage({ params }: { params: Promise<{ nonc
       "env": {
         "DELEGATE_PRIVATE_KEY": "${created.sessionSecret}",
         "SOLANA_RPC_URL": "https://api.devnet.solana.com",
-        "FUIN_RELAYER_URL": "http://127.0.0.1:8788"
+        "FUIN_RELAYER_URL": "http://13.127.60.145:8788"
       }
     }
   }
@@ -240,11 +240,11 @@ export default function SessionDelegatePage({ params }: { params: Promise<{ nonc
             with your own Helius / QuickNode / Triton endpoint.
           </p>
           <p style={{ color: COLORS.textMuted, fontSize: "0.82rem", margin: "0 0 12px", lineHeight: 1.5 }}>
-            The <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>transfer-sol</code> and swarm tools route through the relayer. For local testing, start it with{" "}
+            The <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>transfer-sol</code> and swarm tools route through the hosted Fuin relayer — already wired in{" "}
+            <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>FUIN_RELAYER_URL</code>, so they work out of the box. For local development, run your own with{" "}
             <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>pnpm relayer:dev</code>{" "}
-            and keep <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>FUIN_RELAYER_URL</code> at{" "}
-            <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>http://127.0.0.1:8788</code>{" "}
-            — or point it at your hosted relayer. The other tools (balance, transfer-spl, swap) work without it.
+            and set <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>FUIN_RELAYER_URL</code> to{" "}
+            <code style={{ color: COLORS.textSecondary, fontFamily: "var(--font-geist-mono), monospace" }}>http://127.0.0.1:8788</code>. The other tools (balance, transfer-spl, swap) work without the relayer.
           </p>
           <CodeBlock value={mcpSnippet} onCopy={() => handleCopy(mcpSnippet, "MCP config")} />
         </GlassCard>
